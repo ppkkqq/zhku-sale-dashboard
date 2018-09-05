@@ -1,0 +1,67 @@
+mainColor = #1890ff
+
+body {
+  margin: 0;
+  font-family: "Helvetica Neue For Number", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.65);
+  background-color: #fff;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+a {
+  color: mainColor;
+  background-color: transparent;
+  text-decoration: none;
+  outline: none;
+  cursor: pointer
+
+  &:hover {
+    color: #40a9ff;
+  }
+}
+
+.tooltip-label .el-tooltip {
+  float right
+  transform translateY(10px)
+}
+
+.data-table-footer {
+  // data-table 底部复用样式
+  margin-top 24px
+  text-align right
+}
+
+//border
+.border-0 {
+  // data-table 底部复用样式
+  border: none !important;
+}
+.border{
+  border:1px solid #ebeef5
+}
+
+.rounded-circle{
+  border-radius:50%!important;
+}
+//text
+.text-center{
+  text-align:center!important;
+}
+.text-right{
+  text-align:right!important;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both
+}
