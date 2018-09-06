@@ -7,7 +7,7 @@ if (mode == 'prod') {
 const gateway = process.env.API_SERVER || 'http://portal.deepexi.top'
 
 const config = {
-  projectNo: '321af7ccb5314f52b6f6cb9090af664c',
+  projectNo: '1339d494e3b0474d90c232c882f173e7',
   aliIconFont: '',
   env: {
     mock: {
@@ -20,7 +20,7 @@ const config = {
       '/moby-application-api': 'http://levy.ren:3000/mock/164',
       '/car-deepexi-evaluate-center': 'http://levy.ren:3000/mock/173',
       '/car-deepexi-car-center': 'http://levy.ren:3000/mock/200',
-      '/security': 'http://portal.deepexi.top'
+      '/security': 'http://mall.deepexi.com'
     },
     dev: {
       //内网：http://192.168.31.35:8083
@@ -33,7 +33,7 @@ const config = {
       '/moby-application-api': gateway,
       '/car-deepexi-evaluate-center': gateway,
       '/car-deepexi-car-center': gateway,
-      '/security': gateway
+      '/security': 'http://mall.deepexi.com'
     }
   }
 }
@@ -69,7 +69,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: '百得利总部管理端',
+    title: '云鼎商城平台管理端',
     meta: [
       {charset: 'utf-8'},
       {name: 'viewport', content: 'width=device-width, initial-scale=1'},

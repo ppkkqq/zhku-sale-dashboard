@@ -8,7 +8,7 @@ export const state = () => ({
   token: '',
   meta: {},
 
-  tenantCode: '08d5f0c68cc94b94af8c9d1dee768cb9',
+  tenantCode: '90f53cb2a61043858819c9a07e7cf863',
   user: {},
   menuList: [],
   permission: {},
