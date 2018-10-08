@@ -4,7 +4,7 @@ if (mode == 'prod') {
   require('dotenv').config()
 }
 
-const gateway = process.env.API_SERVER || 'http://portal.deepexi.top'
+const gateway = process.env.API_SERVER || 'http://121.196.205.213:8000'
 
 const config = {
   projectNo: '1339d494e3b0474d90c232c882f173e7',
@@ -25,14 +25,14 @@ const config = {
     dev: {
       //内网：http://192.168.31.35:8083
       '/mock': 'http://levy.ren:3000/mock/95',
-      '/car-deepexi-member-center': gateway,
-      '/car-deepexi-mall-config-api': gateway,
-      '/car-deepexi-product-center': gateway,
-      '/car-deepexi-trade-center': gateway,
-      '/car-deepexi-shop-center': gateway,
-      '/moby-application-api': gateway,
-      '/car-deepexi-evaluate-center': gateway,
-      '/car-deepexi-car-center': gateway,
+      '/mall-deepexi-member-center': gateway,
+      '/mall-deepexi-mall-config-api': gateway,
+      '/mall-deepexi-product-center': gateway,
+      '/mall-deepexi-trade-center': gateway,
+      '/mall-deepexi-shop-center': gateway,
+      '/mall-application-api': gateway,
+      '/mall-deepexi-evaluate-center': gateway,
+      '/mall-deepexi-car-center': gateway,
       '/security': 'http://mall.deepexi.com'
     }
   }

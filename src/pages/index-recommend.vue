@@ -1,24 +1,7 @@
 <template>
   <div :class="pageName">
     <el-row :gutter="12">
-      <el-col :span="4">
-        <el-card>
-          栏目
-           <el-menu
-            default-active="0"
-            class="column-list"
-            @select="handleNodeClick"
-            >
-            <!-- TODO：目前只有一级推荐栏目，先不考虑children -->
-            <el-menu-item :index="column.programa" v-for="(column, index) in columnData" :key="column.programa">
-              <span slot="title">{{column.label}}</span>
-            </el-menu-item>
-          </el-menu>
-
-          <!-- <el-tree :data="columnData" @node-click="handleNodeClick" node-key="programa" ref="columnTree"></el-tree> -->
-        </el-card>
-      </el-col>
-      <el-col :span="20">
+      <el-col :span="24">
         <el-card >
           <el-button size="small" type="primary" :style="'margin-bottom: 22px;'" @click="onShowDialog" :disabled="currentRec.length === 6">新增</el-button>
           每个栏目最多配置6个推荐位，为了客户端的显示效果，推荐位个数需为双数。

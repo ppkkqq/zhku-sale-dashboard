@@ -121,7 +121,7 @@
               <p style="color:#909399;padding:20px">暂无数据</p>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="车辆"
+          <!-- <el-tab-pane label="车辆"
                        name="6">
             <el-data-table :url="carUrl"
                            :columns="carColumns"
@@ -133,7 +133,7 @@
                            :isTree="false"
                            :hasPagination="true">
             </el-data-table>
-          </el-tab-pane>
+          </el-tab-pane> -->
         </el-tabs>
       </div>
     </el-card>
@@ -147,7 +147,7 @@ import {
   mcMemberInfos,
   orderList,
   customerFocus,
-  customerCars,
+  // customerCars,
   customerCertificatess,
   customerSubscribes,
   customerEvaluate
@@ -324,7 +324,7 @@ export default {
             })
           break
         case '6':
-          this.carUrl = customerCars
+          // this.carUrl = customerCars
           break
       }
     },
