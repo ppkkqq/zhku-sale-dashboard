@@ -1,32 +1,34 @@
-const baseApi = '/optimus-api/api/v1'
-
 const prefix = '/mock'
 
-const mallConfigApi = '/car-deepexi-mall-config-api/api/v1'
-const productCenter = '/car-deepexi-product-center/api/v1'
-const memberCenter = '/car-deepexi-member-center/api/v1'
+// const MALL_CONFIG = '/car-deepexi-mall-config-api/api/v1'
+// const PRODUCT_CENTER = '/car-deepexi-product-center/api/v1'
+// const MEMBER_CENTER = '/car-deepexi-member-center/api/v1'
 const shopCenter = '/car-deepexi-shop-center/api/v1'
-const tradeCenter = '/car-deepexi-trade-center/api/v1'
-const applicationCenter = '/moby-application-api/api/v1' //应用中心
-const evaluateCenter = '/car-deepexi-evaluate-center/api/v1' //评价中心
-const carCenter = '/car-deepexi-car-center/api/v1' //车辆中心
+// const TRADE_CENTER = '/car-deepexi-trade-center/api/v1'
+// const APPLICATION = '/moby-application-api/api/v1' //应用中心
+// const EVALUATE_CENTER = '/car-deepexi-evaluate-center/api/v1' //评价中心
 const fakeProductCenter = prefix + '/deepexi-product-center/api/v1'
 
-export const goodsLists = productCenter + '/admin/items'
-export const goodsAudit = id => productCenter + `/admin/items/${id}/status`
+export const PRODUCT_CENTER = '/mall-deepexi-product-center/api/v1'
+export const MEMBER_CENTER = '/mall-deepexi-member-center/api/v1'
+export const TRADE_CENTER = '/mall-deepexi-trade-center/api/v1'
+export const MALL_CONFIG = '/mall-deepexi-mall-config-api/api/v1'
+export const APPLICATION = '/mall-application-api/api/v1'
+export const EVALUATE_CENTER = '/mall-deepexi-evaluate-center/api/v1'
+export const ACCOUNT_CENTER = '/mall-deepexi-account-center/api/v1'
 
-export const recommendList = mallConfigApi + '/featuredFirsts'
+export const goodsLists = PRODUCT_CENTER + '/admin/items'
+export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
+
+export const recommendList = MALL_CONFIG + '/featuredFirsts'
 
 // 品牌管理
 // 根据id 修改品牌信息
-export const productBrandEdit = id => productCenter + `/pcBrands/${id}`
+export const productBrandEdit = id => PRODUCT_CENTER + `/pcBrands/${id}`
 // 获取所有品牌列表
 // export const productBrandList = deepexiProductCenter + '/pcBrands/list'
-export const pcBrands = productCenter + `/pcBrands`
+export const pcBrands = PRODUCT_CENTER + `/pcBrands`
 
-// 首页广告页面
-export const bannerList = mallConfigApi + '/advertisements'
-export const bannerEdit = id => mallConfigApi + `/advertisements/${id}`
 // 门店列表
 export const shopList = shopCenter + '/shops'
 
@@ -49,79 +51,81 @@ export const skusOff = id => {
 
 //后台类目树
 
-export const prdCatalogs = productCenter + '/prdCatalogs/tree'
-export const backendCatalogTree = productCenter + '/prdCatalogs/tree'
-export const backendCatalogDetail = id => productCenter + `/prdCatalogs/${id}`
-export const backendCatalogBaseUrl = productCenter + `/prdCatalogs`
-export const catalogAttr = productCenter + `/catalogAttr`
+export const prdCatalogs = PRODUCT_CENTER + '/prdCatalogs/tree'
+export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
+export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
+export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
+export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
 //前台类目树
-export const frontendCatalogTree = productCenter + '/pcPrecategorys/tree'
+export const frontendCatalogTree = PRODUCT_CENTER + '/pcPrecategorys/tree'
 export const frontendCatalogDetail = id =>
-  productCenter + `/pcPrecategorys/${id}`
-export const frontendCatalogBaseUrl = productCenter + `/pcPrecategorys`
-export const bindBackendUrl = productCenter + `/pcPrecategoryCatalogs`
+  PRODUCT_CENTER + `/pcPrecategorys/${id}`
+export const frontendCatalogBaseUrl = PRODUCT_CENTER + `/pcPrecategorys`
+export const bindBackendUrl = PRODUCT_CENTER + `/pcPrecategoryCatalogs`
 
 // 会员信息
-export const mcMemberInfos = memberCenter + '/mcMemberAccounts'
+export const mcMemberInfos = MEMBER_CENTER + '/mcMemberAccounts'
 
 // 属性管理
 // crud
-export const attributes = productCenter + '/attributes'
+export const attributes = PRODUCT_CENTER + '/attributes'
 
 // 属性组管理
 // crud
-export const attributeGroups = productCenter + '/attributeGroups'
+export const attributeGroups = PRODUCT_CENTER + '/attributeGroups'
 
 // 商品模板管理
 // 列表
-export const templateList = productCenter + '/templates' // 原接口
-// export const shopTemplateList = productCenter + '/shop/templates' // 门店模板
-export const adminTemplateList = productCenter + '/admin/templates'
+export const templateList = PRODUCT_CENTER + '/templates' // 原接口
+// export const shopTemplateList = PRODUCT_CENTER + '/shop/templates' // 门店模板
+export const adminTemplateList = PRODUCT_CENTER + '/admin/templates'
 // 启用禁用
 export const templateStatus = id =>
-  productCenter + `/shop/templates/${id}/status`
+  PRODUCT_CENTER + `/shop/templates/${id}/status`
 // 授权
-export const grantShop = id => productCenter + `/shop/templates/${id}/grantShop`
+export const grantShop = id =>
+  PRODUCT_CENTER + `/shop/templates/${id}/grantShop`
 export const grantList = id =>
-  productCenter + `/shop/templates/${id}/grant/list`
+  PRODUCT_CENTER + `/shop/templates/${id}/grant/list`
 
 // 套餐模板管理
 // 列表
-export const pcBundleTempaltes = productCenter + '/pcBundleTempaltes' // 原接口
-// export const shopPcBundleTempaltes = productCenter + '/pcBundleTempaltes' // 门店模板
-export const adminPcBundleTempaltes = productCenter + '/admin/pcBundleTempaltes'
+export const pcBundleTempaltes = PRODUCT_CENTER + '/pcBundleTempaltes' // 原接口
+// export const shopPcBundleTempaltes = PRODUCT_CENTER + '/pcBundleTempaltes' // 门店模板
+export const adminPcBundleTempaltes =
+  PRODUCT_CENTER + '/admin/pcBundleTempaltes'
 // 授权
 export const bundleGrantShop = id =>
-  productCenter + `/admin/pcBundleTempaltes/${id}/grantShop` // 单个
+  PRODUCT_CENTER + `/admin/pcBundleTempaltes/${id}/grantShop` // 单个
 export const bundleGrantList = id =>
-  productCenter + `/admin/pcBundleTempaltes/${id}/grant/list` // 单个 店铺列表
+  PRODUCT_CENTER + `/admin/pcBundleTempaltes/${id}/grant/list` // 单个 店铺列表
 
 // 启用禁用
 export const bundleStatus = id =>
-  productCenter + `/admin/pcBundleTempaltes/${id}/status`
+  PRODUCT_CENTER + `/admin/pcBundleTempaltes/${id}/status`
 
 //订单列表
 //(平台查询订单列表)
-export const orderList = tradeCenter + '/carOrder/list'
-export const orderDetail = tradeCenter + '/carOrder/detail'
+export const orderList = TRADE_CENTER + '/carOrder/list'
+export const orderDetail = TRADE_CENTER + '/carOrder/detail'
 
 // 反馈 crud
-export const feedback = mallConfigApi + '/feedbacks'
+export const feedback = MALL_CONFIG + '/feedbacks'
 
 //车型基础数据管理
-export const carBrandsSeries = productCenter + '/pcCarBrandSeries'
-export const carModels = productCenter + '/pcCarModels'
+export const carBrandsSeries = PRODUCT_CENTER + '/pcCarBrandSeries'
+export const carModels = PRODUCT_CENTER + '/pcCarModels'
 
 //商品管理
-export const shopItems = `${productCenter}/admin/items`
-export const productDetail = id => `${productCenter}/shop/items/${id}`
+export const shopItems = `${PRODUCT_CENTER}/admin/items`
+export const productDetail = id => `${PRODUCT_CENTER}/shop/items/${id}`
 
 //套餐管理
 //TODO:  后端接口还没有给我。。。。
-export const pcBundles = productCenter + '/admin/pcBundles'
-export const comboLists = productCenter + '/pcBundleTempaltes'
+export const pcBundles = PRODUCT_CENTER + '/admin/pcBundles'
+export const comboLists = PRODUCT_CENTER + '/pcBundleTempaltes'
 export const bundlesAudit = id =>
-  productCenter + `/admin/pcBundles/${id}/status`
+  PRODUCT_CENTER + `/admin/pcBundles/${id}/status`
 
 //客户
 
@@ -129,12 +133,15 @@ export const bundlesAudit = id =>
 
 //subscribes/list
 //我的预约
-export const customerSubscribes = `${tradeCenter}/subscribes/list`
+export const customerSubscribes = `${TRADE_CENTER}/subscribes/list`
 //我的关注
-export const customerFocus = `${applicationCenter}/goodsAttentions/headquarters/personalCollectsDetails`
+export const customerFocus = `${APPLICATION}/goodsAttentions/headquarters/personalCollectsDetails`
 //我的评价
-export const customerEvaluate = `${evaluateCenter}/ecEvaluations/tree`
+export const customerEvaluate = `${EVALUATE_CENTER}/ecEvaluations/tree`
 //我的证件
-export const customerCertificatess = `${memberCenter}/mcCertificatess/list`
-//我的车辆
-export const customerCars = `${carCenter}/ccCarBases/list`
+export const customerCertificatess = `${MEMBER_CENTER}/mcCertificatess/list`
+
+//--------------------此线上面接口会被删除，所需接口放到此线下面--------------------
+// 首页广告页面
+export const bannerList = MALL_CONFIG + '/advertisements'
+export const bannerEdit = id => MALL_CONFIG + `/advertisements/${id}`
