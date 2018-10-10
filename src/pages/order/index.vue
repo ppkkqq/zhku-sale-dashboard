@@ -1,5 +1,5 @@
 <template>
-  <div :class="pageName">
+  <div class="pageName">
     <el-data-table
       ref="dataTable"
       :url="url"
@@ -50,16 +50,16 @@
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
 import {formatDate, price, toOptionsLabel, options2Object} from '@/const/filter'
 import {orderList} from '@/const/api'
-import StoreSelect from 'src/pages/order/index'
+import StoreSelect from '@/container/store-select/'
 import searchFormMixin from '@/mixins/search-form-slot'
 
 export default {
-  name: 'order-list',
+  name: 'my-page',
   components: {StoreSelect},
   mixins: [searchFormMixin],
   data() {
     return {
-      pageName: 'order-list',
+      pageName: 'my-page',
       url: orderList,
       columns: [
         {
@@ -204,3 +204,7 @@ export default {
   computed: {}
 }
 </script>
+
+<style lang="stylus">
+
+</style>
