@@ -16,7 +16,7 @@ const config = {
       '/car-deepexi-member-center': 'http://levy.ren:3000/mock/111',
       '/car-deepexi-shop-center': 'http://levy.ren:3000/mock/113',
       '/car-deepexi-trade-center': 'http://levy.ren:3000/mock/117',
-      '/car-deepexi-product-center': 'http://levy.ren:3000/mock/109',
+      '/mall-deepexi-product-center': 'http://levy.ren:3000/mock/281',
       '/moby-application-api': 'http://levy.ren:3000/mock/164',
       '/car-deepexi-evaluate-center': 'http://levy.ren:3000/mock/173',
       '/car-deepexi-car-center': 'http://levy.ren:3000/mock/200',
