@@ -50,7 +50,7 @@
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
 import {formatDate, price, toOptionsLabel, options2Object} from '@/const/filter'
 import {orderList} from '@/const/api'
-import StoreSelect from '@/container/store-select/'
+import StoreSelect from 'src/pages/order/index'
 import searchFormMixin from '@/mixins/search-form-slot'
 
 export default {
