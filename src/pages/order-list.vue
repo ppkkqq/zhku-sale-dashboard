@@ -1,10 +1,46 @@
 <template>
   <div :class="pageName">
-    <el-data-table ref="dataTable" :url="url" :columns="columns" totalPath="payload.total" dataPath="payload.list" :customQuery="customQuery" :hasNew="false" :hasEdit="false" :hasDelete="false" :hasOperation="true" :isTree="false" :hasPagination="true" :extraButtons="extraButtons" :searchForm="searchForm">
+    <el-data-table
+      ref="dataTable"
+      :url="url"
+      :columns="columns"
+      totalPath="payload.total"
+      dataPath="payload.list"
+      :customQuery="customQuery"
+      :hasNew="false"
+      :hasEdit="false"
+      :hasDelete="false"
+      :hasOperation="true"
+      :isTree="false"
+      :hasPagination="true"
+      :extraButtons="extraButtons"
+      :searchForm="searchForm">
       <template slot="search">
-        <el-form-item label="门店" prop="shopId">
-          <store-select @change="handleSelect('shopId', $event)" ref="shopId"></store-select>
+        <!--//下单时间-->
+        <el-form-item label="下单时间">
+          <el-date-picker
+            @change="setTime('order')"
+            value-format="yyyy-MM-dd"
+            v-model="orderTime"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
         </el-form-item>
+        <!--//支付时间-->
+        <el-form-item label="支付时间">
+          <el-date-picker
+            @change="setTime('pay')"
+            value-format="yyyy-MM-dd"
+            v-model="payTime"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+        </el-form-item>
+
       </template>
     </el-data-table>
   </div>
@@ -27,51 +63,46 @@ export default {
       url: orderList,
       columns: [
         {
-          prop: 'orderType',
-          label: '订单类型',
+          prop: 'num',
+          label: '序号'
+        },
+        {
+          prop: 'orderId',
+          label: '订单编号'
+        },
+        {
+          prop: 'orderCost',
+          label: '订单金额',
           formatter: row => toOptionsLabel(row.orderType, orderTypeOptions)
         },
         {
-          prop: 'createdAt',
-          label: '单据时间',
-          minWidth: 130,
-          formatter: row => formatDate(row.createdAt)
+          prop: 'itemSource',
+          label: '商品来源'
         },
-        {
-          prop: 'id',
-          label: '订单号',
-          minWidth: 160
-        },
-        {
-          prop: 'shopName',
-          label: '门店',
-          minWidth: 180,
-          'show-overflow-tooltip': true
-        },
-        {
-          prop: 'memberName',
-          label: '客户姓名'
-        },
-        {
-          prop: 'memberPhone',
-          label: '客户手机号',
-          minWidth: 120
-        },
-        {prop: 'carType', label: '车型', formatter: this.formatterCarType},
-        {prop: 'payMoney', label: '支付金额', formatter: this.formatterMoney},
         {
           prop: 'status',
           label: '订单状态',
-          minWidth: 120,
-          formatter: this.formatterOrderStatus
+          formatter: row => toOptionsLabel(row.orderType, orderTypeOptions)
+        },
+        {
+          prop: 'account',
+          label: '下单账号'
+        },
+        {
+          prop: 'time',
+          label: '下单时间',
+          formatter: row => toOptionsLabel(row.orderType, orderTypeOptions)
         }
       ],
-      customQuery: {
-        entranceType: 'ENTRANCE_TYPE_ZONGBU'
-      },
       extraButtons: [
         {
-          text: '查看',
+          text: '查看物流' || '发货',
+          type: 'primary',
+          show: this.showButton,
+          atClick: this.go2Detail
+        },
+        {
+          text: '详情',
           type: 'primary',
           show: this.showButton,
           atClick: this.go2Detail
@@ -79,41 +110,65 @@ export default {
       ],
       searchForm: [
         {
-          $el: {placeholder: '请输入客户姓名'},
-          label: '客户姓名',
-          $id: 'memberName',
+          $el: {placeholder: '请输入订单编号'},
+          label: '订单编号',
+          $id: 'orderId',
           $type: 'input'
         },
         {
-          $el: {placeholder: '请输入客户手机号'},
-          label: '客户手机号',
-          $id: 'memberPhone',
+          $el: {placeholder: '请输入商品来源'},
+          label: '商品来源',
+          $id: 'itemSource',
           $type: 'input'
         },
         {
-          $el: {placeholder: '请输入订单号'},
-          label: '订单号',
-          $id: 'id',
-          $type: 'input'
-        },
-        {
-          $options: orderTypeOptions,
-          $el: {placeholder: '请选择订单类型'},
-          label: '订单类型',
-          $id: 'orderType',
-          $type: 'select'
-        },
-        {
-          $options: orderStatusOptions,
+          // 1待支付，2待发货，3待收货，4待评论，5已取消，6已评论
+          $options: [
+            {
+              value: '1',
+              label: '待支付'
+            },
+            {
+              value: '2',
+              label: '待发货'
+            },
+            {
+              value: '3',
+              label: '待收货'
+            },
+            {
+              value: '4',
+              label: '待评论'
+            },
+            {
+              value: '5',
+              label: '已取消'
+            },
+            {
+              value: '6',
+              label: '已评论'
+            }
+          ],
           $el: {placeholder: '请选择订单状态'},
           label: '订单状态',
           $id: 'status',
           $type: 'select'
         }
-      ]
+      ],
+      payTime: '',
+      orderTime: '',
+      customQuery: {
+        orderTime: '',
+        payTime: ''
+      }
     }
   },
   methods: {
+    setTime(way) {
+      if (this[way + 'Time']) {
+        this.customQuery[way + 'Time'] = this[way + 'Time'].join(',')
+      }
+    },
     formatterCarType(row, column) {
       const {outDtoTradeOrderLines = []} = row
       const data = outDtoTradeOrderLines.filter(
@@ -145,6 +200,7 @@ export default {
         this.$router.push(`/order-detail-car?id=${row.id}`)
       }
     }
-  }
+  },
+  computed: {}
 }
 </script>
