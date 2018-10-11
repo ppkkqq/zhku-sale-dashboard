@@ -43,6 +43,26 @@
 
       </template>
     </el-data-table>
+    <div>
+      <button @click="outerVisible = true">点我点我</button>
+    </div>
+    <el-dialog
+      title="查看订单物流"
+      :visible.sync="outerVisible"
+    >
+
+      <el-dialog
+        title="查看"
+        :visible.sync="innerVisible"
+        @open="outerVisible=false"
+        @close="outerVisible = true"
+        append-to-body>
+      </el-dialog>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="outerVisible = false">取 消</el-button>
+        <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -160,7 +180,9 @@ export default {
       customQuery: {
         orderTime: '',
         payTime: ''
-      }
+      },
+      outerVisible: false,
+      innerVisible: false
     }
   },
   methods: {
@@ -191,14 +213,14 @@ export default {
       return options[type] === '保养订单' || options[type] === '新车订单'
     },
     go2Detail(row) {
-      const type = row.orderType
-      const options = options2Object(orderTypeOptions)
-
-      if (options[type] === '保养订单') {
-        this.$router.push(`/order-detail-maintain?id=${row.id}`)
-      } else {
-        this.$router.push(`/order-detail-car?id=${row.id}`)
-      }
+      // const type = row.orderType
+      // const options = options2Object(orderTypeOptions)
+      //
+      // if (options[type] === '保养订单') {
+      //   this.$router.push(`/order-detail-maintain?id=${row.id}`)
+      // } else {
+      //   this.$router.push(`/order-detail-car?id=${row.id}`)
+      // }
     }
   },
   computed: {}
