@@ -222,16 +222,11 @@ export default {
         orderEndDate: '',
         payStartDate: '',
         payEndDate: ''
-        // orderTime: '',
-        // payTime: '',
       },
       visible: false,
-      outerVisible: false,
-      innerVisible: false,
       operationAttrs: {
         width: 200
       },
-      logisticsContent: '',
       deliveryAddress: '',
       trackNum: '',
       steps: []
@@ -268,30 +263,29 @@ export default {
       this.$axios
         .$get(`${logistics}?orderCode=${row.orderCode}&orderId=${row.orderId}`)
         .then(res => {
-          this.logisticsContent = res.payload
-          let firstItem =
-            this.logisticsContent.list && this.logisticsContent.list[0]
+          let logisticsContent = res.payload
+          let firstItem = logisticsContent.list && logisticsContent.list[0]
           this.trackNum = firstItem && firstItem.trackNum
+          let deliveryAddress = logisticsContent.deliveryAddress
+          let list = logisticsContent.list
           this.deliveryAddress =
-            this.logisticsContent.deliveryAddress.provinceName +
-            this.logisticsContent.deliveryAddress.cityName +
-            this.logisticsContent.deliveryAddress.districtName +
-            this.logisticsContent.deliveryAddress.streetName +
-            this.logisticsContent.deliveryAddress.detailAddress +
-            this.logisticsContent.deliveryAddress.postcode +
-            this.logisticsContent.deliveryAddress.receiverName +
-            this.logisticsContent.deliveryAddress.receiverPhone
-          this.logisticsContent.list.forEach(item => {
+            deliveryAddress.provinceName +
+            deliveryAddress.cityName +
+            deliveryAddress.districtName +
+            deliveryAddress.streetName +
+            deliveryAddress.detailAddress +
+            deliveryAddress.postcode +
+            deliveryAddress.receiverName +
+            deliveryAddress.receiverPhone
+          list.forEach(item => {
             item.date = formatDate(item.createTime, 'YYYY-MM-DD')
             item.day = num2day[new Date(item.createTime).getUTCDay()]
             item.time = formatDate(item.createTime, 'HH:mm:ss')
           })
-          this.steps = this.logisticsContent.list
-          console.log(this.logisticsContent)
+          this.steps = list
         })
         .catch()
       this.visible = true
-      this.outerVisible = true
     },
     go2Detail(row) {
       // this.$router.push({
