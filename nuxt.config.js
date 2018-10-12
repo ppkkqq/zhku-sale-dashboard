@@ -4,7 +4,7 @@ if (mode == 'prod') {
   require('dotenv').config()
 }
 
-const gateway = process.env.API_SERVER || 'http://121.196.205.213:8000'
+const gateway = process.env.GATEWAY || 'http://malldev.gtytong.com'
 
 const config = {
   projectNo: '1339d494e3b0474d90c232c882f173e7',
@@ -12,28 +12,29 @@ const config = {
   env: {
     mock: {
       '/mock': 'http://levy.ren:3000/mock/95',
-      '/car-deepexi-mall-config-api': 'http://levy.ren:3000/mock/129',
-      '/car-deepexi-member-center': 'http://levy.ren:3000/mock/111',
-      '/car-deepexi-shop-center': 'http://levy.ren:3000/mock/113',
-      '/car-deepexi-trade-center': 'http://levy.ren:3000/mock/117',
+      '/mall-deepexi-member-center': 'http://levy.ren:3000/mock/308',
+      '/mall-deepexi-shop-center': 'http://levy.ren:3000/mock/326',
+      '/mall-deepexi-trade-center': 'http://levy.ren:3000/mock/344',
       '/mall-deepexi-product-center': 'http://levy.ren:3000/mock/281',
-      '/moby-application-api': 'http://levy.ren:3000/mock/164',
-      '/car-deepexi-evaluate-center': 'http://levy.ren:3000/mock/173',
-      '/car-deepexi-car-center': 'http://levy.ren:3000/mock/200',
-      '/security': 'http://mall.deepexi.com'
+      '/mall-deepexi-mall-config-api': 'http://levy.ren:3000/mock/290',
+      '/mall-deepexi-evaluate-center': 'http://levy.ren:3000/mock/299',
+      '/mall-deepexi-stock-center': 'http://levy.ren:3000/mock/335',
+      '/mall-deepexi-settle-center': 'http://levy.ren:3000/mock/317',
+      '/mall-deepexi-account-center': 'http://levy.ren:3000/mock/371',
+      '/security': gateway
     },
     dev: {
       //内网：http://192.168.31.35:8083
-      '/mock': 'http://levy.ren:3000/mock/95',
       '/mall-deepexi-member-center': gateway,
-      '/mall-deepexi-mall-config-api': gateway,
-      '/mall-deepexi-product-center': gateway,
-      '/mall-deepexi-trade-center': gateway,
       '/mall-deepexi-shop-center': gateway,
-      '/mall-application-api': gateway,
+      '/mall-deepexi-trade-center': gateway,
+      '/mall-deepexi-product-center': gateway,
+      '/mall-deepexi-mall-config-api': gateway,
       '/mall-deepexi-evaluate-center': gateway,
-      '/mall-deepexi-car-center': gateway,
-      '/security': 'http://mall.deepexi.com'
+      '/mall-deepexi-stock-center': gateway,
+      '/mall-deepexi-settle-center': gateway,
+      '/mall-deepexi-account-center': gateway,
+      '/security': gateway
     }
   }
 }
