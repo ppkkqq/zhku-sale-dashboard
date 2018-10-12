@@ -281,20 +281,12 @@ export default {
       this.visible = true
     },
     go2Detail(row) {
-      // this.$router.push({
-      //   path: '/order/order-detail',
-      //   query: {orderId:row.orderId}
-      // })
+      this.$router.push({
+        path: '/order/order-detail',
+        query: {orderId: row.orderId}
+      })
       // this.$router.push(`/order/order-detail?id=${row.orderId}`)
     }
-
-    // 平台端没有发货
-    // go2Ship(row) {
-    //   // this.$router.push({
-    //   //   path: '',
-    //   //   query: {orderId:row.orderId}
-    //   // })
-    // }
   },
   computed: {}
 }
