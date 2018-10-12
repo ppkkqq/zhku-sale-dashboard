@@ -66,13 +66,6 @@
           {{ deliveryAddress }}
         </el-form-item>
       </el-form>
-      <!--<el-steps direction="vertical" :active="1">-->
-      <!--<el-step title="步骤 1">-->
-      <!--<template slot=""></template>-->
-      <!--</el-step>-->
-      <!--<el-step title="步骤 2"></el-step>-->
-      <!--<el-step title="步骤 3" description="这是一段很长很长很长的描述性文字"></el-step>-->
-      <!--</el-steps>-->
       <div v-for="(step,index) in steps"
            :key="index" class="steps is-flex"
       >
@@ -104,10 +97,6 @@ export default {
       pageName: 'order-list',
       url: orderList + '?shopId=67783a1d-1743-495f-a6e9-7a31a450ce47',
       columns: [
-        {
-          type: 'index',
-          label: '序号'
-        },
         {
           prop: 'orderCode',
           minWidth: '100',
@@ -142,13 +131,6 @@ export default {
           type: 'primary',
           show: this.showLogisticsButton,
           atClick: this.go2Logistics,
-          fixed: 'left'
-        },
-        {
-          text: '发货',
-          type: 'primary',
-          show: this.showShipButton,
-          atClick: this.go2Ship,
           fixed: 'left'
         },
         {
@@ -222,16 +204,11 @@ export default {
         orderEndDate: '',
         payStartDate: '',
         payEndDate: ''
-        // orderTime: '',
-        // payTime: '',
       },
       visible: false,
-      outerVisible: false,
-      innerVisible: false,
       operationAttrs: {
         width: 200
       },
-      logisticsContent: '',
       deliveryAddress: '',
       trackNum: '',
       steps: []
@@ -261,51 +238,36 @@ export default {
         row.orderStatusName === '已评论'
       )
     },
-    showShipButton(row) {
-      return row.orderStatusName === '待发货'
-    },
     go2Logistics(row) {
       this.$axios
         .$get(`${logistics}?orderCode=${row.orderCode}&orderId=${row.orderId}`)
         .then(res => {
-          this.logisticsContent = res.payload
-          let firstItem =
-            this.logisticsContent.list && this.logisticsContent.list[0]
+          let logisticsContent = res.payload
+          let firstItem = logisticsContent.list && logisticsContent.list[0]
           this.trackNum = firstItem && firstItem.trackNum
+          let deliveryAddress = logisticsContent.deliveryAddress
+          let list = logisticsContent.list
           this.deliveryAddress =
-            this.logisticsContent.deliveryAddress.provinceName +
-            this.logisticsContent.deliveryAddress.cityName +
-            this.logisticsContent.deliveryAddress.districtName +
-            this.logisticsContent.deliveryAddress.streetName +
-            this.logisticsContent.deliveryAddress.detailAddress +
-            this.logisticsContent.deliveryAddress.postcode +
-            this.logisticsContent.deliveryAddress.receiverName +
-            this.logisticsContent.deliveryAddress.receiverPhone
-          this.logisticsContent.list.forEach(item => {
+            deliveryAddress.provinceName +
+            deliveryAddress.cityName +
+            deliveryAddress.districtName +
+            deliveryAddress.streetName +
+            deliveryAddress.detailAddress +
+            deliveryAddress.postcode +
+            deliveryAddress.receiverName +
+            deliveryAddress.receiverPhone
+          list.forEach(item => {
             item.date = formatDate(item.createTime, 'YYYY-MM-DD')
             item.day = num2day[new Date(item.createTime).getUTCDay()]
             item.time = formatDate(item.createTime, 'HH:mm:ss')
           })
-          this.steps = this.logisticsContent.list
-          console.log(this.logisticsContent)
+          this.steps = list
         })
         .catch()
       this.visible = true
-      this.outerVisible = true
     },
     go2Detail(row) {
-      // this.$router.push({
-      //   path: '/order/order-detail',
-      //   query: {orderId:row.orderId}
-      // })
-      // this.$router.push(`/order/order-detail?id=${row.orderId}`)
-    },
-    go2Ship(row) {
-      // this.$router.push({
-      //ToDo：  路径~~~~
-      //   path: '',
-      //   query: {orderId:row.orderId}
-      // })
+      this.$router.push(`/order/order-detail?id=${row.orderId}`)
     }
   },
   computed: {}
