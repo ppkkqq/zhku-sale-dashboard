@@ -4,7 +4,7 @@
       ref="dataTable"
       :url="url"
       :columns="columns"
-      :hasNew="false"
+      :hasNew="true"
       :hasEdit="false"
       :hasDelete="false"
       :hasOperation="true"
@@ -19,57 +19,57 @@
       :table="tableAttrs"
       @reset="handleResetSearch"
     >
-      <template slot="search">
-        <el-form-item label="状态" prop="status">
-          <el-select @change="handleStatus" v-model="status">
-            <el-option
-              v-for="it in goodsStatusSelect"
-              v-bind="it"
-              :key="it.value"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="后台类目" prop="catalogId">
-          <back-end-category @change="handleSelect('catalogId', $event)" ref="catalogId" ></back-end-category>
-        </el-form-item>
-        <el-form-item label="门店" prop="shopId" >
-          <store-select @change="handleSelect('shopId', $event)" ref="shopId"></store-select>
-        </el-form-item>
+      <!--<template slot="search">-->
+        <!--<el-form-item label="状态" prop="status">-->
+          <!--<el-select @change="handleStatus" v-model="status">-->
+            <!--<el-option-->
+              <!--v-for="it in goodsStatusSelect"-->
+              <!--v-bind="it"-->
+              <!--:key="it.value"-->
+            <!--&gt;-->
+            <!--</el-option>-->
+          <!--</el-select>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="后台类目" prop="catalogId">-->
+          <!--<back-end-category @change="handleSelect('catalogId', $event)" ref="catalogId" ></back-end-category>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="门店" prop="shopId" >-->
+          <!--<store-select @change="handleSelect('shopId', $event)" ref="shopId"></store-select>-->
+        <!--</el-form-item>-->
 
-        <el-form-item label="商品来源" prop="source" >
-          <el-select v-model="customQuery.source" placeholder="请选择">
-            <el-option
-              v-for="it in source"
-              v-bind="it"
-              :key="it.value"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </template>
+        <!--<el-form-item label="商品来源" prop="source" >-->
+          <!--<el-select v-model="customQuery.source" placeholder="请选择">-->
+            <!--<el-option-->
+              <!--v-for="it in source"-->
+              <!--v-bind="it"-->
+              <!--:key="it.value"-->
+            <!--&gt;-->
+            <!--</el-option>-->
+          <!--</el-select>-->
+        <!--</el-form-item>-->
+      <!--</template>-->
     </el-data-table>
 
-    <el-dialog title="商品审核" :visible.sync="dialogVisible" class="verify-dialog">
-      <el-form ref="form" :model="formData" :rules="rules" label-width="120px">
-        <el-form-item label="商品名称">
-          {{row.name}}
-        </el-form-item>
+    <!--<el-dialog title="商品审核" :visible.sync="dialogVisible" class="verify-dialog">-->
+      <!--<el-form ref="form" :model="formData" :rules="rules" label-width="120px">-->
+        <!--<el-form-item label="商品名称">-->
+          <!--{{row.name}}-->
+        <!--</el-form-item>-->
 
-        <el-form-item label="审核结果" prop="agree">
-          <el-radio v-model="formData.agree" :label="true">同意</el-radio>
-          <el-radio v-if="!isEdit" v-model="formData.agree" :label="false">拒绝</el-radio>
-        </el-form-item>
+        <!--<el-form-item label="审核结果" prop="agree">-->
+          <!--<el-radio v-model="formData.agree" :label="true">同意</el-radio>-->
+          <!--<el-radio v-if="!isEdit" v-model="formData.agree" :label="false">拒绝</el-radio>-->
+        <!--</el-form-item>-->
 
-        <el-form-item  v-if="!formData.agree" label="拒绝理由" prop="rejectReason">
-          <el-input class="reason-textarea" type="textarea" v-model="formData.rejectReason" placeholder="请输入"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" v-loading="isAuditLoading" @click="handleAudit">确 定</el-button>
-      </div>
-    </el-dialog>
+        <!--<el-form-item  v-if="!formData.agree" label="拒绝理由" prop="rejectReason">-->
+          <!--<el-input class="reason-textarea" type="textarea" v-model="formData.rejectReason" placeholder="请输入"></el-input>-->
+        <!--</el-form-item>-->
+      <!--</el-form>-->
+      <!--<div slot="footer" class="dialog-footer">-->
+        <!--<el-button size="small" @click="dialogVisible = false">取 消</el-button>-->
+        <!--<el-button size="small" type="primary" v-loading="isAuditLoading" @click="handleAudit">确 定</el-button>-->
+      <!--</div>-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -100,10 +100,46 @@ export default {
     return {
       goodsStatusSelect,
       status: '',
-      source: Object2Options(goodsSource),
+      // source: Object2Options(goodsSource),
       pageName: 'goods-list',
       url: goodsLists,
-      columns: goodsListColumns,
+      columns: [
+        {
+          prop: 'id',
+          label: '商品编号'
+        },
+        {
+          prop: 'name',
+          label: '商品名称',
+          minWidth: 150,
+          'show-overflow-tooltip': true
+        },
+        {
+          prop: 'channel',
+          label: '商品渠道',
+          minWidth: 180
+        },
+        {
+          prop: 'category',
+          label: '后类目'
+        },
+        {
+          prop: 'status',
+          label: '状态'
+          // formatter: ({type}) => goodsType[type]
+        },
+        {
+          prop: 'shelf',
+          label: '上架/下架',
+          minWidth: 100
+          // formatter: ({source}) => goodsSource[source]
+        },
+        {
+          prop: 'setTime',
+          label: '创建时间'
+          // formatter: ({status}) => goodsStatus[status]
+        }
+      ],
       row: {},
       isEdit: false,
       dialogVisible: false,
@@ -128,20 +164,44 @@ export default {
               }
             })
           }
-        },
-        {
-          text: '审核',
-          atClick: row => {
-            this.row = row
-            this.isEdit = false
-            this.showDialog()
-          },
-          show: row => {
-            return row.status === 'unaudited'
-          }
         }
       ],
-      searchForm: searchForm,
+      searchForm: [
+        {
+          $el: {
+            placeholder: '请输入'
+          },
+          label: '商品编号',
+          $id: 'id',
+          $type: 'input'
+        },
+        {
+          $el: {
+            placeholder: '请输入'
+          },
+          label: '商品名称',
+          $id: 'name',
+          $type: 'input'
+        },
+        {
+          $el: {
+            placeholder: '请选择'
+          },
+          label: '商品渠道',
+          $id: 'channel',
+          $type: 'select'
+          // $options: Object2Options(goodsType)
+        },
+        {
+          $el: {
+            placeholder: '请选择'
+          },
+          label: '后台类目',
+          $id: 'category',
+          $type: 'select'
+          // $options: Object2Options(goodsType)
+        }
+      ],
       operationAttrs: {
         width: 200,
         fixed: 'right'

@@ -53,7 +53,7 @@ export default {
     }
     return {
       pageName: 'banner-list',
-      url: bannerList,
+      url: '/mall-deepexi-mall-config-api/api/v1/advertisements',
       columns: [
         {prop: 'url', label: '图片', formatter: this.logoFormatter},
         {prop: 'jumpUrl', label: '跳转链接'},
@@ -155,7 +155,10 @@ export default {
       }
 
       this.$axios
-        .$put(bannerEdit(row.id), changedObj)
+        .$put(
+          `/mall-deepexi-mall-config-api/api/v1/advertisements/${row.id}`,
+          changedObj
+        )
         .then(resp => {
           this.$refs.dataTable.getList()
           this.$message({
