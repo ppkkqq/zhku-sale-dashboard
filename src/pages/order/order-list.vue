@@ -105,10 +105,6 @@ export default {
       url: orderList + '?shopId=67783a1d-1743-495f-a6e9-7a31a450ce47',
       columns: [
         {
-          type: 'index',
-          label: '序号'
-        },
-        {
           prop: 'orderCode',
           minWidth: '100',
           label: '订单编号'
@@ -255,9 +251,6 @@ export default {
         row.orderStatusName === '待评论' ||
         row.orderStatusName === '已评论'
       )
-    },
-    showShipButton(row) {
-      return row.orderStatusName === '待发货'
     },
     go2Logistics(row) {
       this.$axios
