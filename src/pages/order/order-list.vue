@@ -140,13 +140,6 @@ export default {
           atClick: this.go2Logistics,
           fixed: 'left'
         },
-        // {
-        //   text: '发货',
-        //   type: 'primary',
-        //   show: this.showShipButton,
-        //   atClick: this.go2Ship,
-        //   fixed: 'left'
-        // },
         {
           text: '详情',
           type: 'primary',

@@ -34,7 +34,7 @@ const config = {
       '/mall-deepexi-stock-center': gateway,
       '/mall-deepexi-settle-center': gateway,
       '/mall-deepexi-account-center': gateway,
-      '/security': gateway
+      '/security': 'http://mall.deepexi.com'
     }
   }
 }
