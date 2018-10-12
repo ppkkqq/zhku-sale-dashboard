@@ -9,9 +9,13 @@
     <div class="table-container">
       <el-table :data="tableData"
                 height="350"
+                v-loading="isLoading"
                 border>
         <el-table-column prop="name"
                          label="车型名称">
+        </el-table-column>
+        <el-table-column prop="code"
+                         label="编码">
         </el-table-column>
         <el-table-column prop="applyBussiness"
                          :filters="applyBussinessFilters"
@@ -47,8 +51,10 @@
     </div>
 
     <el-dialog title="添加车型"
+                @open="handleOpen"
                :visible.sync="dialogVisible">
       <update-car-type-form :data="editForm"
+                            ref="editForm"
                             @submit="handleSubmit" />
     </el-dialog>
   </div>
@@ -56,9 +62,7 @@
 
 <script>
 import UpdateCarTypeForm from './update-car-type-form'
-import Vue from 'vue'
 import {carModels} from '@/const/api.js'
-import remove from 'lodash/remove'
 import findIndex from 'lodash/findIndex'
 import {yearOptions} from '@/const/config.js'
 const yearFilters = yearOptions.map(item => {
@@ -85,37 +89,60 @@ export default {
   components: {
     UpdateCarTypeForm
   },
-  props: ['tableData', 'hasNodeSelected', 'node'],
+  props: ['hasNodeSelected', 'node'],
   data() {
     return {
+      tableData: [],
       searchForm: {},
       editForm: {},
       dialogVisible: false,
       yearFilters,
       salabilityFilters,
-      applyBussinessFilters
+      applyBussinessFilters,
+      isLoading: false
     }
   },
 
   methods: {
+    getCarModel(id) {
+      let data = {
+        carSeriesId: id
+      }
+
+      this.isLoading = true
+      this.$axios
+        .$put(carModels, data)
+        .then(resp => {
+          this.isLoading = false
+          this.tableData = (resp.payload && resp.payload.content) || []
+        })
+        .catch(err => {
+          this.isLoading = false
+        })
+    },
     onSearch() {},
     filterHandler(value, row, column) {
       const property = column['property']
       return row[property] === value
     },
     handleAdd() {
-      this.dialogVisible = true
       this.editForm = {}
+      this.dialogVisible = true
     },
     handleEdit(row) {
-      const applyBussiness = row.applyBussiness.split(',')
+      const applyBussiness =
+        (row.applyBussiness && row.applyBussiness.split(',')) || []
       this.editForm = {...row, applyBussiness}
-      this.$nextTick(() => {
-        this.dialogVisible = true
-      })
+      this.dialogVisible = true
     },
     handleSave() {
       this.dialogVisible = false
+    },
+    handleOpen() {
+      //弹窗打开时，将当前的表单数据填充表单
+      this.$nextTick(() => {
+        this.$refs.editForm.setFormData(this.editForm)
+      })
     },
     async handleSubmit(data) {
       data.carSeriesId = this.node.id
@@ -124,24 +151,31 @@ export default {
       let table = []
 
       if (this.editForm.id) {
-        const {name, applyBussiness, salability, yearStyle} = data
-        const {payload} = await this.$axios.$put(
-          `${carModels}/${this.editForm.id}`,
-          {
-            name,
-            applyBussiness,
-            salability,
-            yearStyle
-          }
-        )
-        const index = findIndex(this.tableData, ['id', this.editForm.id])
-        table = [...this.tableData]
-        table[index] = payload
+        const {name, applyBussiness, salability, yearStyle, logoUrl} = data
+        try {
+          const {payload} = await this.$axios.$put(
+            `${carModels}/${this.editForm.id}`,
+            {
+              name,
+              applyBussiness,
+              salability,
+              yearStyle,
+              logoUrl
+            }
+          )
+
+          const index = findIndex(this.tableData, ['id', this.editForm.id])
+          table = [...this.tableData]
+          table[index] = payload
+        } catch (e) {}
       } else {
-        const {payload} = await this.$axios.$post(carModels, data)
-        table = [...this.tableData, payload]
+        try {
+          const {payload} = await this.$axios.$post(carModels, data)
+          table = [...this.tableData, payload]
+        } catch (e) {}
       }
-      this.$emit('update-table', table)
+
+      this.tableData = table
       this.dialogVisible = false
     },
     handleDelete(data) {
@@ -149,14 +183,17 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.$axios.$delete(`${carModels}/${data.id}`).then(result => {
-          this.$emit(
-            'update-table',
-            remove(this.tableData, item => item.id !== data.id)
-          )
-        })
       })
+        .then(() => {
+          this.$axios.$delete(`${carModels}/${data.id}`).then(result => {
+            this.tableData = this.tableData.filter(it => it.id !== data.id)
+          })
+        })
+        .catch(e => {})
+    },
+
+    clearTableData() {
+      this.tableData = []
     }
   }
 }

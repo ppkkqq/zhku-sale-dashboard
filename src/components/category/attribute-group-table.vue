@@ -13,7 +13,7 @@
   <div>
     <div style="margin-bottom: 20px">
       <el-button type="primary"
-                 :disabled="!hasNodeSelected"
+                 :disabled="!canAdd"
                  @click="handleAdd"
                  size="small">添加</el-button>
     </div>
@@ -59,7 +59,7 @@ export default {
   components: {
     AtrributeGroupList
   },
-  props: ['hasNodeSelected', 'node'],
+  props: ['canAdd', 'node'],
   data() {
     return {
       dialogVisible: false,
@@ -120,6 +120,9 @@ export default {
     node(val) {
       if (val && val.attributeGroups) {
         this.tableData = val.attributeGroups.slice() || []
+      } else {
+        // 删除类后台类目时，需要考虑清空table的数据。后台已经实现关联删除，因此不需要调接口
+        this.tableData = []
       }
     }
   }
