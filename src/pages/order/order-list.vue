@@ -144,13 +144,13 @@ export default {
           atClick: this.go2Logistics,
           fixed: 'left'
         },
-        {
-          text: '发货',
-          type: 'primary',
-          show: this.showShipButton,
-          atClick: this.go2Ship,
-          fixed: 'left'
-        },
+        // {
+        //   text: '发货',
+        //   type: 'primary',
+        //   show: this.showShipButton,
+        //   atClick: this.go2Ship,
+        //   fixed: 'left'
+        // },
         {
           text: '详情',
           type: 'primary',
@@ -299,14 +299,15 @@ export default {
       //   query: {orderId:row.orderId}
       // })
       // this.$router.push(`/order/order-detail?id=${row.orderId}`)
-    },
-    go2Ship(row) {
-      // this.$router.push({
-      //ToDo：  路径~~~~
-      //   path: '',
-      //   query: {orderId:row.orderId}
-      // })
     }
+
+    // 平台端没有发货
+    // go2Ship(row) {
+    //   // this.$router.push({
+    //   //   path: '',
+    //   //   query: {orderId:row.orderId}
+    //   // })
+    // }
   },
   computed: {}
 }
