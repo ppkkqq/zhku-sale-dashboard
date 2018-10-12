@@ -104,11 +104,6 @@ export const bundleGrantList = id =>
 export const bundleStatus = id =>
   PRODUCT_CENTER + `/admin/pcBundleTempaltes/${id}/status`
 
-//订单列表
-//(平台查询订单列表)
-export const orderList = TRADE_CENTER + '/carOrder/list'
-export const orderDetail = TRADE_CENTER + '/carOrder/detail'
-
 // 反馈 crud
 export const feedback = MALL_CONFIG + '/feedbacks'
 
@@ -145,3 +140,10 @@ export const customerCertificatess = `${MEMBER_CENTER}/mcCertificatess/list`
 // 首页广告页面
 export const bannerList = MALL_CONFIG + '/advertisements'
 export const bannerEdit = id => MALL_CONFIG + `/advertisements/${id}`
+//订单列表
+//(平台查询订单列表)
+export const orderList = TRADE_CENTER + '/order/shopOrderList'
+export const orderDetail = TRADE_CENTER + '/carOrder/detail'
+
+//查询物流
+export const logistics = TRADE_CENTER + '/logistics'
