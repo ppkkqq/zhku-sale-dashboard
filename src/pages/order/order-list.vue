@@ -281,11 +281,7 @@ export default {
       this.visible = true
     },
     go2Detail(row) {
-      this.$router.push({
-        path: '/order/order-detail',
-        query: {orderId: row.orderId}
-      })
-      // this.$router.push(`/order/order-detail?id=${row.orderId}`)
+      this.$router.push(`/order/order-detail?id=${row.orderId}`)
     }
   },
   computed: {}
