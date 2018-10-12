@@ -135,6 +135,19 @@ export const customerFocus = `${APPLICATION}/goodsAttentions/headquarters/person
 export const customerEvaluate = `${EVALUATE_CENTER}/ecEvaluations/tree`
 //我的证件
 export const customerCertificatess = `${MEMBER_CENTER}/mcCertificatess/list`
+// 退款
+export const refundList = TRADE_CENTER + '/refund/supplier/list'
+export const refundAudit = TRADE_CENTER + '/refund/supplier/audit'
+export const refundDetail = TRADE_CENTER + '/refund/supplier/detail'
+
+// 新增筛选条件
+export const filterConditions = PRODUCT_CENTER + '/item/conditions'
+// 根据前台类目id获取筛选条件
+export const selectedFilterCondition =
+  PRODUCT_CENTER + '/item/conditions/findByCategory'
+// 获取类目下所有筛选条件
+export const AllfilterCondition =
+  PRODUCT_CENTER + '/item/conditions/findAllAttribute'
 
 //--------------------此线上面接口会被删除，所需接口放到此线下面--------------------
 // 首页广告页面
