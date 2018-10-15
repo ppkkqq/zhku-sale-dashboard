@@ -35,6 +35,19 @@ const config = {
       '/mall-deepexi-settle-center': gateway,
       '/mall-deepexi-account-center': gateway,
       '/security': 'http://mall.deepexi.com'
+    },
+    test: {
+      //内网：http://192.168.31.35:8083
+      '/mall-deepexi-member-center': gateway,
+      '/mall-deepexi-shop-center': gateway,
+      '/mall-deepexi-trade-center': gateway,
+      '/mall-deepexi-product-center': gateway,
+      '/mall-deepexi-mall-config-api': gateway,
+      '/mall-deepexi-evaluate-center': gateway,
+      '/mall-deepexi-stock-center': gateway,
+      '/mall-deepexi-settle-center': gateway,
+      '/mall-deepexi-account-center': gateway,
+      '/security': 'http://mall.deepexi.com'
     }
   }
 }
