@@ -240,6 +240,10 @@ export default {
           // 1待支付，2待发货，3待收货，4待评论，5已取消，6已评论
           $options: [
             {
+              value: '',
+              label: '全部'
+            },
+            {
               value: 'to_be_paid',
               label: '待支付'
             },
@@ -305,6 +309,9 @@ export default {
       if (this[way + 'Time']) {
         this.customQuery[way + 'EndDate'] = this[way + 'Time'][1]
         this.customQuery[way + 'StartDate'] = this[way + 'Time'][0]
+      } else {
+        this.customQuery[way + 'EndDate'] = ''
+        this.customQuery[way + 'StartDate'] = ''
       }
     },
     showLogisticsButton(row) {
