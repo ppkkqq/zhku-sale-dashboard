@@ -1,5 +1,5 @@
 <template>
-  <div class="order-detail">
+  <div class="order-detail" v-loading="loading">
     <el-card shadow="never"
              class="border-0">
       <div slot="header">
@@ -112,6 +112,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       detail: {} //订单详情
     }
   },
@@ -119,6 +120,26 @@ export default {
     // formatterOrderStatus(status) {
     //   return toOptionsLabel(status, orderStatusOptions)
     // },
+    getDetail() {
+      this.loading = true
+      this.$axios
+        .$get(`${orderDetail}?orderId=${this.orderId}`)
+        .then(result => {
+          this.detail = result.payload
+          // this.detail.payList = [
+          //   {
+          //     payType: '', //支付方式
+          //     payStreamId: '', //支付流水id
+          //     payChannel: '', //支付通道
+          //     payMoney: '', //支付金额
+          //     payDateStr: '' //支付时间
+          //   }
+          // ]
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    }
   },
   computed: {
     orderId() {
@@ -180,45 +201,13 @@ export default {
     }
   },
   mounted() {
-    this.$axios.$get(`${orderDetail}?orderId=${this.orderId}`).then(result => {
-      this.detail = result.payload
-
-      // this.detail.payList = [
-      //   {
-      //     payType: '', //支付方式
-      //     payStreamId: '', //支付流水id
-      //     payChannel: '', //支付通道
-      //     payMoney: '', //支付金额
-      //     payDateStr: '' //支付时间
-      //   }
-      // ]
-    })
+    this.getDetail()
   }
 }
 </script>
 
 <style lang="stylus">
-.order-detail-car {
-  .car-info {
-    display: flex;
-    width: 100%;
-
-    .img {
-      margin-right: 30px;
-    }
-
-    .table {
-      flex: 1;
-    }
-
-    img {
-      max-width: 120px;
-    }
-  }
-
-  .tab-container {
-    margin-top: 30px;
-    min-height: 300px;
-  }
+.order-detail {
+  position: relative;
 }
 </style>
