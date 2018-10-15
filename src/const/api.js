@@ -17,7 +17,6 @@ export const APPLICATION = '/mall-application-api/api/v1'
 export const EVALUATE_CENTER = '/mall-deepexi-evaluate-center/api/v1'
 export const ACCOUNT_CENTER = '/mall-deepexi-account-center/api/v1'
 
-export const goodsLists = PRODUCT_CENTER + '/admin/items'
 export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
 
 export const recommendList = MALL_CONFIG + '/featuredFirsts'
@@ -160,3 +159,6 @@ export const orderDetail = TRADE_CENTER + '/carOrder/detail'
 
 //查询物流
 export const logistics = TRADE_CENTER + '/logistics'
+
+//商品
+export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
