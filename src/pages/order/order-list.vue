@@ -46,37 +46,110 @@
 
       </template>
     </el-data-table>
+    <!--<el-dialog-->
+    <!--class="order-dialog"-->
+    <!--title="查看"-->
+    <!--:visible.sync="visible"-->
+    <!--append-to-body>-->
+    <!--<el-form class="title-left" ref="form"  label-width="120px">-->
+    <!--<el-form-item label="快递单号: ">-->
+    <!--{{trackNum}}-->
+    <!--</el-form-item>-->
+    <!--<el-form-item label="快递公司: ">-->
+    <!--{{''}}-->
+    <!--</el-form-item>-->
+    <!--<el-form-item label="快递联系电话: ">-->
+    <!--{{''}}-->
+    <!--</el-form-item>-->
+    <!--<el-form-item label="收货地址: ">-->
+    <!--&lt;!&ndash;{{'广东省广州市天河区 510510 秦* 176****8176'}}&ndash;&gt;-->
+    <!--{{ deliveryAddress }}-->
+    <!--</el-form-item>-->
+    <!--</el-form>-->
+    <!--<div v-for="(step,index) in steps"-->
+    <!--:key="index" class="steps is-flex"-->
+    <!--&gt;-->
+    <!--<div class="steps-head"></div>-->
+    <!--<div class="steps-body">-->
+    <!--<div class="steps-date">{{step.date}} </div>-->
+    <!--<div class="steps-day">{{step.day}}</div>-->
+    <!--<div class="steps-time">{{step.time}}</div>-->
+    <!--<div class="steps-description">{{step.remark}}</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</el-dialog>-->
+    <!---->
     <el-dialog
-      class="order-dialog"
-      title="查看"
-      :visible.sync="visible"
-      append-to-body>
-      <el-form class="title-left" ref="form"  label-width="120px">
-        <el-form-item label="快递单号: ">
-          {{trackNum}}
-        </el-form-item>
-        <el-form-item label="快递公司: ">
-          {{''}}
-        </el-form-item>
-        <el-form-item label="快递联系电话: ">
-          {{''}}
-        </el-form-item>
-        <el-form-item label="收货地址: ">
-          <!--{{'广东省广州市天河区 510510 秦* 176****8176'}}-->
-          {{ deliveryAddress }}
+      title="查看订单物流"
+      :visible.sync="outerVisible"
+    >
+      <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form-item label="订单号: ">
+          {{orderCode}}
         </el-form-item>
       </el-form>
-      <div v-for="(step,index) in steps"
-           :key="index" class="steps is-flex"
-      >
-        <div class="steps-head"></div>
-        <div class="steps-body">
-          <div class="steps-date">{{step.date}} </div>
-          <div class="steps-day">{{step.day}}</div>
-          <div class="steps-time">{{step.time}}</div>
-          <div class="steps-description">{{step.remark}}</div>
-        </div>
+      <div>
+        <div class="table-title">快递单号列表</div>
+        <el-table
+          :data="steps"
+          style="width: 100%">
+          <el-table-column
+            prop="company"
+            label="快递公司"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="trackNum"
+            label="快递单号"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="mobile"
+            label="快递联系电话">
+          </el-table-column>
+          <el-table-column
+            label="操作">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="handle(scope.$index, scope.row)">查看</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
+      <el-dialog
+        title="查看"
+        :visible.sync="innerVisible"
+        @open="outerVisible=false"
+        @close="outerVisible = true"
+        append-to-body>
+        <el-form class="title-left" ref="form"  label-width="120px">
+          <el-form-item label="快递单号: ">
+            {{trackNum}}
+          </el-form-item>
+          <el-form-item label="快递公司: ">
+            {{''}}
+          </el-form-item>
+          <el-form-item label="快递联系电话: ">
+            {{''}}
+          </el-form-item>
+          <el-form-item label="收货地址: ">
+            <!--{{'广东省广州市天河区 510510 秦* 176****8176'}}-->
+            {{ deliveryAddress }}
+          </el-form-item>
+        </el-form>
+        <div v-for="(step,index) in steps"
+             :key="index" class="steps is-flex"
+        >
+          <div class="steps-head"></div>
+          <div class="steps-body">
+            <div class="steps-date">{{step.date}} </div>
+            <div class="steps-day">{{step.day}}</div>
+            <div class="steps-time">{{step.time}}</div>
+            <div class="steps-description">{{step.remark}}</div>
+          </div>
+        </div>
+      </el-dialog>
     </el-dialog>
   </div>
 </template>
@@ -206,12 +279,15 @@ export default {
         payEndDate: ''
       },
       visible: false,
+      outerVisible: false,
+      innerVisible: false,
       operationAttrs: {
         width: 200
       },
       deliveryAddress: '',
       trackNum: '',
-      steps: []
+      steps: [],
+      orderCode: ''
     }
   },
   methods: {
@@ -264,7 +340,9 @@ export default {
           this.steps = list
         })
         .catch()
+      this.orderCode = row.orderCode
       this.visible = true
+      this.outerVisible = true
     },
     go2Detail(row) {
       this.$router.push(`/order/order-detail?id=${row.orderId}`)
