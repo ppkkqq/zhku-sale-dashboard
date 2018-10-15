@@ -83,7 +83,8 @@
       title="查看订单物流"
       :visible.sync="outerVisible"
     >
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
+      <!--<el-form :inline="true" :model="formInline" class="demo-form-inline">-->
+      <el-form :inline="true" class="demo-form-inline">
         <el-form-item label="订单号: ">
           {{orderCode}}
         </el-form-item>
