@@ -122,6 +122,8 @@ export const bundlesAudit = id =>
   PRODUCT_CENTER + `/admin/pcBundles/${id}/status`
 
 //客户
+//客户列表
+export const getShopUserInfo = `${MEMBER_CENTER}/mcMemberAccounts/getShopUserInfo`
 
 //客户详情
 

@@ -18,3 +18,6 @@ export const attrributeGroupDetail = '/atrribute-group-detail'
 
 // 套餐模板详情
 export const comboTemplateDetail = '/templates/combo-template-detail'
+
+// 会员列表
+export const customerDetail = '/customer-detail'
