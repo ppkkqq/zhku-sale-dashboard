@@ -128,9 +128,10 @@ export default {
         name: [{required: true, trigger: 'blur', validator: checkName}]
       },
       newForm: {
+        parentId: '',
         name: '',
-        description: '',
-        isLeaf: '1'
+        description: ''
+        // isLeaf: '1'd
       },
 
       compareData: {} // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
@@ -204,11 +205,12 @@ export default {
     addNode() {
       this.$refs.newForm.validate(valid => {
         if (valid) {
-          const {name, description, isLeaf} = this.newForm
+          const {name, description, isLeaf, parentId} = this.newForm
           this.$refs.tree.addNode({
             name,
             description,
-            isLeaf
+            isLeaf,
+            parentId
           })
         }
       })
