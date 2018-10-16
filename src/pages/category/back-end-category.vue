@@ -44,17 +44,6 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <!--&lt;!&ndash; 绑定属性 &ndash;&gt;-->
-    <!--<template slot="detail">-->
-      <!--<el-card class="box-card"-->
-               <!--header="类目属性">-->
-        <!--<attribute-group-table-->
-          <!--:node="editForm"-->
-          <!--@set-node="setNode"-->
-          <!--:canAdd="canAdd"-->
-        <!--/>-->
-      <!--</el-card>-->
-    <!--</template>-->
 
     <!-- 新增节点 -->
     <template slot="create">
@@ -62,6 +51,11 @@
                :rules="newFormRules"
                ref="newForm"
                label-width="100px">
+        <el-form-item label="父类目名称"
+                      prop="parentName">
+                      <!--v-if="isRoot">-->
+          <el-input disabled v-model="newForm.parentId"></el-input>
+        </el-form-item>
         <el-form-item label="类目名称"
                       prop="name">
           <el-input v-model="newForm.name"></el-input>
@@ -129,12 +123,14 @@ export default {
       },
       newForm: {
         parentId: '',
+        parentName: '',
         name: '',
-        description: ''
-        // isLeaf: '1'd
+        description: '',
+        isLeaf: '1'
       },
 
-      compareData: {} // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      isRoot: true
     }
   },
   methods: {
@@ -162,6 +158,8 @@ export default {
     changeVisible(val) {
       //弹窗出现或者消失
       this.newForm = {
+        parentId: '',
+        parentName: '',
         name: '',
         description: '',
         isLeaf: '1'
@@ -203,14 +201,15 @@ export default {
       this.$refs.tree.mergeNode(this.editForm.id, data)
     },
     addNode() {
+      // this.isRoot=true
       this.$refs.newForm.validate(valid => {
         if (valid) {
-          const {name, description, isLeaf, parentId} = this.newForm
+          // const {name, description, parentId} = this.newForm
+          const {name, description, isLeaf} = this.newForm
           this.$refs.tree.addNode({
             name,
             description,
-            isLeaf,
-            parentId
+            isLeaf
           })
         }
       })
