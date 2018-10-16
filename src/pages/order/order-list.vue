@@ -46,44 +46,10 @@
 
       </template>
     </el-data-table>
-    <!--<el-dialog-->
-    <!--class="order-dialog"-->
-    <!--title="查看"-->
-    <!--:visible.sync="visible"-->
-    <!--append-to-body>-->
-    <!--<el-form class="title-left" ref="form"  label-width="120px">-->
-    <!--<el-form-item label="快递单号: ">-->
-    <!--{{trackNum}}-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="快递公司: ">-->
-    <!--{{''}}-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="快递联系电话: ">-->
-    <!--{{''}}-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="收货地址: ">-->
-    <!--&lt;!&ndash;{{'广东省广州市天河区 510510 秦* 176****8176'}}&ndash;&gt;-->
-    <!--{{ deliveryAddress }}-->
-    <!--</el-form-item>-->
-    <!--</el-form>-->
-    <!--<div v-for="(step,index) in steps"-->
-    <!--:key="index" class="steps is-flex"-->
-    <!--&gt;-->
-    <!--<div class="steps-head"></div>-->
-    <!--<div class="steps-body">-->
-    <!--<div class="steps-date">{{step.date}} </div>-->
-    <!--<div class="steps-day">{{step.day}}</div>-->
-    <!--<div class="steps-time">{{step.time}}</div>-->
-    <!--<div class="steps-description">{{step.remark}}</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</el-dialog>-->
-    <!---->
     <el-dialog
       title="查看订单物流"
       :visible.sync="outerVisible"
     >
-      <!--<el-form :inline="true" :model="formInline" class="demo-form-inline">-->
       <el-form :inline="true" class="demo-form-inline">
         <el-form-item label="订单号: ">
           {{orderCode}}
@@ -92,10 +58,10 @@
       <div>
         <div class="table-title">快递单号列表</div>
         <el-table
-          :data="steps"
+          :data="trackList"
           style="width: 100%">
           <el-table-column
-            prop="company"
+            prop="logisticsCompanyName"
             label="快递公司"
             width="180">
           </el-table-column>
@@ -105,41 +71,42 @@
             width="180">
           </el-table-column>
           <el-table-column
-            prop="mobile"
+            prop="phone"
             label="快递联系电话">
           </el-table-column>
           <el-table-column
-            label="操作">
+            label="操作"
+            fixed="right">
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                @click="handle(scope.$index, scope.row)">查看</el-button>
+                @click="handleDetail(scope.$index, scope.row)">查看</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <el-dialog
+        class="inner-dialog"
         title="查看"
         :visible.sync="innerVisible"
         @open="outerVisible=false"
         @close="outerVisible = true"
         append-to-body>
-        <el-form class="title-left" ref="form"  label-width="120px">
+        <el-form class="title-left" v-model="trackDetail" ref="form"  label-width="120px">
           <el-form-item label="快递单号: ">
-            {{trackNum}}
+            {{trackDetail.trackNum}}
           </el-form-item>
           <el-form-item label="快递公司: ">
-            {{''}}
+            {{trackDetail.logisticsCompanyName}}
           </el-form-item>
           <el-form-item label="快递联系电话: ">
-            {{''}}
+            {{trackDetail.phone}}
           </el-form-item>
           <el-form-item label="收货地址: ">
-            <!--{{'广东省广州市天河区 510510 秦* 176****8176'}}-->
-            {{ deliveryAddress }}
+            {{ trackDetail.deliveryAddress}}
           </el-form-item>
         </el-form>
-        <div v-for="(step,index) in steps"
+        <div v-for="(step,index) in trackDetail.infos"
              :key="index" class="steps is-flex"
         >
           <div class="steps-head"></div>
@@ -169,7 +136,7 @@ export default {
   data() {
     return {
       pageName: 'order-list',
-      url: orderList + '?shopId=67783a1d-1743-495f-a6e9-7a31a450ce47',
+      url: orderList,
       columns: [
         {
           prop: 'orderCode',
@@ -191,11 +158,13 @@ export default {
         },
         {
           prop: 'user',
+          minWidth: '120',
           label: '下单账号'
         },
         {
           prop: 'orderDate',
           label: '下单时间',
+          minWidth: '130',
           formatter: row => formatDate(row.orderDate, 'YYYY-MM-DD HH:mm')
         }
       ],
@@ -286,12 +255,19 @@ export default {
       visible: false,
       outerVisible: false,
       innerVisible: false,
+
       operationAttrs: {
+        fixed: 'right',
         width: 200
       },
-      deliveryAddress: '',
-      trackNum: '',
-      steps: [],
+      trackDetail: {
+        deliveryAddress: '',
+        logisticsCompanyName: '',
+        trackNum: '',
+        phone: '',
+        infos: []
+      },
+      trackList: [],
       orderCode: ''
     }
   },
@@ -326,26 +302,28 @@ export default {
       this.$axios
         .$get(`${logistics}?orderCode=${row.orderCode}&orderId=${row.orderId}`)
         .then(res => {
-          let logisticsContent = res.payload
-          let firstItem = logisticsContent.list && logisticsContent.list[0]
-          this.trackNum = firstItem && firstItem.trackNum
-          let deliveryAddress = logisticsContent.deliveryAddress
-          let list = logisticsContent.list
-          this.deliveryAddress =
-            deliveryAddress.provinceName +
-            deliveryAddress.cityName +
-            deliveryAddress.districtName +
-            deliveryAddress.streetName +
-            deliveryAddress.detailAddress +
-            deliveryAddress.postcode +
-            deliveryAddress.receiverName +
-            deliveryAddress.receiverPhone
-          list.forEach(item => {
-            item.date = formatDate(item.createTime, 'YYYY-MM-DD')
-            item.day = num2day[new Date(item.createTime).getUTCDay()]
-            item.time = formatDate(item.createTime, 'HH:mm:ss')
+          let address = res.payload.address
+
+          this.trackList = res.payload.data
+          this.trackList.forEach(item => {
+            item.infos.forEach(info => {
+              info.date = formatDate(info.createTime, 'YYYY-MM-DD')
+              info.day = num2day[new Date(info.createTime).getUTCDay()]
+              info.time = formatDate(info.createTime, 'HH:mm:ss')
+            })
           })
-          this.steps = list
+          this.trackDetail.deliveryAddress =
+            address.provinceName +
+            address.cityName +
+            address.districtName +
+            address.streetName +
+            address.detailAddress +
+            ' ' +
+            address.postCode +
+            ' ' +
+            address.receiverName +
+            ' ' +
+            address.receiverPhone
         })
         .catch()
       this.orderCode = row.orderCode
@@ -354,6 +332,15 @@ export default {
     },
     go2Detail(row) {
       this.$router.push(`/order/order-detail?id=${row.orderId}`)
+    },
+    handleDetail(index, row) {
+      this.trackDetail.trackNum = this.trackList[index].trackNum
+      this.trackDetail.LogisticsCompanyName = this.trackList[
+        index
+      ].LogisticsCompanyName
+      this.trackDetail.phone = this.trackList[index].phone
+      this.trackDetail.infos = this.trackList[index].infos
+      this.innerVisible = true
     }
   },
   computed: {}
@@ -362,29 +349,36 @@ export default {
 
 <style lang="stylus">
   .order-dialog{
-    .title-left{
-      .el-form-item__label{
-        text-align: left;
-      }
 
+
+
+  }
+  .table-title{
+    font-weight bold
+    text-align center
+  }
+  .inner-dialog{
+    .el-form-item__label{
+      text-align left
     }
     .steps-body{
       display: flex;
       flex-wrap: wrap;
       flex-direction: row;
 
-      .steps-date{
+      .steps-date {
         margin-right 10px
+        font-weight bold
       }
-      .steps-day{
+      .steps-day {
         margin-right 10px
+        font-weight bold
       }
-      .steps-time{
+      .steps-time {
         margin-right 10px
       }
     }
   }
-
 
 
 </style>

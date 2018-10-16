@@ -15,7 +15,11 @@
                ref="editForm"
                label-width="100px"
                class="demo-editForm">
-        <el-form-item label="类目名称"
+        <el-form-item label="父级节点"
+                      prop="name">
+          <el-input disabled v-model="editForm.parentName"></el-input>
+        </el-form-item>
+        <el-form-item label="节点名称"
                       prop="name">
           <el-input v-model="editForm.name"></el-input>
         </el-form-item>
@@ -24,9 +28,9 @@
           <el-input v-model="editForm.description"></el-input>
         </el-form-item>
 
-        <el-form-item label="是否末级类目"
-                      prop="isLeaf">
-          <el-radio-group v-model="editForm.isLeaf"
+            <el-form-item label="是否末级类目"
+                          prop="isLeaf">
+              <el-radio-group v-model="editForm.isLeaf"
                           :disabled="hasChildren || editForm.hasAttributeGroups">
             <el-radio label="1">是</el-radio>
             <el-radio label="0">否</el-radio>
@@ -35,20 +39,11 @@
         <el-form-item>
           <el-button type="primary"
                      @click="updateNode">保存</el-button>
+          <el-button type="normal"
+                     @click="resetNode">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
-    <!-- 绑定属性 -->
-    <template slot="detail">
-      <el-card class="box-card"
-               header="类目属性">
-        <attribute-group-table
-          :node="editForm"
-          @set-node="setNode"
-          :canAdd="canAdd"
-        />
-      </el-card>
-    </template>
 
     <!-- 新增节点 -->
     <template slot="create">
@@ -115,7 +110,8 @@ export default {
         name: '',
         description: '',
         isLeaf: '1',
-        children: []
+        children: [],
+        parentName: ''
       },
       newFormRules: {
         name: [{required: true, trigger: 'blur', validator: checkName}]
@@ -126,7 +122,8 @@ export default {
         isLeaf: '1'
       },
 
-      compareData: {} // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      isRoot: true
     }
   },
   methods: {
@@ -154,6 +151,8 @@ export default {
     changeVisible(val) {
       //弹窗出现或者消失
       this.newForm = {
+        parentId: '',
+        parentName: '',
         name: '',
         description: '',
         isLeaf: '1'
@@ -183,6 +182,9 @@ export default {
         }
       })
     },
+    resetNode() {
+      this.editForm = {...this.compareData}
+    },
     setNode(data) {
       if (data.attributeGroups && data.attributeGroups.length > 0) {
         this.$set(this.editForm, 'hasAttributeGroups', true)
@@ -192,6 +194,7 @@ export default {
       this.$refs.tree.mergeNode(this.editForm.id, data)
     },
     addNode() {
+      // this.isRoot=true
       this.$refs.newForm.validate(valid => {
         if (valid) {
           const {name, description, isLeaf} = this.newForm

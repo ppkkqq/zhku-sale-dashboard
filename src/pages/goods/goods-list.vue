@@ -17,7 +17,6 @@
       :extraParams="extraParams"
       :operationAttrs="operationAttrs"
       :customQuery="customQuery"
-      :headerButtons="headerButtons"
       @reset="handleReset"
     >
       <template slot="search">
