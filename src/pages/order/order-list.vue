@@ -46,44 +46,10 @@
 
       </template>
     </el-data-table>
-    <!--<el-dialog-->
-    <!--class="order-dialog"-->
-    <!--title="查看"-->
-    <!--:visible.sync="visible"-->
-    <!--append-to-body>-->
-    <!--<el-form class="title-left" ref="form"  label-width="120px">-->
-    <!--<el-form-item label="快递单号: ">-->
-    <!--{{trackNum}}-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="快递公司: ">-->
-    <!--{{''}}-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="快递联系电话: ">-->
-    <!--{{''}}-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="收货地址: ">-->
-    <!--&lt;!&ndash;{{'广东省广州市天河区 510510 秦* 176****8176'}}&ndash;&gt;-->
-    <!--{{ deliveryAddress }}-->
-    <!--</el-form-item>-->
-    <!--</el-form>-->
-    <!--<div v-for="(step,index) in steps"-->
-    <!--:key="index" class="steps is-flex"-->
-    <!--&gt;-->
-    <!--<div class="steps-head"></div>-->
-    <!--<div class="steps-body">-->
-    <!--<div class="steps-date">{{step.date}} </div>-->
-    <!--<div class="steps-day">{{step.day}}</div>-->
-    <!--<div class="steps-time">{{step.time}}</div>-->
-    <!--<div class="steps-description">{{step.remark}}</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</el-dialog>-->
-    <!---->
     <el-dialog
       title="查看订单物流"
       :visible.sync="outerVisible"
     >
-      <!--<el-form :inline="true" :model="formInline" class="demo-form-inline">-->
       <el-form :inline="true" class="demo-form-inline">
         <el-form-item label="订单号: ">
           {{orderCode}}
@@ -170,7 +136,7 @@ export default {
   data() {
     return {
       pageName: 'order-list',
-      url: orderList + '?shopId=67783a1d-1743-495f-a6e9-7a31a450ce47',
+      url: orderList,
       columns: [
         {
           prop: 'orderCode',
@@ -371,13 +337,7 @@ export default {
         index
       ].LogisticsCompanyName
       this.trackDetail.phone = this.trackList[index].phone
-
       this.trackDetail.infos = this.trackList[index].infos
-      // this.trackDetail.infos.forEach(item=>{
-      //   item.date = formatDate(item.createTime, 'YYYY-MM-DD')
-      //   item.day = num2day[new Date(item.createTime).getUTCDay()]
-      //   item.time = formatDate(item.createTime, 'HH:mm:ss')
-      // })
       this.innerVisible = true
     }
   },
