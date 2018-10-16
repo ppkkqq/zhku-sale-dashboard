@@ -155,7 +155,7 @@ export const bannerEdit = id => MALL_CONFIG + `/advertisements/${id}`
 //订单列表
 //(平台查询订单列表)
 export const orderList = TRADE_CENTER + '/order/shopOrderList'
-export const orderDetail = TRADE_CENTER + '/carOrder/detail'
+export const orderDetail = TRADE_CENTER + '/order/shopOrderDetail'
 
 //查询物流
 export const logistics = TRADE_CENTER + '/logistics'
