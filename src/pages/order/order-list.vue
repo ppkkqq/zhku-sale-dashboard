@@ -158,11 +158,13 @@ export default {
         },
         {
           prop: 'user',
+          minWidth: '120',
           label: '下单账号'
         },
         {
           prop: 'orderDate',
           label: '下单时间',
+          minWidth: '130',
           formatter: row => formatDate(row.orderDate, 'YYYY-MM-DD HH:mm')
         }
       ],
