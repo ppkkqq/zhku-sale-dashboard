@@ -6663,9 +6663,9 @@ upath@^1.0.5, upath@^1.1.0:
   version "1.1.0"
   resolved "http://registry.npm.taobao.org/upath/download/upath-1.1.0.tgz#35256597e46a581db4793d0ce47fa9aebfc9fabd"
 
-upload-to-ali@^2.0.0:
-  version "2.0.0"
-  resolved "http://nexus.deepexi.top/repository/npm-group/upload-to-ali/-/upload-to-ali-2.0.0.tgz#16ed3bdd22a2d2bd306c01c3bc8eac234d26b4fa"
+upload-to-ali@^2.0.0, upload-to-ali@^2.2.0:
+  version "2.2.0"
+  resolved "http://nexus.deepexi.top/repository/npm-group/upload-to-ali/-/upload-to-ali-2.2.0.tgz#f04c1254e06b978bdf94c47d46924d88228e049a"
   dependencies:
     ali-oss "^6.0.1"
     image-compressor.js "^1.1.4"
