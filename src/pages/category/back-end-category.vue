@@ -51,11 +51,6 @@
                :rules="newFormRules"
                ref="newForm"
                label-width="100px">
-        <el-form-item label="父类目名称"
-                      prop="parentName">
-                      <!--v-if="isRoot">-->
-          <el-input disabled v-model="newForm.parentId"></el-input>
-        </el-form-item>
         <el-form-item label="类目名称"
                       prop="name">
           <el-input v-model="newForm.name"></el-input>
@@ -122,8 +117,6 @@ export default {
         name: [{required: true, trigger: 'blur', validator: checkName}]
       },
       newForm: {
-        parentId: '',
-        parentName: '',
         name: '',
         description: '',
         isLeaf: '1'
@@ -204,7 +197,6 @@ export default {
       // this.isRoot=true
       this.$refs.newForm.validate(valid => {
         if (valid) {
-          // const {name, description, parentId} = this.newForm
           const {name, description, isLeaf} = this.newForm
           this.$refs.tree.addNode({
             name,
