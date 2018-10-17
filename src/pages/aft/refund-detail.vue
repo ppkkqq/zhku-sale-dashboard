@@ -208,7 +208,7 @@ export default {
   methods: {
     getDetail() {
       this.$axios
-        .$get(refundDetail + `?orderId=${this.query.id}`)
+        .$get(refundDetail + `?id=${this.query.refundId}`)
         .then(resp => {
           this.detail = resp.payload
         })
