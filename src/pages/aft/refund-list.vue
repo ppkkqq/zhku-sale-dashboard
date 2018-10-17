@@ -41,7 +41,7 @@
 <script>
 import {orderStatusOptions, orderTypeOptions} from '@/const/config'
 import {refundList, refundAudit} from '@/const/api'
-import {statusOpts, searchForm, columns} from '@/const/refund'
+import {statusOpts, searchForm, columns} from '@/const/aft'
 
 export default {
   name: 'refund-list',

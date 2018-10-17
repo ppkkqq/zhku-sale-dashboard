@@ -60,7 +60,7 @@ import TableInfo from '@/components/table-info'
 import {refundDetail} from '@/const/api'
 import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
-import {statusOpts} from '@/const/refund'
+import {statusOpts} from '@/const/aft'
 
 export default {
   name: 'refund-detail',
