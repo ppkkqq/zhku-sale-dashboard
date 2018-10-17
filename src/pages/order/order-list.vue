@@ -56,7 +56,6 @@
         </el-form-item>
       </el-form>
       <div>
-        <div class="table-title">快递单号列表</div>
         <el-table
           :data="trackList"
           style="width: 100%">
@@ -72,7 +71,9 @@
           </el-table-column>
           <el-table-column
             prop="phone"
-            label="快递联系电话">
+            label="快递联系电话"
+            min-width="140"
+          >
           </el-table-column>
           <el-table-column
             label="操作"
@@ -80,7 +81,8 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                @click="handleDetail(scope.$index, scope.row)">查看</el-button>
+                @click="handleDetail(scope.$index, scope.row)">查看
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -92,7 +94,7 @@
         @open="outerVisible=false"
         @close="outerVisible = true"
         append-to-body>
-        <el-form class="title-left" v-model="trackDetail" ref="form"  label-width="120px">
+        <el-form class="title-left" v-model="trackDetail" ref="form" label-width="120px">
           <el-form-item label="快递单号: ">
             {{trackDetail.trackNum}}
           </el-form-item>
@@ -111,7 +113,7 @@
         >
           <div class="steps-head"></div>
           <div class="steps-body">
-            <div class="steps-date">{{step.date}} </div>
+            <div class="steps-date">{{step.date}}</div>
             <div class="steps-day">{{step.day}}</div>
             <div class="steps-time">{{step.time}}</div>
             <div class="steps-description">{{step.remark}}</div>
@@ -140,8 +142,9 @@ export default {
       columns: [
         {
           prop: 'orderCode',
-          minWidth: '100',
-          label: '订单编号'
+          minWidth: '120',
+          label: '订单编号',
+          'show-overflow-tooltip': true
         },
         {
           prop: 'itemMoney',
@@ -150,6 +153,7 @@ export default {
         {
           prop: 'source',
           label: '商品来源',
+          minWidth: '120',
           formatter: row => num2source[row.source]
         },
         {
@@ -158,13 +162,13 @@ export default {
         },
         {
           prop: 'user',
-          minWidth: '120',
+          minWidth: '140',
           label: '下单账号'
         },
         {
           prop: 'orderDate',
           label: '下单时间',
-          minWidth: '130',
+          minWidth: '150',
           formatter: row => formatDate(row.orderDate, 'YYYY-MM-DD HH:mm')
         }
       ],
@@ -313,17 +317,13 @@ export default {
             })
           })
           this.trackDetail.deliveryAddress =
-            address.provinceName +
-            address.cityName +
-            address.districtName +
-            address.streetName +
-            address.detailAddress +
+            (address.provinceName || '') +
+            (address.cityName || '') +
+            (address.districtName || '') +
             ' ' +
-            address.postCode +
-            ' ' +
-            address.receiverName +
-            ' ' +
-            address.receiverPhone
+            (address.postcode || ' ') +
+            (address.receiverName || ' ') +
+            (address.receiverPhone || '')
         })
         .catch()
       this.orderCode = row.orderCode
@@ -353,13 +353,9 @@ export default {
 
 
   }
-  .table-title{
-    font-weight bold
-    text-align center
-  }
   .inner-dialog{
-    .el-form-item__label{
-      text-align left
+    .el-form-item {
+      margin-bottom 0
     }
     .steps-body{
       display: flex;

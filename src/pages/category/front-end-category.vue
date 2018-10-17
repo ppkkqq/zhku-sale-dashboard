@@ -67,20 +67,20 @@
     </template>
 
     <!--设置筛选条件-->
-    <template slot="detail">
-      <el-card
-        class="box-card"
-        header="设置筛选条件"
-      >
-        <bind-attribute-filter
-          :canAdd="canAdd"
-          :node="editForm"
-          :props="defaultProps"
-          :selectedFilters="selectedFilters"
-        ></bind-attribute-filter>
+    <!--<template slot="detail">-->
+      <!--<el-card-->
+        <!--class="box-card"-->
+        <!--header="设置筛选条件"-->
+      <!--&gt;-->
+        <!--<bind-attribute-filter-->
+          <!--:canAdd="canAdd"-->
+          <!--:node="editForm"-->
+          <!--:props="defaultProps"-->
+          <!--:selectedFilters="selectedFilters"-->
+        <!--&gt;</bind-attribute-filter>-->
 
-      </el-card>
-    </template>
+      <!--</el-card>-->
+    <!--</template>-->
 
     <!-- 新增节点 -->
     <template slot="create">
