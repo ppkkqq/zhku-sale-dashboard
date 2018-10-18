@@ -28,7 +28,7 @@
             {{topUpform.mobile}}
           </el-form-item>
           <el-form-item label="当前源通币">
-            {{topUpform.coin || 0}}
+            {{topUpform.balance}}
           </el-form-item>
           <el-form-item label="充值数量" prop="money">
             <el-input v-model.trim="topUpform.money"></el-input>
@@ -51,6 +51,7 @@
 import {formatDate} from '@/const/filter'
 import {mcMemberInfos, getShopUserInfo, topUp} from '@/const/api'
 import {customerDetail} from '@/const/path'
+import {integer} from '@/const/pattern'
 
 const dialogTitle = {
   batch: '批量充值',
@@ -63,7 +64,9 @@ export default {
   data() {
     const validateCount = (rule, value, callback) => {
       if (!value) {
-        callback('请输入数量')
+        callback('请输入充值数量')
+      } else if (!integer.test(value)) {
+        callback('请输入整数')
       } else {
         callback()
       }
@@ -153,8 +156,12 @@ export default {
         money: {trigger: 'blur', validator: validateCount}
       },
       currentDialog: single,
-      topUpDialogTitle: dialogTitle[this.currentDialog],
       topUpDialogVisible: false
+    }
+  },
+  computed: {
+    topUpDialogTitle() {
+      return dialogTitle[this.currentDialog]
     }
   },
   watch: {
@@ -173,14 +180,13 @@ export default {
       this.$refs.topUpform.validate(valid => {
         let data = {
           memberId: this.topUpform.id,
-          money: +this.topUpform.money
+          money: this.topUpform.money
         }
         if (valid) {
           this.topUpLoading = true
           this.$axios
             .$post(topUp, data)
             .then(resp => {
-              console.log(resp)
               this.$message.success('操作成功')
             })
             .catch(e => console.error(e))
@@ -197,7 +203,7 @@ export default {
       this.$axios
         .$get(topUp)
         .then(resp => {
-          this.topUpform = {...this.topUpform, money: resp.payload.balance}
+          this.topUpform = {...this.topUpform, balance: resp.payload.balance}
         })
         .catch(e => console.error(e))
         .finally(() => {

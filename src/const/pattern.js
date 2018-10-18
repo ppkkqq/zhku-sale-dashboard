@@ -39,3 +39,6 @@ export const NUMBERPattern = /\d+/
 export const NATURAL_NUMBERPattern = /[0-9]+/
 // 英文和数字
 export const ENGLISH_NUMBERPattern = /^[A-Za-z0-9]+$/
+
+// 整数
+export const integer = /^(-)?\d+$/
