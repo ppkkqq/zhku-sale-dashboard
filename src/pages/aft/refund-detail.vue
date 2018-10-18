@@ -1,11 +1,12 @@
 <template>
-  <div class="aft-detail">
+  <div class="refund-detail">
     <el-card shadow="never" class="border-0">
       <div slot="header">
         <h2 class="bar-left">退货详情
           <go-back class="ml-2"></go-back>
         </h2>
-        <h2>订单状态：
+        <h2>
+          订单状态：
           <span class="red">{{toOptionsLabel(this.trade.status, orderStatusOptions)}}</span>
         </h2>
       </div>
@@ -294,7 +295,7 @@ export default {
   methods: {
     getDetail() {
       this.$axios
-        .$get(aftDetail + `?id=${this.query.refundId}`)
+        .$get(refundDetail + `?id=${this.query.refundId}`)
         .then(resp => {
           this.detail = resp.payload
         })
@@ -353,6 +354,7 @@ export default {
     border-left: 4px solid #F70321
     padding-left: 10px
     margin-bottom: 20px
+    display: flex
   }
 
   .ml-2 {
