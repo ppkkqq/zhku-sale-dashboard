@@ -1,54 +1,82 @@
 <template>
-  <div class="refund-detail">
+  <div class="aft-detail">
     <el-card shadow="never" class="border-0">
       <div slot="header">
-        <h2>退款单详情</h2>
+        <h2 class="bar-left">退货详情
+          <go-back class="ml-2"></go-back>
+        </h2>
+        <h2>订单状态：
+          <span class="red">{{toOptionsLabel(this.trade.status, orderStatusOptions)}}</span>
+        </h2>
       </div>
-      <card-table header="单据信息">
+      <h3 class="mb-1">退款流转过程</h3>
+      <el-steps :active="3" align-center>
+        <el-step title="提交订单" description></el-step>
+        <el-step title="商家审核通过" description></el-step>
+        <el-step title="买家寄回货物" description></el-step>
+        <el-step title="签收货物" description></el-step>
+        <el-step title="验收货物" description></el-step>
+        <el-step title="已完成" description></el-step>
+      </el-steps>
+      <card-table>
         <table-info :table="orderInfoTable"></table-info>
       </card-table>
-      <card-table header="车辆信息">
-        <div class="car-info">
-          <div class="img">
-            <img :src="this.car.imgUrl" />
-          </div>
-          <div class="table">
-            <table-info :table="carInfoTable"></table-info>
-          </div>
-        </div>
+      <div class="refund-table-info">
+        <card-table header="退货人信息">
+          <table class="table-info-one-column">
+            <tbody>
+              <tr v-for="(tr,index) in customerInfoTable" :key="index">
+                <template>
+                  <td class="label">{{tr.label}}</td>
+                  <td class="value">{{tr.value}}</td>
+                </template>
+              </tr>
+              <slot></slot>
+            </tbody>
+          </table>
+        </card-table>
+        <card-table header="配送信息">
+          <table class="table-info-one-column">
+            <tbody>
+              <tr v-for="(tr,index) in deliveryInfoTable" :key="index">
+                <template>
+                  <td class="label">{{tr.label}}</td>
+                  <td class="value">{{tr.value}}</td>
+                </template>
+              </tr>
+              <slot></slot>
+            </tbody>
+          </table>
+        </card-table>
+        <card-table header="退款信息">
+          <table class="table-info-one-column">
+            <tbody>
+              <tr v-for="(tr,index) in refundInfoTable" :key="index">
+                <template>
+                  <td class="label">{{tr.label}}</td>
+                  <td class="value">{{tr.value}}</td>
+                </template>
+              </tr>
+            </tbody>
+          </table>
+        </card-table>
+      </div>
+      <card-table header="退货商品">
+        <el-data-table
+          ref="dataTable"
+          :url="url"
+          :columns="returnGoodsColumns"
+          :hasNew="false"
+          :hasEdit="false"
+          :hasDelete="false"
+          :hasOperation="false"
+          :isTree="false"
+          :hasPagination="false"
+          :extraParams="extraParams"
+        ></el-data-table>
       </card-table>
-      <card-table header="支付信息"
-                  v-if="payment.length>0">
-        <el-table :data="payment"
-                  border
-                  style="width: 100%">
-          <el-table-column v-for="(data, index) in paymentTable"
-                           :key="index"
-                           :prop="data.prop"
-                           :label="data.label"
-                           :formatter="data.formatter"
-                           :width="data.width">
-          </el-table-column>
-        </el-table>
-      </card-table>
-
-      <card-table header="退款信息"
-                  v-if="refund.length>0">
-        <el-table :data="refund"
-                  border
-                  style="width: 100%">
-          <el-table-column v-for="(data, i) in refundTable"
-                           :key="i"
-                           :prop="data.prop"
-                           :label="data.label"
-                           :width="data.width"
-                           :formatter="data.formatter"
-                           >
-          </el-table-column>
-        </el-table>
-      </card-table>
-      <card-table header="退款审核">
-        <table-info :table="refundAudit"></table-info>
+      <card-table header="验货结果">
+        <table-info :table="aftAudit"></table-info>
       </card-table>
     </el-card>
   </div>
@@ -61,12 +89,14 @@ import {refundDetail} from '@/const/api'
 import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
 import {statusOpts} from '@/const/aft'
+import GoBack from '@/components/GoBack'
 
 export default {
   name: 'refund-detail',
   components: {
     CardTable,
-    TableInfo
+    TableInfo,
+    GoBack
   },
   data() {
     return {
@@ -102,7 +132,7 @@ export default {
           width: '180'
         }
       ],
-      refundTable: [
+      aftTable: [
         {
           prop: 'createdAt',
           label: '退款时间',
@@ -110,9 +140,9 @@ export default {
           width: '180'
         },
         {
-          prop: 'refundMoney',
+          prop: 'aftMoney',
           label: '退款金额',
-          formatter: row => price(row.refundMoney)
+          formatter: row => price(row.aftMoney)
         },
         {prop: 'id', label: '退款单号'},
         {
@@ -120,8 +150,22 @@ export default {
           label: '退款状态',
           formatter: row => statusOpts[row.status]
         },
-        {prop: 'refundTypeId', label: '退款原因'},
+        {prop: 'aftTypeId', label: '退款原因'},
         {prop: 'description', label: '退款说明'}
+      ],
+      returnGoodsColumns: [
+        {prop: 'name', label: '序号'},
+        {
+          prop: 'logoUrl',
+          label: '商品',
+          formatter: this.logoFormatter,
+          width: '300px'
+        },
+        {prop: 'name', label: '商品编码'},
+        {prop: 'alias', label: '数量'},
+        {prop: 'alias', label: '单价'},
+        {prop: 'alias', label: '小计'},
+        {prop: 'alias', label: '实际退款'}
       ]
     }
   },
@@ -143,15 +187,78 @@ export default {
         maxDeposit = ''
       } = this.trade
       const data = {
-        创建时间: formatDate(createdAt),
-        订单号: id,
-        客户姓名: memberName,
-        手机号: memberPhone,
-        门店: shopName,
-        订单金额: price(payMoney),
-        订金: price(maxDeposit),
-        订单状态: toOptionsLabel(status, orderStatusOptions),
-        客户备注: remark
+        退货单号: '',
+        退货原因: '',
+        订单编号: id,
+        退货说明: '',
+        退款单号: '',
+        会员账号: '',
+        总商品金额: '',
+        优惠金额: price(payMoney),
+        源通币: '',
+        运费: '',
+        实付金额: '',
+        实退款总金额: ''
+      }
+      return Object2Options(data, 'value')
+    },
+    customerInfoTable() {
+      // const {
+      //   id,
+      //   createdAt,
+      //   memberName,
+      //   memberPhone,
+      //   shopName,
+      //   remark,
+      //   status,
+      //   payMoney = '',
+      //   maxDeposit = ''
+      // } = this.trade
+      const data = {
+        会员账号: '',
+        联系电话: ''
+      }
+      return Object2Options(data, 'value')
+    },
+    deliveryInfoTable() {
+      // const {
+      //   id,
+      //   createdAt,
+      //   memberName,
+      //   memberPhone,
+      //   shopName,
+      //   remark,
+      //   status,
+      //   payMoney = '',
+      //   maxDeposit = ''
+      // } = this.trade
+      const data = {
+        物流方式: '',
+        快递公司: '',
+        运费: '',
+        物流单号: ''
+      }
+      return Object2Options(data, 'value')
+    },
+    refundInfoTable() {
+      // const {
+      //   id,
+      //   createdAt,
+      //   memberName,
+      //   memberPhone,
+      //   shopName,
+      //   remark,
+      //   status,
+      //   payMoney = '',
+      //   maxDeposit = ''
+      // } = this.trade
+      const data = {
+        退款方式: '',
+        退款渠道: '',
+        退款时间: '',
+        商品总额: '',
+        应支付金额: '',
+        运费金额: ''
       }
       return Object2Options(data, 'value')
     },
@@ -159,32 +266,13 @@ export default {
       //商品，多个，是个数组
       return this.detail.outDtoTradeOrderLines || []
     },
-    car() {
-      //新车
-      const data = this.products.filter(
-        item => item.productType === productType['新车']
-      )
-      return data[0] || {}
-    },
-    carInfoTable() {
-      const data = {
-        车系: this.car.bundleCarSeriesName,
-        品牌: this.car.bundleCarBrandName,
-        车型编号: this.car.vehicleModelCode,
-        车型名称: this.car.bundleCarModelName,
-        指导价: price(this.car.guidancePrice),
-        门店单价: price(this.car.shopPrice),
-        规格组合: this.car.propValues
-      }
-      return Object2Options(data, 'value')
-    },
     payment() {
       return this.detail.outDtoOrderPayments || []
     },
-    refund() {
-      return this.detail.refundOrders || []
+    aft() {
+      return this.detail.aftOrders || []
     },
-    refundAudit() {
+    aftAudit() {
       // 当订单未审核的时候 退款审核不显示内容
       let init = {
         updatedAt: '',
@@ -193,9 +281,7 @@ export default {
         rejectRemark: ''
       }
       let auditData =
-        this.refund[0] && this.refund[0].status !== 'WAIT_AUDIT'
-          ? this.refund[0]
-          : init
+        this.aft[0] && this.aft[0].status !== 'WAIT_AUDIT' ? this.aft[0] : init
       const data = {
         操作时间: formatDate(auditData.updatedAt),
         审核人: auditData.updatedBy,
@@ -208,7 +294,7 @@ export default {
   methods: {
     getDetail() {
       this.$axios
-        .$get(refundDetail + `?id=${this.query.refundId}`)
+        .$get(aftDetail + `?id=${this.query.refundId}`)
         .then(resp => {
           this.detail = resp.payload
         })
@@ -216,6 +302,19 @@ export default {
           this.$message.error('获取退款详情失败! 请稍后再试!')
         })
     },
+    logoFormatter(row) {
+      return (
+        <img
+          src={row.logoUrl ? row.logoUrl : ''}
+          style={{
+            width: '100px',
+            background: 'transparent',
+            padding: '0'
+          }}
+        />
+      )
+    },
+
     formatDate,
     price,
     toOptionsLabel
@@ -229,25 +328,89 @@ export default {
 <style lang="stylus">
 .refund-detail {
   .car-info {
-    display flex
-    width 100%
+    display: flex
+    width: 100%
 
     .img {
-      margin auto
-      margin-right: 30px;
+      margin: auto
+      margin-right: 30px
     }
 
     .table {
-      flex 1
+      flex: 1
     }
 
     img {
-      max-width 120px
+      max-width: 120px
     }
   }
+
+  .red {
+    color: #F70321
+  }
+
+  .bar-left {
+    border-left: 4px solid #F70321
+    padding-left: 10px
+    margin-bottom: 20px
+  }
+
+  .ml-2 {
+    margin-left: 20px
+  }
+
+  .mb-1 {
+    margin-bottom: 10px
+  }
+
+  .is-finish {
+    color: #F70321
+    border-color: #F70321
+  }
+
   .tab-container {
-    margin-top 30px
-    min-height 300px
+    margin-top: 30px
+    min-height: 300px
+  }
+
+  .refund-table-info {
+    display: flex
+    width: 100%
+    justify-content: space-between
+
+    .card-table+.card-table {
+      margin-top: 0
+    }
+
+    .card-table {
+      width: 30%
+    }
+  }
+
+  .table-info-one-column {
+    border: 1px solid #dee2e6
+    border-collapse: collapse
+    width: 100%
+
+    tbody {
+      width: 100%
+    }
+
+    td {
+      padding: 12px
+      text-align: center
+      border: 1px solid #dee2e6
+    }
+
+    .label {
+      background-color: #f5f5f5
+      width: 40%
+    }
+
+    .value {
+      width: 60%
+      word-wrap: break-word
+    }
   }
 }
 </style>
