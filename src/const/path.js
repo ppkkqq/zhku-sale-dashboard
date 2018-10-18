@@ -21,3 +21,6 @@ export const comboTemplateDetail = '/templates/combo-template-detail'
 
 // 会员列表
 export const customerDetail = '/customer-detail'
+
+// 售后
+export const refundDetail = '/aft/refund-detail'

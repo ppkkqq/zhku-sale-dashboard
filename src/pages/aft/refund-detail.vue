@@ -60,7 +60,7 @@ import TableInfo from '@/components/table-info'
 import {refundDetail} from '@/const/api'
 import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
-import {statusOpts} from '@/const/refund'
+import {statusOpts} from '@/const/aft'
 
 export default {
   name: 'refund-detail',
@@ -208,7 +208,7 @@ export default {
   methods: {
     getDetail() {
       this.$axios
-        .$get(refundDetail + `?orderId=${this.query.id}`)
+        .$get(refundDetail + `?id=${this.query.refundId}`)
         .then(resp => {
           this.detail = resp.payload
         })

@@ -41,7 +41,8 @@
 <script>
 import {orderStatusOptions, orderTypeOptions} from '@/const/config'
 import {refundList, refundAudit} from '@/const/api'
-import {statusOpts, searchForm, columns} from '@/const/refund'
+import {statusOpts, searchForm, columns} from '@/const/aft'
+import {refundDetail} from '@/const/path'
 
 export default {
   name: 'refund-list',
@@ -102,7 +103,7 @@ export default {
   methods: {
     go2Detail(row) {
       //查看
-      this.$router.push(`/refund-detail?id=${row.tradeOrderId}`)
+      this.$router.push(`${refundDetail}?refundId=${row.id}`)
     },
     go2Review(row) {
       //审核
