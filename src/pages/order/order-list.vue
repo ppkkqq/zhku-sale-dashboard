@@ -223,6 +223,10 @@ export default {
             },
             {
               value: 'paid',
+              label: '已支付'
+            },
+            {
+              value: 'paidAndAudit',
               label: '待发货'
             },
             {
