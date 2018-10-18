@@ -164,3 +164,6 @@ export const logistics = TRADE_CENTER + '/logistics'
 
 //商品
 export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
+
+// 源通币
+export const topUp = ACCOUNT_CENTER + '/currency/member'

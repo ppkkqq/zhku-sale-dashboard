@@ -30,8 +30,8 @@
           <el-form-item label="当前源通币">
             {{topUpform.coin || 0}}
           </el-form-item>
-          <el-form-item label="充值数量" prop="count">
-            <el-input v-model.trim="topUpform.count"></el-input>
+          <el-form-item label="充值数量" prop="money">
+            <el-input v-model.trim="topUpform.money"></el-input>
           </el-form-item>
         </template>
         <template v-else>
@@ -39,7 +39,7 @@
         </template>
 
         <el-form-item>
-          <el-button type="primary" @click="topUp">保存</el-button>
+          <el-button type="primary" @click="topUp" v-loading="topUpLoading">保存</el-button>
           <el-button @click="topUpDialogVisible = false">取消</el-button>
         </el-form-item>
       </el-form>
@@ -49,7 +49,7 @@
 
 <script>
 import {formatDate} from '@/const/filter'
-import {mcMemberInfos, getShopUserInfo} from '@/const/api'
+import {mcMemberInfos, getShopUserInfo, topUp} from '@/const/api'
 import {customerDetail} from '@/const/path'
 
 const dialogTitle = {
@@ -145,11 +145,12 @@ export default {
 
       single,
       batch,
+      topUpLoading: false,
       topUpform: {
-        count: 0
+        money: 0
       },
       topUpRules: {
-        count: {trigger: 'blur', validator: validateCount}
+        money: {trigger: 'blur', validator: validateCount}
       },
       currentDialog: single,
       topUpDialogTitle: dialogTitle[this.currentDialog],
@@ -170,15 +171,44 @@ export default {
     },
     topUp() {
       this.$refs.topUpform.validate(valid => {
+        let data = {
+          memberId: this.topUpform.id,
+          money: +this.topUpform.money
+        }
         if (valid) {
-          this.topUpDialogVisible = false
+          this.topUpLoading = true
+          this.$axios
+            .$post(topUp, data)
+            .then(resp => {
+              console.log(resp)
+              this.$message.success('操作成功')
+            })
+            .catch(e => console.error(e))
+            .finally(() => {
+              this.topUpLoading = false
+              this.topUpDialogVisible = false
+            })
         }
       })
+    },
+    getBalance() {
+      this.topUpLoading = true
+
+      this.$axios
+        .$get(topUp)
+        .then(resp => {
+          this.topUpform = {...this.topUpform, money: resp.payload.balance}
+        })
+        .catch(e => console.error(e))
+        .finally(() => {
+          this.topUpLoading = false
+        })
     },
     showTopUp(row) {
       this.currentDialog = single
       this.topUpDialogVisible = true
       this.topUpform = row
+      this.getBalance()
     }
   }
 }
