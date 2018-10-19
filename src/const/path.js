@@ -23,4 +23,4 @@ export const comboTemplateDetail = '/templates/combo-template-detail'
 export const customerDetail = '/customer-detail'
 
 // 售后
-export const refundDetail = '/aft/refund-detail'
+export const aftDetail = '/aft/aft-detail'

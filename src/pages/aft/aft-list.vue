@@ -42,14 +42,14 @@
 import {orderStatusOptions, orderTypeOptions} from '@/const/config'
 import {refundList, refundAudit} from '@/const/api'
 import {statusOpts, searchForm, columns} from '@/const/aft'
-import {refundDetail} from '@/const/path'
+import {aftDetail} from '@/const/path'
 
 export default {
-  name: 'refund-list',
+  name: 'aft-list',
   components: {},
   data() {
     return {
-      pageName: 'refund-list',
+      pageName: 'aft-list',
       url: refundList + `?shopId=${this.$store.state.shopId}`,
       operationAttrs: {
         width: 160,
@@ -103,7 +103,7 @@ export default {
   methods: {
     go2Detail(row) {
       //查看
-      this.$router.push(`${refundDetail}?refundId=${row.id}`)
+      this.$router.push(`${aftDetail}?refundId=${row.id}`)
     },
     go2Review(row) {
       //审核
