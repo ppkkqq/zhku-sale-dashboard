@@ -87,7 +87,8 @@ export default {
         },
         {
           prop: 'mobile',
-          label: '手机号'
+          label: '手机号',
+          width: '120px'
         },
         {
           prop: 'gender',
@@ -95,7 +96,8 @@ export default {
         },
         {
           prop: 'birthday',
-          label: '生日'
+          label: '生日',
+          formatter: ({birthday}) => formatDate(birthday, 'MM-DD')
         },
         {
           prop: 'email',
@@ -104,11 +106,13 @@ export default {
         {
           prop: 'createdAt',
           label: '创建时间',
+          width: '140px',
           formatter: row => formatDate(row.createdAt)
         },
         {
           prop: 'updatedAt',
           label: '最后登录时间',
+          width: '140px',
           formatter: row => formatDate(row.updatedAt)
         }
       ],
