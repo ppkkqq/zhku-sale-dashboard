@@ -34,7 +34,7 @@ const config = {
       '/mall-deepexi-stock-center': gateway,
       '/mall-deepexi-settle-center': gateway,
       '/mall-deepexi-account-center': gateway,
-      '/security': 'http://mall.deepexi.com'
+      '/security': gateway
     },
     test: {
       //内网：http://192.168.31.35:8083
@@ -47,7 +47,7 @@ const config = {
       '/mall-deepexi-stock-center': gateway,
       '/mall-deepexi-settle-center': gateway,
       '/mall-deepexi-account-center': gateway,
-      '/security': 'http://mall.deepexi.com'
+      '/security': gateway
     }
   }
 }
