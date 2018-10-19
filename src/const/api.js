@@ -167,3 +167,4 @@ export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
 
 // 源通币
 export const topUp = ACCOUNT_CENTER + '/currency/member'
+export const balance = ACCOUNT_CENTER + '/admin/currency'
