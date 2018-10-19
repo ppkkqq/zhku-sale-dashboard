@@ -49,7 +49,7 @@
 
 <script>
 import {formatDate} from '@/const/filter'
-import {mcMemberInfos, getShopUserInfo, topUp} from '@/const/api'
+import {mcMemberInfos, getShopUserInfo, topUp, balance} from '@/const/api'
 import {customerDetail} from '@/const/path'
 import {integer} from '@/const/pattern'
 
@@ -204,8 +204,9 @@ export default {
     getBalance() {
       this.topUpLoading = true
 
+      let url = `${balance}/${this.topUpform.id}`
       this.$axios
-        .$get(topUp)
+        .$get(url)
         .then(resp => {
           this.topUpform = {...this.topUpform, balance: resp.payload.balance}
         })

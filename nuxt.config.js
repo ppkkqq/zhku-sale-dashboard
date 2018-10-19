@@ -1,8 +1,8 @@
 const mode = process.env.MODE
 
-if (mode == 'prod') {
-  require('dotenv').config()
-}
+// if (mode == 'prod') {
+require('dotenv').config()
+// }
 
 const gateway = process.env.GATEWAY || 'http://malldev.gtytong.com'
 
@@ -72,7 +72,13 @@ module.exports = {
   mode: 'spa',
   env: {
     PROJECT_NO: process.env.PROJECT_NO || config.projectNo,
-    NO_LOGIN: process.env.NO_LOGIN
+    NO_LOGIN: process.env.NO_LOGIN,
+    OSS_KEY: process.env.OSS_KEY,
+    OSS_SECRET: process.env.OSS_SECRET,
+    OSS_BUCKET: process.env.OSS_BUCKET,
+    OSS_REGION: process.env.OSS_REGION,
+    OSS_DIR: process.env.OSS_DIR,
+    OSS_CUSTOM_DOMAIN: process.env.OSS_CUSTOM_DOMAIN
   },
   proxy: {...config.env[mode]},
   router: {
