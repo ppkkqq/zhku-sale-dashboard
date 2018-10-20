@@ -99,7 +99,8 @@ module.exports = {
       {
         rel: 'icon',
         type: 'image/x-icon',
-        href: context + 'favicon.ico'
+        href:
+          '//gtytoss.oss-cn-hangzhou.aliyuncs.com/platform/logo-1539941787898.png'
       }
     ]
   },
