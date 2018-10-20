@@ -90,6 +90,7 @@ export default {
         }
       }
     ]
+    let accountId = `?accountId=${this.$route.query.memberId}`
     return {
       baseInfo: [],
       addressInfo: [],
@@ -105,9 +106,9 @@ export default {
         paginationSize: 5,
         paginationSizes: [5, 10]
       },
-      collect: collect,
-      browserHistory: browserHistory,
-      address: address,
+      collect: collect + accountId,
+      browserHistory: browserHistory + accountId,
+      address: address + accountId,
 
       collectColumns: [
         ...commonColumns,
