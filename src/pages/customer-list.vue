@@ -30,7 +30,13 @@
           <el-form-item label="当前源通币">
             {{topUpform.balance}}
           </el-form-item>
-          <el-form-item label="充值数量" prop="money">
+          <el-form-item prop="money">
+            <div slot="label">
+              <span>充值数量</span>
+              <el-tooltip class="item" effect="dark" content="输入正整数为增加，输入负整数为减" placement="top-start">
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </div>
             <el-input v-model.trim="topUpform.money"></el-input>
           </el-form-item>
         </template>
@@ -49,7 +55,7 @@
 
 <script>
 import {formatDate} from '@/const/filter'
-import {mcMemberInfos, getShopUserInfo, topUp, balance} from '@/const/api'
+import {mcMemberInfos, getShopUserInfo, currency} from '@/const/api'
 import {customerDetail} from '@/const/path'
 import {integer} from '@/const/pattern'
 
@@ -188,8 +194,11 @@ export default {
         }
         if (valid) {
           this.topUpLoading = true
+
+          let url = `${currency}`
+
           this.$axios
-            .$post(topUp, data)
+            .$post(url, data)
             .then(resp => {
               this.$message.success('操作成功')
             })
@@ -204,7 +213,7 @@ export default {
     getBalance() {
       this.topUpLoading = true
 
-      let url = `${balance}/${this.topUpform.id}`
+      let url = `${currency}/${this.topUpform.id}`
       this.$axios
         .$get(url)
         .then(resp => {

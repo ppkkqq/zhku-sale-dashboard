@@ -166,5 +166,13 @@ export const logistics = TRADE_CENTER + '/logistics'
 export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
 
 // 源通币
-export const topUp = ACCOUNT_CENTER + '/currency/member'
-export const balance = ACCOUNT_CENTER + '/admin/currency'
+export const currency = ACCOUNT_CENTER + '/admin/currency'
+
+// 会员
+export const address =
+  MEMBER_CENTER + `/mcDeliveryAddress/getUserDeliveryAddressInfo`
+export const collect = MEMBER_CENTER + `/mcItemCollects/getUserCollectInfo`
+export const browserHistory =
+  MEMBER_CENTER + `/mcMemberAccounts/getUserBrowseInfo`
+export const memberBaseInfo =
+  MEMBER_CENTER + `/mcMemberAccounts/getUserBasicInfo`
