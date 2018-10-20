@@ -129,12 +129,17 @@ export default {
       if (skus.length === 0) return []
 
       const {propNames} = skus[0]
-      const result = propNames.split(',').map(item => {
-        return {
-          label: item,
-          prop: item
-        }
-      })
+      let result
+      if (propNames && propNames.length) {
+        result = propNames.split(',').map(item => {
+          return {
+            label: item,
+            prop: item
+          }
+        })
+      } else {
+        result = []
+      }
       return result.concat([
         {
           label: '指导价',
