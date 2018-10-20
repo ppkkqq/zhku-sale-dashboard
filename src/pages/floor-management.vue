@@ -8,83 +8,118 @@
     :change-visible="changeVisible"
     @node-click="handleNodeClick"
     @clear-node="handleClearNode">
+    <!-- 修改节点 -->
+    <el-card class="box-card"
+             header="类目编辑">
+      <el-form :model="editForm"
+               :rules="editFormRules"
+               :disabled="!editForm.id"
+               ref="editForm"
+               label-width="100px"
+               class="demo-editForm">
+        <el-form-item label="类目名称"
+                      prop="name">
+          <el-input v-model="editForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="描述"
+                      prop="description">
+          <el-input v-model="editForm.description"></el-input>
+        </el-form-item>
+        <el-form-item label="图片"
+                      prop="displayUrl">
+          <upload-to-ali @load="onUpLoadFile($event, 'editForm')"
+                         :disabled="!editForm.id"
+                         accept="image/png, image/jpeg, image/jpg"
+                         :fileUrl="editForm.displayUrl">
+          </upload-to-ali>
+          <div class="el-form-item__warning">
+            建议尺寸：128*128，仅支持jpg,png格式，图片大小1M以内。
+          </div>
+        </el-form-item>
 
-    <el-tabs type="border-card">
-      <el-tab-pane label="分类详情">
-        <el-form
-          :model="editForm"
-          :rules="editFormRules"
-          ref="editForm"
-          label-width="100px"
-          class="editForm"
-        >
-          <el-form-item label="节点名称:" prop="name">
-            <el-input v-model="editForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="描述:" prop="description">
-            <el-input type="textarea" v-model="editForm.description"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary"
-                       @click="updateNode">保存</el-button>
-            <el-button type="normal"
-                       @click="resetNode">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="子分类新增">
-        <el-form
-          :model="newForm"
-          :rules="newFormRules"
-          ref="newForm"
-          label-width="100px"
-          class="newForm"
-        >
-          <el-form-item label="节点名称:" prop="name">
-            <el-input v-model="newForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="图片"
-                        prop="displayUrl">
-            <upload-to-ali @load="onUpLoadFile($event, 'newForm')"
-                           :disabled="!newForm.id"
-                           accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="newForm.displayUrl">
-            </upload-to-ali>
-            <div class="el-form-item__warning">
-              建议尺寸：26*34，仅支持png格式，图片大小1M以内。
-            </div>
-          </el-form-item>
-          <el-form-item label="描述:" prop="description">
-            <el-input type="textarea" v-model="newForm.description"></el-input>
-          </el-form-item>
-          <el-form-item label="图片"
-                        prop="displayUrl">
-            <div class="el-form-item__warning">
-              建议尺寸：1190*109，显示在楼层底部位置
-            </div>
-            <upload-to-ali @load="onUpLoadFile($event, 'newForm')"
-                           :disabled="!newForm.id"
-                           accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="newForm.displayUrl">
-            </upload-to-ali>
-            <div class="el-form-item__warning">
-              建议尺寸：215*605，显示在楼层左侧位置
-            </div>
-          </el-form-item>
+        <el-form-item label="是否末级类目"
+                      prop="isLeaf">
+          <el-radio-group v-model="editForm.isLeaf"
+                          :disabled="hasChildren || !!editForm.catalogs">
+            <el-radio label="1">是</el-radio>
+            <el-radio label="0">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary"
+                     @click="updateNode">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
 
-          <el-tree
-            :data="config"
-            :props="defaultProps"
-            show-checkbox
-            @check-change="handleCheck"
-          ></el-tree>
-          <el-form-item>
-            <el-button type="primary"
-                       @click="addNode">保存</el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-    </el-tabs>
+    <!-- 挂载后台类目 -->
+    <template>
+      <el-card class="box-card"
+               header="挂载后台类目">
+        <bind-backend-category
+          :data="backendTree"
+          :canAdd="canAdd"
+          :baseUrl="bindBackendUrl"
+          :node="editForm"
+          @save="setNode"
+          :props="defaultProps" />
+      </el-card>
+    </template>
+
+    <!--设置筛选条件-->
+    <!--<template slot="detail">-->
+    <!--<el-card-->
+    <!--class="box-card"-->
+    <!--header="设置筛选条件"-->
+    <!--&gt;-->
+    <!--<bind-attribute-filter-->
+    <!--:canAdd="canAdd"-->
+    <!--:node="editForm"-->
+    <!--:props="defaultProps"-->
+    <!--:selectedFilters="selectedFilters"-->
+    <!--&gt;</bind-attribute-filter>-->
+
+    <!--</el-card>-->
+    <!--</template>-->
+
+    <!-- 新增节点 -->
+    <template slot="create">
+      <el-form :model="newForm"
+               :rules="newFormRules"
+               ref="newForm"
+               label-width="100px">
+        <el-form-item label="类目名称"
+                      prop="name">
+          <el-input v-model="newForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="描述"
+                      prop="description">
+          <el-input v-model="newForm.description"></el-input>
+        </el-form-item>
+        <el-form-item label="图片"
+                      prop="displayUrl">
+          <upload-to-ali @load="onUpLoadFile($event, 'newForm')"
+                         accept="image/png, image/jpeg, image/jpg"
+                         :fileUrl="newForm.displayUrl">
+          </upload-to-ali>
+          <div class="el-form-item__warning">
+            建议尺寸：128*128，仅支持jpg,png格式，图片大小1M以内。
+          </div>
+        </el-form-item>
+
+        <el-form-item label="是否末级类目"
+                      prop="isLeaf">
+          <el-radio-group v-model="newForm.isLeaf">
+            <el-radio label="1">是</el-radio>
+            <el-radio label="0">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary"
+                     @click="addNode">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </template>
 
   </el-crud-tree>
 </template>
@@ -101,11 +136,10 @@ import {
 } from '@/const/api'
 import BindBackendCategory from '@/components/category/bind-backend-category'
 import BindAttributeFilter from '@/components/category/bind-attribute-filter'
-import {Tree} from 'element-ui'
+
 export default {
   name: 'front-end-category',
   components: {
-    'el-tree': Tree,
     ElCrudTree,
     UploadToAli,
     BindBackendCategory,
@@ -123,50 +157,16 @@ export default {
       }
     }
     return {
-      config: [
-        {
-          label: '台式机',
-          children: [
-            {
-              label: 'A系列'
-            },
-            {
-              label: 'M系列',
-              children: [{label: 'M1'}, {label: 'M2'}]
-            },
-            {
-              label: 'T系列'
-            },
-            {
-              label: 'W系列'
-            },
-            {
-              label: '惠商专属'
-            }
-          ]
-        },
-        {
-          label: '一体机',
-          children: [
-            {
-              label: 'S2系列'
-            },
-            {
-              label: 'S3系列'
-            }
-          ]
-        }
-      ],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
       pageName: 'front-end-category',
       url: frontendCatalogBaseUrl,
       bindBackendUrl: bindBackendUrl,
       backendTree: [],
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      },
       editFormRules: {
-        name: [{required: true, message: '请输入节点名称', trigger: 'blur'}]
+        name: [{required: true, message: '请输入类目名称', trigger: 'blur'}]
       },
       editForm: {
         name: '',
@@ -188,9 +188,6 @@ export default {
     }
   },
   methods: {
-    handleCheck(data, props) {
-      console.log(1)
-    },
     //树形
     addNodeButtonFilter(node, data) {
       return data.isLeaf === '1'
@@ -254,9 +251,6 @@ export default {
         }
       })
     },
-    resetNode() {
-      this.editForm = {...this.compareData}
-    },
     //form
     onUpLoadFile(value, key) {
       this.$set(this[key], 'displayUrl', value)
@@ -297,8 +291,7 @@ export default {
 
       return !!this.editForm.id
     }
-  },
-  watch: {}
+  }
 }
 </script>
 
