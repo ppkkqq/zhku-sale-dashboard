@@ -2,13 +2,13 @@
   <div :class="pageName">
     <el-data-table
       totalPath="payload.total"
-      dataPath="payload.list"
+      data-path="payload.list"
       ref="dataTable"
       :url="url"
       :columns="columns"
       :hasNew="false"
       :hasEdit="false"
-      :hasDelete="false"
+      :hasDelete="false" 
       :hasOperation="true"
       :isTree="false"
       :hasPagination="true"
@@ -21,8 +21,7 @@
     >
       <template slot="search">
         <el-form-item label="后台类目" prop="catalogId">
-          <back-end-category-select @change="handleSelect('catalogId', $event)"
-                                    ref="catalogId"></back-end-category-select>
+          <back-end-category-select @change="handleSelect('catalogId', $event)" ref="catalogId"></back-end-category-select>
         </el-form-item>
       </template>
     </el-data-table>
@@ -82,21 +81,22 @@ export default {
           prop: 'catalogName',
           label: '后台类目'
         },
+        // {
+        //   prop: 'status',
+        //   label: '状态',
+        //   formatter: row => status2String[row.status]
+        // },
+        // {
+        //   prop: 'shelf',
+        //   label: '上架/下架',
+        //   formatter: row => {
+        //     return row.onCount + '/' + row.offCount
+        //   }
+        // },
         {
-          prop: 'status',
-          label: '状态',
-          formatter: row => status2String[row.status]
-        },
-        {
-          prop: 'shelf',
-          label: '上架/下架',
-          formatter: row => {
-            return row.onCount + '/' + row.offCount
-          }
-        },
-        {
+          // todo: 对字段
           prop: 'createdAt',
-          label: '创建时间',
+          label: '申请时间',
           minWidth: '150',
           formatter: row => {
             return formatDate(row.createdAt, 'YYYY-MM-DD HH:mm:ss')
@@ -134,24 +134,15 @@ export default {
           $type: 'input'
         },
         {
-          $el: {placeholder: '请输入商品渠道'},
-          label: '商品渠道',
-          $id: 'channel',
-          $type: 'select',
-          $options: [
-            {
-              label: '我买网',
-              value: '0'
-            },
-            {
-              label: '京东',
-              value: '1'
-            },
-            {
-              label: '自营',
-              value: '2'
-            }
-          ]
+          $el: {
+            type: 'daterange',
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            valueFormat: 'yyyy-MM-dd'
+          },
+          label: '申请时间',
+          $id: 'name',
+          $type: 'datePicker'
         }
       ],
       operationAttrs: {
@@ -179,7 +170,6 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-  .goods-list {
-
-  }
+.goods-list {
+}
 </style>
