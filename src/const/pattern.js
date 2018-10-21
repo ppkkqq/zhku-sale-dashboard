@@ -42,3 +42,6 @@ export const ENGLISH_NUMBERPattern = /^[A-Za-z0-9]+$/
 
 // 整数
 export const integer = /^(-)?\d+$/
+
+// 正整数
+export const positiveInteger = /^\d+$/

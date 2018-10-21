@@ -5,6 +5,7 @@
       v-loading="loading"
       :url="url"
       :columns="columns"
+      :headerButtons="headerButtons"
       :hasNew="false"
       :hasEdit="false"
       :hasDelete="false"
@@ -21,13 +22,13 @@
     <el-dialog :title="topUpDialogTitle" :visible.sync="topUpDialogVisible">
       <el-form ref="topUpform" label-width="100px" label-position="right" :model="topUpform" :rules="topUpRules">
         <template v-if="currentDialog === single">
-          <el-form-item label="昵称">
+          <el-form-item prop="nickName" label="昵称">
             {{topUpform.nickName}}
           </el-form-item>
-          <el-form-item label="手机号">
+          <el-form-item prop="mobile" label="手机号">
             {{topUpform.mobile}}
           </el-form-item>
-          <el-form-item label="当前源通币">
+          <el-form-item prop="balance" label="当前源通币">
             {{topUpform.balance}}
           </el-form-item>
           <el-form-item prop="money">
@@ -41,7 +42,25 @@
           </el-form-item>
         </template>
         <template v-else>
+          <el-form-item prop="money">
+            <div slot="label">
+              <span>充值数量</span>
+              <el-tooltip class="item" effect="dark" content="只能输入正整数" placement="top-start">
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </div>
+            <el-input v-model.trim="topUpform.money"></el-input>
+          </el-form-item>
+          <el-form-item prop="mobiles">
+            <div slot="label">
+              <span>充值账号</span>
+              <el-tooltip class="item" effect="dark" content="赠送账号为手机号码，账号与账号之间用半角符“,”隔开" placement="top-start">
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </div>
+            <el-input type="textarea" row="4" resize="none" v-model.trim="topUpform.mobiles"></el-input>
 
+          </el-form-item>
         </template>
 
         <el-form-item>
@@ -57,7 +76,7 @@
 import {formatDate} from '@/const/filter'
 import {mcMemberInfos, getShopUserInfo, currency} from '@/const/api'
 import {customerDetail} from '@/const/path'
-import {integer} from '@/const/pattern'
+import {integer, positiveInteger, telPattern} from '@/const/pattern'
 
 const dialogTitle = {
   batch: '批量充值',
@@ -68,11 +87,40 @@ const batch = 'batch'
 export default {
   name: 'customer-list',
   data() {
-    const validateCount = (rule, value, callback) => {
+    const validateMoney = (rule, value, callback) => {
       if (!value) {
         callback('请输入充值数量')
-      } else if (!integer.test(value)) {
+        return
+      }
+      if (this.currentDialog === this.single && !integer.test(value)) {
         callback('请输入整数')
+        return
+      }
+
+      if (this.currentDialog === this.batch && !positiveInteger.test(value)) {
+        callback('请输入正整数')
+        return
+      }
+      callback()
+    }
+
+    const validateMobile = (rule, value, callback) => {
+      if (!value) {
+        callback('请输入充值手机号')
+        return
+      }
+
+      // 检查错误格式的手机号
+      const mobiles = value.split(',')
+      const errMobile = mobiles.reduce((result, mobile, index) => {
+        if (mobile.trim() && !telPattern.test(mobile)) {
+          result.push(mobile)
+        }
+        return result
+      }, [])
+
+      if (errMobile && errMobile.length > 0) {
+        callback(`手机号码格式不正确${errMobile.join(',')}`)
       } else {
         callback()
       }
@@ -126,6 +174,16 @@ export default {
       operationAttrs: {
         width: '200px'
       },
+      headerButtons: [
+        {
+          text: '批量充值',
+          type: 'primary',
+          atClick: selected => {
+            this.currentDialog = batch
+            this.topUpDialogVisible = true
+          }
+        }
+      ],
       extraButtons: [
         {
           text: '源通币充值',
@@ -159,11 +217,10 @@ export default {
       single,
       batch,
       topUpLoading: false,
-      topUpform: {
-        money: 0
-      },
+      topUpform: {},
       topUpRules: {
-        money: {trigger: 'blur', validator: validateCount}
+        money: {trigger: 'blur', validator: validateMoney},
+        mobiles: {trigger: 'blur', validator: validateMobile}
       },
       currentDialog: single,
       topUpDialogVisible: false
@@ -177,8 +234,9 @@ export default {
   watch: {
     topUpDialogVisible: function(isShow) {
       if (!isShow) {
-        this.topUpform = {}
         this.$refs.topUpform.resetFields()
+
+        this.topUpform = {}
       }
     }
   },
@@ -192,6 +250,17 @@ export default {
           mobiles: this.topUpform.mobile,
           money: this.topUpform.money
         }
+
+        if (this.currentDialog === this.batch) {
+          data = {
+            mobiles: this.topUpform.mobiles
+              .split(',')
+              .filter(v => !!v)
+              .join(','),
+            money: this.topUpform.money
+          }
+        }
+
         if (valid) {
           this.topUpLoading = true
 
