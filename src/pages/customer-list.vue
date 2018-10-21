@@ -189,7 +189,7 @@ export default {
     topUp() {
       this.$refs.topUpform.validate(valid => {
         let data = {
-          memberId: this.topUpform.id,
+          mobiles: this.topUpform.mobile,
           money: this.topUpform.money
         }
         if (valid) {
