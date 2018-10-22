@@ -3,7 +3,8 @@
     <power-quill-editor
       class="power-quill-editor"
       :content="value"
-      :disabled="disabled"
+      :disabled="editorDisabled"
+      :upload="upload"
       @on-editor-change="onEditorChange" />
   </div>
 </template>
@@ -16,7 +17,8 @@ import 'quill/dist/quill.bubble.css'
 export default {
   name: 'ProductDescription',
   props: {
-    disabled: Boolean,
+    // disabled: Boolean,
+    editorDisabled: Boolean,
     content: {
       type: String,
       default: ''
@@ -24,7 +26,10 @@ export default {
   },
   data() {
     return {
-      value: this.content
+      value: this.content,
+      upload: {
+        multiple: true
+      }
     }
   },
   watch: {
@@ -55,6 +60,13 @@ export default {
     .power-quill-editor {
       // margin-left 80px
       line-height 1
+    }
+
+    .ql-editor {
+      img {
+        display block
+        margin auto
+      }
     }
   }
 </style>

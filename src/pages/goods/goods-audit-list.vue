@@ -8,7 +8,7 @@
       :columns="columns"
       :hasNew="false"
       :hasEdit="false"
-      :hasDelete="false" 
+      :hasDelete="false"
       :hasOperation="true"
       :isTree="false"
       :hasPagination="true"
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import {goodsLists, goodsCancelApply} from '@/const/api'
+import {goodsLists, getNeedCheckPcItem, goodsCancelApply} from '@/const/api'
 import {goodsListColumns} from '@/const/goods'
 import {listSearchForm} from '@/const/goods'
 import {getGoodsOnOffStatus, formatDate} from '@/const/filter'
@@ -57,7 +57,7 @@ export default {
     let extraParams = {}
     return {
       pageName: 'goods-list',
-      url: goodsLists,
+      url: goodsLists, //getNeedCheckPcItem,
       columns: [
         {
           prop: 'code',
@@ -94,8 +94,7 @@ export default {
         //   }
         // },
         {
-          // todo: 对字段
-          prop: 'createdAt',
+          prop: 'pcApplyAt',
           label: '申请时间',
           minWidth: '150',
           formatter: row => {
@@ -107,13 +106,24 @@ export default {
       form: [],
       extraButtons: [
         {
-          text: '查看',
+          text: '审核',
           type: 'primary',
           atClick: row => {
             this.$router.push({
-              path: '/goods/goods-detail',
+              path: '/goods/goods-audit-detail',
               query: {
-                // isView: 1,
+                productId: row.itemId
+              }
+            })
+          }
+        },
+        {
+          text: '查看',
+          atClick: row => {
+            this.$router.push({
+              path: '/goods/goods-audit-detail',
+              query: {
+                isView: 1,
                 productId: row.itemId
               }
             })
@@ -146,10 +156,13 @@ export default {
         }
       ],
       operationAttrs: {
-        fixed: 'right'
+        fixed: 'right',
+        minWidth: 150
       },
       customQuery: {
-        catalogId: ''
+        catalogId: '',
+        pcApplyStart: '',
+        pcApplyEnd: ''
       },
       extraParams
     }
