@@ -131,6 +131,15 @@ import {orderList, logistics} from '@/const/api'
 import searchFormMixin from '@/mixins/search-form-slot'
 const num2source = ['我买网订单', '自营订单']
 const num2day = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+const status2chinese = {
+  to_be_paid: '待支付',
+  paid: '已付款',
+  paidAndAudit: '待发货',
+  deliverying: '待收货',
+  finished: '待评价',
+  commented: '已评价',
+  cancelled: '已取消'
+}
 export default {
   name: 'order-list',
   components: {},
@@ -159,6 +168,7 @@ export default {
         {
           prop: 'orderStatusName',
           label: '订单状态'
+          // formatter: row => status2chinese[row.orderStatusId]
         },
         {
           prop: 'user',
@@ -187,6 +197,7 @@ export default {
           fixed: 'right'
         }
       ],
+      //todo:  待检验  searchForm
       searchForm: [
         {
           $el: {placeholder: '请输入订单编号'},
@@ -211,40 +222,19 @@ export default {
           $type: 'select'
         },
         {
-          // 1待支付，2待发货，3待收货，4待评论，5已取消，6已评论
+          // 1待支付，2待发货，3待收货，4待评价，5已取消，6已评价
           $options: [
             {
               value: '',
               label: '全部'
             },
-            {
-              value: 'to_be_paid',
-              label: '待支付'
-            },
-            {
-              value: 'paid',
-              label: '已支付'
-            },
-            {
-              value: 'paidAndAudit',
-              label: '待发货'
-            },
-            {
-              value: 'deliverying',
-              label: '待收货'
-            },
-            {
-              value: 'finished',
-              label: '待评论'
-            },
-            {
-              value: 'commented',
-              label: '已评论'
-            },
-            {
-              value: 'cancelled',
-              label: '已取消'
-            }
+            {value: 'to_be_paid', label: '待支付'},
+            {value: 'paid', label: '已付款'},
+            {value: 'paidAndAudit', label: '待发货'},
+            {value: 'deliverying', label: '待收货'},
+            {value: 'finished', label: '已完成'},
+            {value: 'commented', label: '已评价'},
+            {value: 'cancelled', label: '已取消'}
           ],
           $el: {placeholder: '请选择订单状态'},
           label: '订单状态',
@@ -301,8 +291,8 @@ export default {
     },
     showLogisticsButton(row) {
       return (
-        row.orderStatusName === '待收货' ||
-        row.orderStatusName === '待评论' ||
+        row.orderStatusName === '待发货' ||
+        row.orderStatusName === '已完成' ||
         row.orderStatusName === '已评论'
       )
     },
