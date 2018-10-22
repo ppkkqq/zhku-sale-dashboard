@@ -80,7 +80,9 @@ export default {
         },
         {
           prop: 'catalogName',
-          label: '后台类目'
+          label: '后台类目',
+          minWidth: '100',
+          'show-overflow-tooltip': true
         },
         {
           prop: 'status',
