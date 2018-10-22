@@ -164,10 +164,10 @@ export default {
           formatter: row => formatDate(row.createdAt)
         },
         {
-          prop: 'updatedAt',
+          prop: 'lastLoginTime',
           label: '最后登录时间',
           width: '140px',
-          formatter: row => formatDate(row.updatedAt)
+          formatter: row => formatDate(row.lastLoginTime)
         }
       ],
       loading: false,

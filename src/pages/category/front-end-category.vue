@@ -199,8 +199,8 @@ export default {
       this.editForm = {...data}
       this.compareData = {...data}
 
-      // 获取筛选条件
-      this.getSelectedFilters()
+      // 获取筛选条件,暂时无固定条件筛选功能
+      // this.getSelectedFilters()
     },
     handleClearNode() {
       this.editForm = {}
@@ -225,7 +225,6 @@ export default {
           this.compareData = payload
         }
       }
-
       this.$refs.editForm.validate(valid => {
         if (valid) {
           const {id, name, description, isLeaf, displayUrl} = this.editForm
