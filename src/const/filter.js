@@ -22,8 +22,17 @@ export function options2Object(options = []) {
  * @type String
  */
 export function price(val) {
-  if (!val) return 0
-  return Number.parseInt(val).toLocaleString('en-US')
+  if (!val) return 0.0
+  let USPrice = Number.parseFloat(val).toLocaleString('en-US')
+
+  // 完全是整数, 需要添加小数点
+  let lastDot = USPrice.toString().indexOf('.')
+  if (lastDot === -1) USPrice += '.00'
+
+  // 返回数据是一位小数，用0补齐为两位小数
+  if (USPrice.toString().substring(lastDot + 1).length === 1) USPrice += '0'
+
+  return USPrice
 }
 
 //用于将value转为option对应的label

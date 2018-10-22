@@ -42,6 +42,8 @@ import {
   Tabs,
   TabPane,
   Tag,
+  Steps,
+  Step,
   Cascader
 } from 'element-ui'
 import ElFormRenderer from 'el-form-renderer'
@@ -91,8 +93,8 @@ Vue.use(Tag)
 // Vue.use(Autocomplete)
 
 // steps
-// Vue.use(Steps)
-// Vue.use(Step)
+Vue.use(Steps)
+Vue.use(Step)
 
 Vue.component('el-form-renderer', ElFormRenderer)
 Vue.component('el-data-table', ElDataTable)
