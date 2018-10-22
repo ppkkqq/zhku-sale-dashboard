@@ -2304,9 +2304,9 @@ ejs@^2.5.7:
   version "2.6.1"
   resolved "http://registry.npm.taobao.org/ejs/download/ejs-2.6.1.tgz#498ec0d495655abc6f23cd61868d926464071aa0"
 
-el-area-select@^0.0.2:
-  version "0.0.2"
-  resolved "http://nexus.deepexi.top/repository/npm-private/el-area-select/-/el-area-select-0.0.2.tgz#69032d910ab70eafe09c52b8b2b7d144506b0d67"
+el-area-select@^0.0.3:
+  version "0.0.3"
+  resolved "http://nexus.deepexi.top/repository/npm-private/el-area-select/-/el-area-select-0.0.3.tgz#37b08eb5b52672e9acd682d27114697662cbb9a1"
   dependencies:
     lodash.find "^4.6.0"
 

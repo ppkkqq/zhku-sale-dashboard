@@ -30,7 +30,7 @@
     "crypto-js": "^3.1.9-1",
     "dayjs": "^1.7.4",
     "dotenv": "^6.0.0",
-    "el-area-select": "^0.0.2",
+    "el-area-select": "^0.0.3",
     "el-data-table": "0.5",
     "el-form-renderer": "^1.1.0",
     "element-ui": "^2.4.6",
