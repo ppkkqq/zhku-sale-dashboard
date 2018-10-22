@@ -28,13 +28,39 @@
           <el-input v-model="editForm.description"></el-input>
         </el-form-item>
 
-        <el-form-item label="是否末级类目"
-                      prop="isLeaf">
-          <el-radio-group v-model="editForm.isLeaf"
-                          :disabled="hasChildren || editForm.hasAttributeGroups">
-            <el-radio label="1">是</el-radio>
-            <el-radio label="0">否</el-radio>
-          </el-radio-group>
+        <!--<el-form-item label="是否末级类目"-->
+                      <!--prop="isLeaf">-->
+          <!--<el-radio-group v-model="editForm.isLeaf"-->
+                          <!--:disabled="hasChildren || editForm.hasAttributeGroups">-->
+            <!--<el-radio label="1">是</el-radio>-->
+            <!--<el-radio label="0">否</el-radio>-->
+          <!--</el-radio-group>-->
+        <!--</el-form-item>-->
+
+        <el-form-item label="分类图标"
+                      prop="displayUrl">
+          <upload-to-ali @load="onUpLoadFile($event, 'newForm')"
+                         :disabled="!newForm.id"
+                         accept="image/png, image/jpeg, image/jpg"
+                         :fileUrl="newForm.displayUrl">
+          </upload-to-ali>
+          <!--<div class="el-form-item__warning">-->
+            <!--建议尺寸：26*34，仅支持png格式，图片大小1M以内。-->
+          <!--</div>-->
+        </el-form-item>
+        <el-form-item label="广告图"
+                      prop="displayUrl">
+          <div class="el-form-item__warning">
+            建议尺寸：1190*109，显示在楼层底部位置
+          </div>
+          <upload-to-ali @load="onUpLoadFile($event, 'newForm')"
+                         :disabled="!newForm.id"
+                         accept="image/png, image/jpeg, image/jpg"
+                         :fileUrl="newForm.displayUrl">
+          </upload-to-ali>
+          <div class="el-form-item__warning">
+            建议尺寸：215*605，显示在楼层左侧位置
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary"
@@ -46,6 +72,8 @@
     </el-card>
 
     <!-- 新增节点 -->
+    <!--新增子楼层-->
+    <!--新增楼层-->
     <template slot="create">
       <el-form :model="newForm"
                :rules="newFormRules"
