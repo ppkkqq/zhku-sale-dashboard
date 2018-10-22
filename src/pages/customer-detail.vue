@@ -171,7 +171,7 @@ export default {
       生日: data.birthday,
       邮箱: data.email,
       注册时间: formatDate(data.createdAt),
-      最后登录时间: formatDate(data.updatedAt)
+      最后登录时间: formatDate(data.lastLoginTime)
     }
 
     const assetsInfo = {
