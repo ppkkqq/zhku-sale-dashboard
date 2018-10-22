@@ -6,34 +6,34 @@
       </div>
       <el-form ref="form" :model="data" label-width="120px">
         <el-form-item label="商品名称">
-          <el-input v-model="data.name"></el-input>
+          <el-input v-model="data.name" :disabled="isView"></el-input>
         </el-form-item>
         <el-form-item label="商品标签">
-          <el-input v-model="data.name"></el-input>
+          <el-input v-model="data.title" :disabled="isView"></el-input>
         </el-form-item>
         <el-form-item label="商品编号">
-          <el-input v-model="data.id"></el-input>
+          <el-input v-model="data.code" :disabled="isView"></el-input>
         </el-form-item>
         <el-form-item label="所属商户">
-          <el-input v-model="data.shopName"></el-input>
+          <el-input v-model="data.tenantName" :disabled="isView"></el-input>
         </el-form-item>
         <div style="max-width:920px;display:flex;justify-content:space-between">
           <el-form-item label="支持换货">
-            <el-radio-group v-model="data.resource">
-              <el-radio label="是"></el-radio>
-              <el-radio label="否"></el-radio>
+            <el-radio-group v-model="data.supportExchangeGoods" :disabled="isView">
+              <el-radio label="0">是</el-radio>
+              <el-radio label="1">否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="支持退货">
-            <el-radio-group v-model="data.resource">
-              <el-radio label="是"></el-radio>
-              <el-radio label="否"></el-radio>
+            <el-radio-group v-model="data.supportReturnGoods" :disabled="isView">
+              <el-radio label="0">是</el-radio>
+              <el-radio label="1">否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="支持开发票">
-            <el-radio-group v-model="data.resource">
-              <el-radio label="是"></el-radio>
-              <el-radio label="否"></el-radio>
+            <el-radio-group v-model="data.supportInvoice" :disabled="isView">
+              <el-radio label="0">是</el-radio>
+              <el-radio label="1">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </div>
@@ -46,46 +46,7 @@
           >
         </el-form-item>
       </el-form>
-      <!-- <card-table header="商品信息">
-        <table-info style="width:700px">
-          <tbody>
-            <tr>
-              <td class="label">商品名称</td>
-              <td class="value" colspan="3">{{data.name}}</td>
-            </tr>
-            <tr>
-              <td class="label">商品标签</td>
-              <td class="value" colspan="3">{{data.catalogName}}</td>
-            </tr>
-            <tr>
-              <td class="label">后台类目</td>
-              <td class="value" colspan="3">{{catalogName}}</td>
-            </tr>
-            <tr>
-              <td class="label">后台类目</td>
-              <td class="value" colspan="3">{{catalogName}}</td>
-            </tr>
-            <tr>
-              <td class="label">品牌</td>
-              <td class="value" colspan="3">{{brandName}}</td>
-            </tr>
-            <tr>
-              <td class="label">定金</td>
-              <td class="value" colspan="3">{{price(data.depositPercent || 0)}}</td>
-            </tr>
-            <tr>
-              <td class="label">广告语</td>
-              <td class="value" colspan="3">{{data.title}}</td>
-            </tr>
-            <tr>
-              <td class="label">商品图片</td>
-              <td class="value" colspan="3">
-                <img :src="item" v-for="(item,index) in productPhoto" :key="index">
-              </td>
-            </tr>
-          </tbody>
-        </table-info>
-      </card-table>-->
+
       <card-table header="商品属性">
         <el-table :data="data.itemAttributes || []" border="">
           <!-- <el-table-column prop="groupName" label="属性组" width="100px"></el-table-column> -->
@@ -109,13 +70,9 @@
           <el-tab-pane label="PC简介" name="web"></el-tab-pane>
           <el-tab-pane label="APP简介" name="app"></el-tab-pane>
         </el-tabs>
-        <product-description
-          ref="richText"
-          :content="description"
-          :editorDisabled="editorDisabled"
-        />
+        <product-description ref="richText" :content="description" :editorDisabled="isView"/>
       </card-table>
-      <card-table header="审核信息">
+      <card-table header="审核信息" v-if="!isView">
         <el-form :model="auditData" label-width="120px">
           <el-form-item label="审核结果">
             <el-radio-group v-model="auditData">
@@ -123,7 +80,7 @@
               <el-radio label="拒接"></el-radio>
             </el-radio-group>
           </el-form-item>
-          <div class="text-right margin-top" v-if="!isView">
+          <div class="text-right margin-top">
             <el-button @click="$router.back()">取消</el-button>
             <el-button type="primary" @click="onSubmit" v-loading="isLoading">提交</el-button>
           </div>
@@ -138,7 +95,7 @@ import CardTable from '@/components/card-table'
 import TableInfo from '@/components/table-info'
 import ProductDescription from '@/components/goods-template/product-description'
 import {price} from '@/const/filter'
-import {productDetail} from '@/const/api'
+import {getNeedCheckPcById} from '@/const/api'
 import {goodsType} from '@/const/config'
 import zipObject from 'lodash/zipObject'
 import split from 'lodash/split'
@@ -151,8 +108,6 @@ export default {
   },
   data() {
     return {
-      isView: false,
-      editorDisabled: false,
       isLoading: false,
       data: {},
       tableData: [],
@@ -175,6 +130,9 @@ export default {
   computed: {
     isNewCar() {
       return true
+    },
+    isView() {
+      return this.$route.query.isView > 0
     },
     id() {
       return this.$route.query.productId
@@ -253,9 +211,13 @@ export default {
     }
   },
   mounted() {
-    this.$axios.$get(productDetail(this.id)).then(result => {
-      this.data = result.payload
-    })
+    this.$axios
+      .$get(getNeedCheckPcById, {params: {id: this.$route.query.productId}})
+      .then(result => {
+        result.payload &&
+          result.payload.PcInfo.length &&
+          (this.data = result.payload.PcInfo[0])
+      })
   }
 }
 </script>
