@@ -190,7 +190,7 @@ export default {
   methods: {
     //树形
     addNodeButtonFilter(node, data) {
-      return data.isLeaf === '1'
+      return data.isLeaf === '1' || node.level == '3'
     },
     deleteNodeButtonFilter(node, data) {
       return !node.isLeaf
