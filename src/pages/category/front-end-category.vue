@@ -7,7 +7,8 @@
     :delete-node-button-filter="deleteNodeButtonFilter"
     :change-visible="changeVisible"
     @node-click="handleNodeClick"
-    @clear-node="handleClearNode">
+    @clear-node="handleClearNode"
+    @check-node-level="checkNodeLevel">
     <!-- 修改节点 -->
     <el-card class="box-card"
              header="类目编辑">
@@ -40,7 +41,7 @@
         <el-form-item label="是否末级类目"
                       prop="isLeaf">
           <el-radio-group v-model="editForm.isLeaf"
-                          :disabled="hasChildren || !!editForm.catalogs">
+                          :disabled="hasChildren || !!editForm.catalogs||isThirdNode">
             <el-radio label="1">是</el-radio>
             <el-radio label="0">否</el-radio>
           </el-radio-group>
@@ -109,7 +110,7 @@
 
         <el-form-item label="是否末级类目"
                       prop="isLeaf">
-          <el-radio-group v-model="newForm.isLeaf">
+          <el-radio-group v-model="newForm.isLeaf" :disabled="isThirdNode">
             <el-radio label="1">是</el-radio>
             <el-radio label="0">否</el-radio>
           </el-radio-group>
@@ -184,7 +185,8 @@ export default {
 
       selectedFilters: [],
 
-      compareData: {} // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      isThirdNode: false //是否三级节点
     }
   },
   methods: {
@@ -198,6 +200,11 @@ export default {
     handleNodeClick({data, node}) {
       this.editForm = {...data}
       this.compareData = {...data}
+      if (node.level == 3) {
+        this.isThirdNode = true
+      } else {
+        this.isThirdNode = false
+      }
 
       // 获取筛选条件,暂时无固定条件筛选功能
       // this.getSelectedFilters()
@@ -252,6 +259,13 @@ export default {
           })
         }
       })
+    },
+    checkNodeLevel(level) {
+      if (level == '2') {
+        this.isThirdNode = true
+      } else {
+        this.isThirdNode = false
+      }
     },
     //form
     onUpLoadFile(value, key) {

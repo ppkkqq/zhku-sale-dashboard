@@ -114,8 +114,9 @@ export default {
       this.mergeNode(id, payload)
       this.loading = false
     },
-    setStatus(type) {
+    setStatus(type, level) {
       this.status = type
+      this.$emit('check-node-level', level)
     },
 
     addChild(node) {

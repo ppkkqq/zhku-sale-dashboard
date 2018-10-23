@@ -49,7 +49,7 @@
             <el-button type="text"
                        size="mini"
                        :disabled="addNodeButtonFilter?addNodeButtonFilter(node,data):false"
-                       @click="() => append(data)">
+                       @click="() => append(node,data)">
               {{createNodeTitle}}
             </el-button>
             <el-button type="text"
@@ -119,9 +119,11 @@ export default {
         node: this.$refs.tree.getCurrentNode()
       })
     },
-    append(data) {
+    append(node, data) {
       this.createType = data ? 'addChild' : 'addRoot'
-      this.$emit('create-type', this.createType)
+      let nodeLevel = node ? node.level : 0
+      this.$emit('create-type', this.createType, nodeLevel)
+
       this.dialogFormVisible = true
       return false
     },
