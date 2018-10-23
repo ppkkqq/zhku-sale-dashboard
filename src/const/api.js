@@ -55,12 +55,6 @@ export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
 export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
 export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
 export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
-//前台类目树
-export const frontendCatalogTree = PRODUCT_CENTER + '/pcPrecategorys/tree'
-export const frontendCatalogDetail = id =>
-  PRODUCT_CENTER + `/pcPrecategorys/${id}`
-export const frontendCatalogBaseUrl = PRODUCT_CENTER + `/pcPrecategorys`
-export const bindBackendUrl = PRODUCT_CENTER + `/pcPrecategoryCatalogs`
 
 // 会员信息
 export const mcMemberInfos = MEMBER_CENTER + '/mcMemberAccounts'
@@ -181,3 +175,10 @@ export const browserHistory =
   MEMBER_CENTER + `/mcMemberAccounts/getUserBrowseInfo`
 export const memberBaseInfo =
   MEMBER_CENTER + `/mcMemberAccounts/getUserBasicInfo`
+
+//前台类目树
+export const frontendCatalogTree = PRODUCT_CENTER + '/pcPrecategorys/tree'
+export const frontendCatalogDetail = id =>
+  PRODUCT_CENTER + `/pcPrecategorys/${id}`
+export const frontendCatalogBaseUrl = PRODUCT_CENTER + `/pcPrecategorys`
+export const bindBackendUrl = PRODUCT_CENTER + `/pcPrecategoryCatalogs`
