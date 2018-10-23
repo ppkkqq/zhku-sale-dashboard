@@ -1,6 +1,5 @@
 <template>
   <floor-tree ref='tree'
-              @set-type="setType"
               :url="url"
               :add-node-button-filter="addNodeButtonFilter"
               :delete-node-button-filter="deleteNodeButtonFilter"
@@ -258,10 +257,13 @@ export default {
     },
     setAddType(type) {
       this.addType = type
+      this.editType = !type
       console.log(this.addType ? '新建根' : '新建子')
     },
-    handleNodeClick({data, node, type}) {
-      this.editType = type
+    handleNodeClick({data, node, editType}) {
+      console.log(editType)
+      this.editType = editType
+      this.addType = !editType
       console.log(this.editType ? '编辑根' : '编辑子')
       this.editForm = {...data}
       this.compareData = {...data}

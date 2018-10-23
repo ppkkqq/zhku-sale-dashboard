@@ -248,12 +248,14 @@ export default {
       console.log(data)
       console.log(node)
       console.log(that)
-      let editType = node.parent.parent ? 'editRoot' : 'editChildren'
+      let editType = node.parent.parent ? false : true
+      console.log('editType', editType)
       this.currentKey = data ? data.id : ''
       this.currentData = data
       if (this.currentKey && !this.disabledLoadNodeDetail) {
+        this.$emit('node-click', {data, node, editType})
         this.loadNodeDetail(this.currentKey).then(() => {
-          this.$emit('node-click', {data, node, editType})
+          // this.$emit('node-click', {data, node, editType})
         })
       } else {
         this.$emit('node-click', {data, node, editType})
