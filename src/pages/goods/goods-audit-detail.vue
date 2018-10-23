@@ -15,7 +15,7 @@
           <el-input v-model="data.code" :disabled="isView"></el-input>
         </el-form-item>
         <el-form-item label="所属商户">
-          <el-input v-model="data.tenantName" :disabled="isView"></el-input>
+          <el-input v-model="channel" :disabled="isView"></el-input>
         </el-form-item>
         <div style="max-width:920px;display:flex;justify-content:space-between">
           <el-form-item label="支持换货">
@@ -46,7 +46,6 @@
           >
         </el-form-item>
       </el-form>
-
       <card-table header="商品属性">
         <el-table :data="data.itemAttributes || []" border="">
           <!-- <el-table-column prop="groupName" label="属性组" width="100px"></el-table-column> -->
@@ -55,7 +54,9 @@
           <el-table-column prop="type" :formatter="formatter" label="属性类型"></el-table-column>
         </el-table>
       </card-table>
-      <card-table header="规格组合" v-if=" skuTableColumn.length > 0">
+      <!-- v-if="skuTableColumn.length > 0" -->
+
+      <card-table header="规格组合">
         <el-table :data="skuTableData || []" border="">
           <el-table-column
             v-for="(item,index) in skuTableColumn"
@@ -73,11 +74,11 @@
         <product-description ref="richText" :content="description" :editorDisabled="isView"/>
       </card-table>
       <card-table header="审核信息" v-if="!isView">
-        <el-form :model="auditData" label-width="120px">
+        <el-form label-width="120px">
           <el-form-item label="审核结果">
-            <el-radio-group v-model="auditData">
-              <el-radio label="通过"></el-radio>
-              <el-radio label="拒接"></el-radio>
+            <el-radio-group v-model="auditStatus">
+              <el-radio :label="true">通过</el-radio>
+              <el-radio :label="false">拒绝</el-radio>
             </el-radio-group>
           </el-form-item>
           <div class="text-right margin-top">
@@ -95,10 +96,15 @@ import CardTable from '@/components/card-table'
 import TableInfo from '@/components/table-info'
 import ProductDescription from '@/components/goods-template/product-description'
 import {price} from '@/const/filter'
-import {getNeedCheckPcById} from '@/const/api'
+import {getNeedCheckPcById, goodsAudit} from '@/const/api'
+import {channel} from '@/const/goods'
 import {goodsType} from '@/const/config'
 import zipObject from 'lodash/zipObject'
 import split from 'lodash/split'
+
+const web = 'web'
+const app = 'app'
+
 export default {
   name: 'goods-detail',
   components: {
@@ -111,7 +117,7 @@ export default {
       isLoading: false,
       data: {},
       tableData: [],
-      auditData: {},
+      auditStatus: false,
       description: '',
       activeName: 'web'
     }
@@ -124,18 +130,40 @@ export default {
       return goodsType[row.type]
     },
     price,
-    handleClick() {},
-    onSubmit() {}
+    handleClick() {
+      if (this.activeName == web) {
+        this.description = this.data.detail
+      } else {
+        this.description = this.data.mobileDetail
+      }
+    },
+    onSubmit() {
+      if (this.auditStatus) {
+        let url = goodsAudit(this.$route.query.productId)
+        this.$axios
+          .$put(url, {
+            agree: this.auditStatus
+          })
+          .then(result => {
+            this.$message({
+              type: 'success',
+              message: '操作成功'
+            })
+            this.$router.back()
+          })
+          .catch()
+      }
+    }
   },
   computed: {
-    isNewCar() {
-      return true
-    },
     isView() {
       return this.$route.query.isView > 0
     },
     id() {
       return this.$route.query.productId
+    },
+    channel() {
+      return channel[this.data.channel]
     },
     skuTableColumn() {
       const skus = this.data.skus || []
@@ -183,16 +211,16 @@ export default {
       const result = (this.data.skus || []).map(item => {
         const {
           propNames = '',
-          propValues = '',
-          minPrice,
-          maxPrice,
-          preferentialPrice,
-          guidePrice
+          propValues = ''
+          // minPrice,
+          // maxPrice,
+          // preferentialPrice,
+          // guidePrice
         } = item
         const data = zipObject(split(propNames, ','), split(propValues, ','))
-        data.preferentialPrice = price(preferentialPrice) || 0
-        data.guidePrice = price(guidePrice) || 0
-        data.priceRange = `${minPrice || 0},${maxPrice || 0}`
+        // data.preferentialPrice = price(preferentialPrice) || 0
+        // data.guidePrice = price(guidePrice) || 0
+        // data.priceRange = `${minPrice || 0},${maxPrice || 0}`
 
         return data
       })
@@ -201,11 +229,11 @@ export default {
     catalogName() {
       return this.data.prdCatalog ? this.data.prdCatalog.name : ''
     },
-    brandName() {
-      const brandList = this.data.brandList || []
-      const brand = brandList[0] || {}
-      return brand.name || ''
-    },
+    // brandName() {
+    //   const brandList = this.data.brandList || []
+    //   const brand = brandList[0] || {}
+    //   return brand.name || ''
+    // },
     productPhoto() {
       return split(this.data.productPhoto, ',')
     }
@@ -214,10 +242,12 @@ export default {
     this.$axios
       .$get(getNeedCheckPcById, {params: {id: this.$route.query.productId}})
       .then(result => {
-        result.payload &&
-          result.payload.PcInfo.length &&
-          (this.data = result.payload.PcInfo[0])
+        if (result.payload) {
+          this.data = result.payload
+          this.description = this.data.detail
+        }
       })
+      .catch()
   }
 }
 </script>
