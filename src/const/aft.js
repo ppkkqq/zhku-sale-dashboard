@@ -52,11 +52,11 @@ export const searchForm = [
     $type: 'select',
     $options: [
       {
-        label: '我买网订单',
+        label: '我买网',
         value: 0
       },
       {
-        label: '自营订单',
+        label: '自营',
         value: 1
       }
     ]
