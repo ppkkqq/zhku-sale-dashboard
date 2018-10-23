@@ -41,7 +41,7 @@
         <el-form-item label="是否末级类目"
                       prop="isLeaf">
           <el-radio-group v-model="editForm.isLeaf"
-                          :disabled="hasChildren || !!editForm.catalogs||isThirdNode">
+                          :disabled="hasChildren || !!editForm.catalogs||isThirdNode||curNodeLevel==3">
             <el-radio label="1">是</el-radio>
             <el-radio label="0">否</el-radio>
           </el-radio-group>
@@ -186,7 +186,8 @@ export default {
       selectedFilters: [],
 
       compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
-      isThirdNode: false //是否三级节点
+      isThirdNode: false, //是否三级节点
+      curNodeLevel: '' //当前选中节点级别
     }
   },
   methods: {
@@ -200,12 +201,7 @@ export default {
     handleNodeClick({data, node}) {
       this.editForm = {...data}
       this.compareData = {...data}
-      if (node.level == 3) {
-        this.isThirdNode = true
-      } else {
-        this.isThirdNode = false
-      }
-
+      this.curNodeLevel = node.level
       // 获取筛选条件,暂时无固定条件筛选功能
       // this.getSelectedFilters()
     },
