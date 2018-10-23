@@ -20,6 +20,17 @@
       @reset="handleReset"
     >
       <template slot="search">
+        <el-form-item label="申请时间">
+          <el-date-picker
+            @change="setTime"
+            value-format="yyyy-MM-dd"
+            v-model="dateRange"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+        </el-form-item>
         <el-form-item label="后台类目" prop="catalogId">
           <back-end-category-select @change="handleSelect('catalogId', $event)" ref="catalogId"></back-end-category-select>
         </el-form-item>
@@ -142,23 +153,13 @@ export default {
           label: '商品名称',
           $id: 'name',
           $type: 'input'
-        },
-        {
-          $el: {
-            type: 'daterange',
-            startPlaceholder: '开始日期',
-            endPlaceholder: '结束日期',
-            valueFormat: 'yyyy-MM-dd'
-          },
-          label: '申请时间',
-          $id: 'name',
-          $type: 'datePicker'
         }
       ],
       operationAttrs: {
         fixed: 'right',
         minWidth: 150
       },
+      dateRange: '',
       customQuery: {
         catalogId: '',
         pcApplyStart: '',
@@ -176,6 +177,15 @@ export default {
       //   {return}
       // }
       this.customQuery[type] = ids[ids.length - 1]
+    },
+    setTime() {
+      this.customQuery.pcApplyStart = this.dateRange[0]
+      this.customQuery.pcApplyEnd = this.dateRange[1]
+    },
+    handleReset() {
+      this.customQuery.startDate = ''
+      this.customQuery.endDate = ''
+      this.dateRange = []
     }
   },
   async asyncData({app}) {},
