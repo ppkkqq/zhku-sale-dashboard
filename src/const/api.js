@@ -161,6 +161,8 @@ export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
 // 商品审核
 export const getNeedCheckPcItem =
   PRODUCT_CENTER + '/manager/pcItems/getNeedCheckPcItem'
+export const getNeedCheckPcById =
+  PRODUCT_CENTER + '/manager/pcItems/getNeedCheckPcById'
 
 // 源通币
 export const currency = ACCOUNT_CENTER + '/admin/currency'
