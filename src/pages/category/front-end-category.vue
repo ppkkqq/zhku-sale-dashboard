@@ -48,6 +48,8 @@
         <el-form-item>
           <el-button type="primary"
                      @click="updateNode">保存</el-button>
+          <el-button type="normal"
+                     @click="resetNode">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -67,20 +69,18 @@
     </template>
 
     <!--设置筛选条件-->
-    <!--<template slot="detail">-->
-      <!--<el-card-->
-        <!--class="box-card"-->
-        <!--header="设置筛选条件"-->
-      <!--&gt;-->
-        <!--<bind-attribute-filter-->
-          <!--:canAdd="canAdd"-->
-          <!--:node="editForm"-->
-          <!--:props="defaultProps"-->
-          <!--:selectedFilters="selectedFilters"-->
-        <!--&gt;</bind-attribute-filter>-->
-
-      <!--</el-card>-->
-    <!--</template>-->
+    <!-- <template slot="detail">
+      <el-card
+        class="box-card"
+        header="设置筛选条件">
+        <bind-attribute-filter
+          :canAdd="canAdd"
+          :node="editForm"
+          :props="defaultProps"
+          :selectedFilters="selectedFilters">
+        </bind-attribute-filter>
+      </el-card>
+    </template> -->
 
     <!-- 新增节点 -->
     <template slot="create">
@@ -240,6 +240,9 @@ export default {
           )
         }
       })
+    },
+    resetNode() {
+      this.editForm = {...this.compareData}
     },
     addNode() {
       this.$refs.newForm.validate(valid => {
