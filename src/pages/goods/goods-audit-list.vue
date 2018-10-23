@@ -57,7 +57,7 @@ export default {
     let extraParams = {}
     return {
       pageName: 'goods-list',
-      url: goodsLists, //getNeedCheckPcItem,
+      url: getNeedCheckPcItem, //goodsLists, //
       columns: [
         {
           prop: 'code',
