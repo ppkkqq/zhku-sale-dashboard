@@ -1,139 +1,116 @@
 <template>
-  <floor-tree ref='tree'
-              :url="url"
-              :add-node-button-filter="addNodeButtonFilter"
-              :delete-node-button-filter="deleteNodeButtonFilter"
-              :change-visible="changeVisible"
-              @node-click="handleNodeClick"
-              @setAddType="setAddType"
-              @clear-node="handleClearNode">
-    <div v-if="editType || addType">
-      <!-- 新增修改节点 -->
-      <el-card
+  <el-crud-tree
+    ref='tree'
+    class="front-end-category"
+    :url="url"
+    :add-node-button-filter="addNodeButtonFilter"
+    :delete-node-button-filter="deleteNodeButtonFilter"
+    :change-visible="changeVisible"
+    @node-click="handleNodeClick"
+    @clear-node="handleClearNode">
+    <!-- 修改节点 -->
+    <el-card
 
-        class="box-card"
-        header="类目编辑">
-        <el-form :model="editForm"
-                 :rules="editFormRules"
-                 :disabled="!editForm.id"
-                 ref="editForm"
-                 label-width="100px"
-                 class="demo-editForm">
-          <el-form-item label="父级节点"
-                        prop="name">
-            <el-input disabled v-model="editForm.parentName"></el-input>
-          </el-form-item>
-          <el-form-item label="节点名称"
-                        prop="name">
-            <el-input v-model="editForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="描述"
-                        prop="description">
-            <el-input v-model="editForm.description"></el-input>
-          </el-form-item>
-
-          <!--<el-form-item label="是否末级类目"-->
-          <!--prop="isLeaf">-->
-          <!--<el-radio-group v-model="editForm.isLeaf"-->
-          <!--:disabled="hasChildren || editForm.hasAttributeGroups">-->
-          <!--<el-radio label="1">是</el-radio>-->
-          <!--<el-radio label="0">否</el-radio>-->
-          <!--</el-radio-group>-->
-          <!--</el-form-item>-->
-
-          <el-form-item label="分类图标"
-                        prop="displayUrl">
-            <upload-to-ali @load="onUpLoadFile($event)"
-                           accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="editForm.displayUrl">
-            </upload-to-ali>
-            <!--<div class="el-form-item__warning">-->
-            <!--建议尺寸：26*34，仅支持png格式，图片大小1M以内。-->
-            <!--</div>-->
-          </el-form-item>
-
-          <el-form-item label="广告图"
-                        prop="displayUrl">
-            <!--<div class="el-form-item__warning">-->
-            <!--建议尺寸：1190*109，显示在楼层底部位置-->
-            <!--</div>-->
-            <upload-to-ali @load="onUpLoadFile($event, 'editForm')"
-                           accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="editForm.displayUrl">
-            </upload-to-ali>
-            <el-input placeholder="请输入广告位地址" v-model.trim="editForm.displayUrl"></el-input>
-            <el-button><a :href="editForm.displayUrl" target="_blank">测试</a></el-button>
-            <!--<div class="el-form-item__warning">-->
-            <!--建议尺寸：215*605，显示在楼层左侧位置-->
-            <!--</div>-->
-          </el-form-item>
-          <!--<el-form-item label="关联类目"-->
-          <!--prop="name">-->
-          <!--<el-input v-model="editForm.name"></el-input>-->
-          <!--</el-form-item>-->
-          <el-form-item>
-            <el-button type="primary"
-                       @click="updateNode">保存</el-button>
-            <el-button type="normal"
-                       @click="resetNode">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
-
-      <!-- 挂载后台类目 -->
-      <template>
-        <el-card class="box-card"
-                 header="推荐商品">
-          <bind-backend-category
-            :data="backendTree"
-            :canAdd="canAdd"
-            :baseUrl="bindBackendUrl"
-            :node="editForm"
-            @save="setNode"
-            :props="defaultProps" />
-        </el-card>
-      </template>
-    </div>
-    <div v-else>
-      <el-card
-
-        class="box-card"
-        header="类目编辑">
-        <el-form :model="editForm"
-                 :rules="editFormRules"
-                 :disabled="!editForm.id"
-                 ref="editForm"
-                 label-width="100px"
-                 class="demo-editForm">
-          <el-form-item label="父级节点"
-                        prop="name">
-            <el-input disabled v-model="editForm.parentName"></el-input>
-          </el-form-item>
-          <el-form-item label="楼层名称"
-                        prop="name">
-            <el-input v-model="editForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="描述"
-                        prop="description">
-            <el-input v-model="editForm.description"></el-input>
-          </el-form-item>
-
-          <el-form-item label="关联类目"
-          prop="name">
+      class="box-card"
+      header="类目编辑">
+      <el-form :model="editForm"
+               :rules="editFormRules"
+               :disabled="!editForm.id"
+               ref="editForm"
+               label-width="100px"
+               class="demo-editForm">
+        <el-form-item label="父级节点"
+                      prop="name">
+          <el-input disabled v-model="editForm.parentName"></el-input>
+        </el-form-item>
+        <el-form-item label="节点名称"
+                      prop="name">
           <el-input v-model="editForm.name"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary"
-                       @click="updateNode">保存</el-button>
-            <el-button type="normal"
-                       @click="resetNode">重置</el-button>
-          </el-form-item>
-        </el-form>
+        </el-form-item>
+        <el-form-item label="描述"
+                      prop="description">
+          <el-input v-model="editForm.description"></el-input>
+        </el-form-item>
+
+        <!--<el-form-item label="是否末级类目"-->
+        <!--prop="isLeaf">-->
+        <!--<el-radio-group v-model="editForm.isLeaf"-->
+        <!--:disabled="hasChildren || editForm.hasAttributeGroups">-->
+        <!--<el-radio label="1">是</el-radio>-->
+        <!--<el-radio label="0">否</el-radio>-->
+        <!--</el-radio-group>-->
+        <!--</el-form-item>-->
+
+        <el-form-item label="分类图标"
+                      prop="displayUrl">
+          <upload-to-ali @load="onUpLoadFile($event)"
+                         accept="image/png, image/jpeg, image/jpg"
+                         :fileUrl="editForm.displayUrl">
+          </upload-to-ali>
+          <!--<div class="el-form-item__warning">-->
+          <!--建议尺寸：26*34，仅支持png格式，图片大小1M以内。-->
+          <!--</div>-->
+        </el-form-item>
+
+        <el-form-item label="广告图"
+                      prop="displayUrl">
+          <!--<div class="el-form-item__warning">-->
+          <!--建议尺寸：1190*109，显示在楼层底部位置-->
+          <!--</div>-->
+          <upload-to-ali @load="onUpLoadFile($event, 'editForm')"
+                         accept="image/png, image/jpeg, image/jpg"
+                         :fileUrl="editForm.displayUrl">
+          </upload-to-ali>
+          <el-input placeholder="请输入广告位地址" v-model.trim="editForm.displayUrl"></el-input>
+          <el-button><a :href="editForm.displayUrl" target="_blank">测试</a></el-button>
+          <!--<div class="el-form-item__warning">-->
+          <!--建议尺寸：215*605，显示在楼层左侧位置-->
+          <!--</div>-->
+        </el-form-item>
+        <!--<el-form-item label="关联类目"-->
+        <!--prop="name">-->
+        <!--<el-input v-model="editForm.name"></el-input>-->
+        <!--</el-form-item>-->
+        <el-form-item>
+          <el-button type="primary"
+                     @click="updateNode">保存</el-button>
+          <el-button type="normal"
+                     @click="resetNode">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+
+    <!-- 挂载后台类目 -->
+    <template>
+      <el-card class="box-card"
+               header="挂载后台类目">
+        <bind-backend-category
+          :data="backendTree"
+          :canAdd="canAdd"
+          :baseUrl="bindBackendUrl"
+          :node="editForm"
+          @save="setNode"
+          :props="defaultProps" />
       </el-card>
-    </div>
+    </template>
+
+    <!--设置筛选条件-->
+    <!--<template slot="detail">-->
+    <!--<el-card-->
+    <!--class="box-card"-->
+    <!--header="设置筛选条件"-->
+    <!--&gt;-->
+    <!--<bind-attribute-filter-->
+    <!--:canAdd="canAdd"-->
+    <!--:node="editForm"-->
+    <!--:props="defaultProps"-->
+    <!--:selectedFilters="selectedFilters"-->
+    <!--&gt;</bind-attribute-filter>-->
+
+    <!--</el-card>-->
+    <!--</template>-->
+
     <!-- 新增节点 -->
-    <!--新增子楼层-->
-    <!--新增楼层-->
     <template slot="create">
       <el-form :model="newForm"
                :rules="newFormRules"
@@ -146,6 +123,16 @@
         <el-form-item label="描述"
                       prop="description">
           <el-input v-model="newForm.description"></el-input>
+        </el-form-item>
+        <el-form-item label="图片"
+                      prop="displayUrl">
+          <upload-to-ali @load="onUpLoadFile($event, 'newForm')"
+                         accept="image/png, image/jpeg, image/jpg"
+                         :fileUrl="newForm.displayUrl">
+          </upload-to-ali>
+          <div class="el-form-item__warning">
+            建议尺寸：128*128，仅支持jpg,png格式，图片大小1M以内。
+          </div>
         </el-form-item>
 
         <el-form-item label="是否末级类目"
@@ -162,14 +149,12 @@
       </el-form>
     </template>
 
-  </floor-tree>
+  </el-crud-tree>
 </template>
 
 <script>
-import floorTree from '@/components/floor-tree/floor-tree'
-import AttributeGroupTable from '@/components/category/attribute-group-table'
-import uploadToAli from 'upload-to-ali'
-// import {backendCatalogBaseUrl} from '@/const/api'
+import ElCrudTree from '@/components/floor-tree/el-crud-tree'
+import UploadToAli from 'upload-to-ali'
 import {
   frontendCatalogBaseUrl,
   backendCatalogBaseUrl,
@@ -179,14 +164,14 @@ import {
 } from '@/const/api'
 import BindBackendCategory from '@/components/category/bind-backend-category'
 import BindAttributeFilter from '@/components/category/bind-attribute-filter'
+
 export default {
-  name: 'back-end-category',
+  name: 'front-end-category',
   components: {
+    ElCrudTree,
+    UploadToAli,
     BindBackendCategory,
-    BindAttributeFilter,
-    uploadToAli,
-    floorTree,
-    AttributeGroupTable
+    BindAttributeFilter
   },
   data() {
     const checkName = (rule, value, callback) => {
@@ -200,29 +185,21 @@ export default {
       }
     }
     return {
-      addType: true,
-      editType: true,
-      //true 表示 Root   false 表示Children
-
+      pageName: 'front-end-category',
+      url: `/mall-deepexi-mall-config-api/api/v1/floor/allFloor`,
+      bindBackendUrl: bindBackendUrl,
+      backendTree: [],
       defaultProps: {
         children: 'children',
         label: 'name'
       },
-      pageName: 'back-end-category',
-      bindBackendUrl: bindBackendUrl,
-      url: backendCatalogBaseUrl,
       editFormRules: {
         name: [{required: true, message: '请输入类目名称', trigger: 'blur'}]
       },
-      backendTree: [],
-      advertisingUrl: '',
       editForm: {
         name: '',
         description: '',
-        isLeaf: '1',
-        displayUrl: '',
-        children: [],
-        parentName: ''
+        isLeaf: '1'
       },
       newFormRules: {
         name: [{required: true, trigger: 'blur', validator: checkName}]
@@ -230,24 +207,15 @@ export default {
       newForm: {
         name: '',
         description: '',
-        displayUrl: '',
         isLeaf: '1'
       },
 
-      compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
-      isRoot: true
+      selectedFilters: [],
+
+      compareData: {} // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
     }
   },
   methods: {
-    onUpLoadFile(event, edit) {
-      console.log(event)
-      this.editForm.displayUrl = event
-    },
-    loadBackendTree() {
-      this.$axios.$get(`${backendCatalogBaseUrl}/tree`).then(result => {
-        this.backendTree = result.payload
-      })
-    },
     //树形
     addNodeButtonFilter(node, data) {
       return data.isLeaf === '1'
@@ -255,41 +223,29 @@ export default {
     deleteNodeButtonFilter(node, data) {
       return !node.isLeaf
     },
-    setAddType(type) {
-      this.addType = type
-      this.editType = !type
-      console.log(this.addType ? '新建根' : '新建子')
-    },
-    handleNodeClick({data, node, editType}) {
-      console.log(editType)
-      this.editType = editType
-      this.addType = !editType
-      console.log(this.editType ? '编辑根' : '编辑子')
+    handleNodeClick({data, node}) {
       this.editForm = {...data}
       this.compareData = {...data}
 
-      let hasAttributeGroups =
-        this.editForm.attributeGroups &&
-        this.editForm.attributeGroups.length > 0
-
-      this.$set(this.editForm, 'hasAttributeGroups', hasAttributeGroups)
+      // 获取筛选条件
+      this.getSelectedFilters()
     },
     handleClearNode() {
       this.editForm = {}
       this.compareData = {}
+      this.selectedFilters = []
     },
     changeVisible(val) {
       //弹窗出现或者消失
       this.newForm = {
-        parentId: '',
-        parentName: '',
         name: '',
-        displayUrl: '',
         description: '',
         isLeaf: '1'
       }
     },
-    //点击保存保存表单是触发
+    setNode(data) {
+      this.$refs.tree.mergeNode(this.editForm.id, data)
+    },
     updateNode() {
       // 新增节点保存成功
       const done = payload => {
@@ -300,12 +256,13 @@ export default {
 
       this.$refs.editForm.validate(valid => {
         if (valid) {
-          const {id, name, description, isLeaf} = this.editForm
+          const {id, name, description, isLeaf, displayUrl} = this.editForm
           this.$refs.tree.updateNode(
             {
               id,
               name,
               description,
+              displayUrl,
               isLeaf
             },
             done
@@ -313,30 +270,39 @@ export default {
         }
       })
     },
-    resetNode() {
-      this.editForm = {...this.compareData}
-    },
-    setNode(data) {
-      // if (data.attributeGroups && data.attributeGroups.length > 0) {
-      //   this.$set(this.editForm, 'hasAttributeGroups', true)
-      // } else {
-      //   this.$set(this.editForm, 'hasAttributeGroups', false)
-      // }
-      this.$refs.tree.mergeNode(this.editForm.id, data)
-    },
     addNode() {
-      // this.isRoot=true
       this.$refs.newForm.validate(valid => {
         if (valid) {
-          const {name, description, isLeaf} = this.newForm
           this.$refs.tree.addNode({
-            name,
-            description,
-            isLeaf
+            ...this.newForm
           })
         }
       })
+    },
+    //form
+    onUpLoadFile(value, key) {
+      this.$set(this[key], 'displayUrl', value)
+    },
+    //detail
+    loadBackendTree() {
+      this.$axios.$get(`${backendCatalogBaseUrl}/tree`).then(result => {
+        this.backendTree = result.payload
+      })
+    },
+
+    // 获取筛选条件
+    async getSelectedFilters() {
+      // let url = selectedFilterCondition + `?preCategoryId=${this.editForm.id}`
+      //
+      // try {
+      //   let resp = await this.$axios.$get(url)
+      //   let data = resp.payload || []
+      //   this.selectedFilters = data
+      // } catch (e) {}
     }
+  },
+  mounted: function() {
+    this.loadBackendTree()
   },
   computed: {
     hasChildren() {
@@ -353,16 +319,37 @@ export default {
 
       return !!this.editForm.id
     }
-  },
-  mounted: function() {
-    this.loadBackendTree()
   }
 }
 </script>
 
-<style lang="stylus" scoped>
-  .back-end-category {
+<style lang="stylus">
+  .front-end-category {
     display: flex;
+
+    .el-form-item__warning {
+      color: #dcdcdc;
+      font-size: 12px;
+      line-height: 1;
+      padding-top: 4px;
+      position: absolute;
+      top: 100%;
+      left: 0;
+    }
+
+    .upload-to-ali {
+      text-align: center;
+
+      .upload-img-box {
+        display: flex;
+        width: 60px;
+        height: 60px;
+
+        .upload-img {
+          margin: auto;
+        }
+      }
+    }
 
     .box-card {
       height: 100%;

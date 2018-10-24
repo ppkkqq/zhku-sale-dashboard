@@ -8,7 +8,7 @@
         <el-button-group size="small">
           <el-button type="primary"
                      size="small"
-                     @click="() => append(true)"
+                     @click="() => append()"
                      icon="el-icon-edit">新建根</el-button>
           <el-button type="primary"
                      size="small"
@@ -49,7 +49,7 @@
             <el-button type="text"
                        size="mini"
                        :disabled="addNodeButtonFilter?addNodeButtonFilter(node,data):false"
-                       @click="() => append(false)">
+                       @click="() => append(data)">
               {{createNodeTitle}}
             </el-button>
             <el-button type="text"
@@ -119,8 +119,10 @@ export default {
         node: this.$refs.tree.getCurrentNode()
       })
     },
-    append(type) {
-      this.$emit('setAddType', type)
+    append(data) {
+      this.createType = data ? 'addChild' : 'addRoot'
+      this.$emit('create-type', this.createType)
+      this.dialogFormVisible = true
       return false
     },
     remove(node, data) {
