@@ -126,3 +126,8 @@ export const columns = [
     formatter: row => statusOpts[row.status]
   }
 ]
+
+export const AUDIT = 'AUDIT'
+export const RECEIVING = 'RECEIVING'
+export const REFUND = 'REFUND'
+export const RETURN = 'RETURN'
