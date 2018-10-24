@@ -172,7 +172,7 @@ export const address =
   MEMBER_CENTER + `/mcDeliveryAddress/getUserDeliveryAddressInfo`
 export const collect = MEMBER_CENTER + `/mcItemCollects/getUserCollectInfo`
 export const browserHistory =
-  MEMBER_CENTER + `/mcMemberAccounts/getUserBrowseInfo`
+  MEMBER_CENTER + `/mcMemberBrowse/getUserBrowseInfo`
 export const memberBaseInfo =
   MEMBER_CENTER + `/mcMemberAccounts/getUserBasicInfo`
 
