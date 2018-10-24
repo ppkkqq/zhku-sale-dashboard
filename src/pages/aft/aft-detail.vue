@@ -108,7 +108,7 @@
           :extraParams="extraParams"
         ></el-data-table>
       </card-table>
-      <card-table header="退货商品">
+      <!-- <card-table header="退货商品">
         <el-table :data="skuTableData || []" border="">
           <el-table-column label="商品" width="300">
             <img
@@ -137,7 +137,7 @@
           :hasPagination="false"
           :extraParams="extraParams"
         ></el-data-table>-->
-      </card-table>
+      </card-table> -->
       <card-table header="验货结果" v-if="type != REFUND">
         <table-info :table="aftAudit"></table-info>
       </card-table>
@@ -172,6 +172,8 @@ export default {
       //     desc: '还没提车'
       //   }
       // ],
+      REFUND: REFUND,
+      RETURN: RETURN,
       url: '',
       extraParams: {},
       detail: {},
@@ -230,7 +232,7 @@ export default {
         {prop: 'quantity', label: '数量'},
         {prop: 'itemMoney', label: '单价'},
         {
-          prop: 'payMoney',
+          prop: 'sum',
           label: '小计',
           formatter: row => price(row.quantity * row.itemMoney)
         },
