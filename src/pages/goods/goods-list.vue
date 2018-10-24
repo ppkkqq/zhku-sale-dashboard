@@ -92,6 +92,7 @@ export default {
         {
           prop: 'shelf',
           label: '上架/下架',
+          minWidth: '100',
           formatter: row => {
             return row.onCount + '/' + row.offCount
           }
