@@ -125,7 +125,7 @@
             :key="index"
           ></el-table-column>
         </el-table>
-        <!-- <el-data-table
+        <el-data-table
           ref="dataTable"
           :url="url"
           :columns="returnGoodsColumns"
@@ -136,7 +136,7 @@
           :isTree="false"
           :hasPagination="false"
           :extraParams="extraParams"
-        ></el-data-table>-->
+        ></el-data-table>
       </card-table> -->
       <card-table header="验货结果" v-if="type != REFUND">
         <table-info :table="aftAudit"></table-info>
