@@ -41,6 +41,7 @@
                v-on="$listeners"
                v-bind="$attrs"
                node-key='id'
+               :props="{children: 'secondFloors',label: 'name'}"
                :filter-node-method="filterNode">
         <span class="custom-tree-node"
               slot-scope="{ node, data }">
@@ -64,6 +65,7 @@
     </div>
 
     <el-dialog :title="createNodeTitle"
+               width="70%"
                :visible.sync="dialogFormVisible">
       <slot></slot>
     </el-dialog>
@@ -120,8 +122,12 @@ export default {
       })
     },
     append(data) {
+      console.log(data)
       this.createType = data ? 'addChild' : 'addRoot'
       this.$emit('create-type', this.createType)
+      if (data) {
+        this.$emit('createData', data.id, data.name)
+      }
       this.dialogFormVisible = true
       return false
     },

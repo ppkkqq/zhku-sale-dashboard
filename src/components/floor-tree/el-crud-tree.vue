@@ -13,6 +13,7 @@
                  :deleteNodeButtonFilter="deleteNodeButtonFilter"
                  @create-type="setStatus"
                  @node-sort="handleSortNode"
+                 @createData="createData"
                  @remove-node="handleRemoveNode">
         <slot name='create'></slot>
       </crud-tree>
@@ -94,11 +95,15 @@ export default {
     }
   },
   methods: {
+    createData(id, name) {
+      this.$emit('createData', id, name)
+    },
     async loadTree() {
       this.loading = true
       try {
-        const data = await this.$axios.$get(`${this.url}`)
+        const data = await this.$axios.$get(`${this.url}/allFloor`)
         this.tree = property(this.dataPath)(data)
+        console.log(this.tree)
       } catch (error) {
       } finally {
         this.loading = false
@@ -116,6 +121,7 @@ export default {
     },
     setStatus(type) {
       this.status = type
+      this.$emit('create-type', type)
     },
 
     addChild(node) {
@@ -130,14 +136,16 @@ export default {
     },
 
     //新增
-    async addNode(data) {
+    async addNode(data, url) {
+      //新增节点发送相关相求
       this.loading = true
       try {
         if (this.status === 'addChild') {
           data.parentId = this.currentKey
         }
-        const {payload} = await this.$axios.$post(this.url, data)
-        this[this.status](payload)
+        const {payload} = await this.$axios.$post(url, data)
+        this.loadTree()
+        // this[this.status](payload)
         this.$refs.tree.hideDialogForm()
         this.loading = false
         this.clearCurrent()
@@ -276,7 +284,10 @@ export default {
       //从表单数据中获取id
       const id = formData.id
       try {
-        const {payload} = await this.$axios.$put(`${this.url}/${id}`, formData)
+        const {payload} = await this.$axios.$post(
+          `${this.url}/createFloor`,
+          formData
+        )
         //更新成功后更新tree节点数据
         this.mergeNode(id, formData)
       } catch (error) {
