@@ -48,14 +48,6 @@ export const skusOff = id => {
   return fakeProductCenter + `/seller/items/${id}/skus/off`
 }
 
-//后台类目树
-
-export const prdCatalogs = PRODUCT_CENTER + '/prdCatalogs/tree'
-export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
-export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
-export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
-export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
-
 // 会员信息
 export const mcMemberInfos = MEMBER_CENTER + '/mcMemberAccounts'
 
@@ -182,3 +174,10 @@ export const frontendCatalogDetail = id =>
   PRODUCT_CENTER + `/pcPrecategorys/${id}`
 export const frontendCatalogBaseUrl = PRODUCT_CENTER + `/pcPrecategorys`
 export const bindBackendUrl = PRODUCT_CENTER + `/pcPrecategoryCatalogs`
+
+//后台类目树
+export const prdCatalogs = PRODUCT_CENTER + '/prdCatalogs/tree'
+export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
+export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
+export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
+export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
