@@ -1,7 +1,7 @@
 <template>
   <el-crud-tree
     ref='tree'
-    class="front-end-category"
+    class="floor-management"
     :url="url"
     :add-node-button-filter="addNodeButtonFilter"
     :delete-node-button-filter="deleteNodeButtonFilter"
@@ -84,10 +84,10 @@
       <template>
         <el-card class="box-card"
                  header="推荐商品">
-          <bind-frontend-category
-            :data="frontendTree"
+          <backend-category-goods-list
+            :data="backendTree"
             :canAdd="canAdd"
-            :baseUrl="bindFrontendUrl"
+            :baseUrl="bindBackendUrl"
             :node="editForm"
             @save="setNode"
             :props="defaultProps" />
@@ -191,10 +191,10 @@
         <template>
           <el-card class="box-card"
                    header="推荐商品">
-            <bind-frontend-category
-              :data="frontendTree"
+            <backend-category-goods-list
+              :data="backendTree"
               :canAdd="canAdd"
-              :baseUrl="bindFrontendUrl"
+              :baseUrl="bindBackendUrl"
               :node="newForm"
               @save="setNode"
               :props="defaultProps" />
@@ -245,22 +245,26 @@
 import ElCrudTree from '@/components/floor-tree/el-crud-tree'
 import UploadToAli from 'upload-to-ali'
 import {
-  frontendCatalogBaseUrl,
+  backendCatalogBaseUrl,
+  // frontendCatalogBaseUrl,
   selectedFilterCondition,
   AllfilterCondition
 } from '@/const/api'
 
 import BindAttributeFilter from '@/components/category/bind-attribute-filter'
-import BindFrontendCategory from '../components/category/bind-frontend-category'
+
+//这个组件 bind-frontend-category  用来显示楼层关联的类目
+// import BindFrontendCategory from '../components/category/bind-frontend-category'
+import BackendCategoryGoodsList from '../components/category/backend-category-goods-list'
 
 export default {
-  name: 'front-end-category',
+  name: 'floor-management',
   components: {
-    BindFrontendCategory,
     ElCrudTree,
     UploadToAli,
-    BindFrontendCategory,
-    BindAttributeFilter
+    // BindFrontendCategory,   //   前台类目  用于楼层关联
+    BindAttributeFilter,
+    BackendCategoryGoodsList //后台商品  返回商品列表   用于一级楼层 推荐
   },
   data() {
     const checkName = (rule, value, callback) => {
@@ -276,11 +280,12 @@ export default {
     return {
       isAddRoot: false,
       isEditRoot: true,
-      pageName: 'front-end-category',
+      pageName: 'floor-management',
       url: `/mall-deepexi-mall-config-api/api/v1/floor`,
       // bindBackendUrl: bindBackendUrl,
-      bindFrontendUrl: '/mall-deepexi-mall-config-api/api/v1/floor',
-      frontendTree: [],
+      // bindFrontendUrl: '/mall-deepexi-mall-config-api/api/v1/floor',
+      bindBackendUrl: '/mall-deepexi-mall-config-api/api/v1/floor',
+      backendTree: [],
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -458,9 +463,9 @@ export default {
       this.$set(this[key], type, value)
     },
     //detail
-    loadFrontendTree() {
-      this.$axios.$get(`${frontendCatalogBaseUrl}/tree`).then(result => {
-        this.frontendTree = result.payload
+    loadBackendTree() {
+      this.$axios.$get(`${backendCatalogBaseUrl}/tree`).then(result => {
+        this.backendTree = result.payload
       })
     },
 
@@ -476,7 +481,7 @@ export default {
     }
   },
   mounted: function() {
-    this.loadFrontendTree()
+    this.loadBackendTree()
   },
   watch: {
     // newForm (val){
@@ -503,7 +508,7 @@ export default {
 </script>
 
 <style lang="stylus">
-  .front-end-category {
+  .floor-management {
     display: flex;
 
     .el-form-item__warning {

@@ -110,7 +110,7 @@ export default {
       }
     },
     async loadNodeDetail(id) {
-      if (this.idMap[id]._loaded) return
+      // if (this.idMap[id]._loaded) return
 
       this.loading = true
 
