@@ -1,24 +1,44 @@
 <template>
   <div :class="pageName">
-    <el-data-table ref="dataTable"
-                   :url="url"
-                   :columns="columns"
-                   :hasNew="false"
-                   :hasEdit="false"
-                   :hasDelete="false"
-                   :hasOperation="true"
-                   :isTree="false"
-                   :hasPagination="true"
-                   :extraButtons="extraButtons"
-                   :operationAttrs="operationAttrs"
-                   dataPath="payload.list"
-                   totalPath="payload.total"
-                   :searchForm="searchForm">
+    <el-data-table
+      ref="dataTable"
+      :url="url"
+      :columns="columns"
+      :hasNew="false"
+      :hasEdit="false"
+      :hasDelete="false"
+      :hasOperation="true"
+      :isTree="false"
+      :hasPagination="true"
+      :extraButtons="extraButtons"
+      :operationAttrs="operationAttrs"
+      data-path="payload.list"
+      totalPath="payload.total"
+      :searchForm="searchForm"
+      :customQuery="customQuery"
+      @reset="handleReset"
+    >
+      <template slot="search">
+        <!--//下单时间-->
+        <el-form-item label="下单时间">
+          <el-date-picker
+            @change="setTime"
+            value-format="yyyy-MM-dd"
+            v-model="dateRange"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+        </el-form-item>
+      </template>
     </el-data-table>
-    <el-dialog title="审核退款"
-               :visible.sync="dialogVisible"
-               class="verify-dialog"
-               :before-close="beforeClose">
+    <el-dialog
+      title="审核退款"
+      :visible.sync="dialogVisible"
+      class="verify-dialog"
+      :before-close="beforeClose"
+    >
       <el-form ref="comboForm" :model="reviewForm" label-width="120px" :rules="reviewRules">
         <el-form-item label="审核" prop="approve">
           <el-radio-group v-model="reviewForm.approve">
@@ -27,7 +47,13 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注信息" prop="rejectRemark">
-          <el-input v-model="reviewForm.rejectRemark" placeholder="请输入" type="textarea" :rows="2" resize="none"></el-input>
+          <el-input
+            v-model="reviewForm.rejectRemark"
+            placeholder="请输入"
+            type="textarea"
+            :rows="2"
+            resize="none"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -76,6 +102,11 @@ export default {
           }
         }
       ],
+      dateRange: '',
+      customQuery: {
+        startDate: '',
+        endDate: ''
+      },
       searchForm,
       reviewRow: {}
     }
@@ -101,6 +132,15 @@ export default {
     }
   },
   methods: {
+    setTime() {
+      this.customQuery.startDate = this.dateRange[0]
+      this.customQuery.endDate = this.dateRange[1]
+    },
+    handleReset() {
+      this.customQuery.startDate = ''
+      this.customQuery.endDate = ''
+      this.dateRange = []
+    },
     go2Detail(row) {
       //查看
       this.$router.push(`${aftDetail}?refundId=${row.id}`)

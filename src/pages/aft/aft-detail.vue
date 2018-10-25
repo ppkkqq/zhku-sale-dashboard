@@ -2,16 +2,17 @@
   <div class="refund-detail">
     <el-card shadow="never" class="border-0">
       <div slot="header">
-        <h2 class="bar-left">退货详情
+        <h2 class="bar-left">
+          {{type == REFUND ? '退款详情' : '退货退款详情'}}
           <go-back class="ml-2"></go-back>
         </h2>
         <h2>
           订单状态：
-          <span class="red">{{toOptionsLabel(this.trade.status, orderStatusOptions)}}</span>
+          <span class="red">{{toOptionsLabel(this.trade.orderStatus, orderStatusOptions)}}</span>
         </h2>
       </div>
-      <h3 class="mb-1">退款流转过程</h3>
-      <el-steps :active="3" align-center>
+      <h3 class="mb-1">{{type == REFUND ? '退款流转过程' : '退货流转过程'}}</h3>
+      <el-steps :active="3" align-center v-if="type != REFUND">
         <el-step title="提交订单" description></el-step>
         <el-step title="商家审核通过" description></el-step>
         <el-step title="买家寄回货物" description></el-step>
@@ -19,11 +20,17 @@
         <el-step title="验收货物" description></el-step>
         <el-step title="已完成" description></el-step>
       </el-steps>
+      <el-steps :active="3" align-center v-if="type == REFUND">
+        <el-step title="提交申请" description></el-step>
+        <el-step title="商家审核通过" description></el-step>
+        <el-step title="退款已受理" description></el-step>
+      </el-steps>
       <card-table>
-        <table-info :table="orderInfoTable"></table-info>
+        <table-info :table="orderInfoTableForReturn" v-if="type != REFUND"></table-info>
+        <table-info :table="orderInfoTableForRefund" v-if="type == REFUND"></table-info>
       </card-table>
       <div class="refund-table-info">
-        <card-table header="退货人信息">
+        <card-table header="退款人信息" v-if="type == REFUND">
           <table class="table-info-one-column">
             <tbody>
               <tr v-for="(tr,index) in customerInfoTable" :key="index">
@@ -32,7 +39,18 @@
                   <td class="value">{{tr.value}}</td>
                 </template>
               </tr>
-              <slot></slot>
+            </tbody>
+          </table>
+        </card-table>
+        <card-table header="退货人信息" v-if="type != REFUND">
+          <table class="table-info-one-column">
+            <tbody>
+              <tr v-for="(tr,index) in customerInfoTable" :key="index">
+                <template>
+                  <td class="label">{{tr.label}}</td>
+                  <td class="value">{{tr.value}}</td>
+                </template>
+              </tr>
             </tbody>
           </table>
         </card-table>
@@ -62,7 +80,7 @@
           </table>
         </card-table>
       </div>
-      <card-table header="退货商品">
+      <card-table header="退款商品" v-if="type == REFUND">
         <el-data-table
           ref="dataTable"
           :url="url"
@@ -76,7 +94,51 @@
           :extraParams="extraParams"
         ></el-data-table>
       </card-table>
-      <card-table header="验货结果">
+      <card-table header="退货商品" v-if="type != REFUND">
+        <el-data-table
+          ref="dataTable"
+          :url="url"
+          :columns="returnGoodsColumns"
+          :hasNew="false"
+          :hasEdit="false"
+          :hasDelete="false"
+          :hasOperation="false"
+          :isTree="false"
+          :hasPagination="false"
+          :extraParams="extraParams"
+        ></el-data-table>
+      </card-table>
+      <!-- <card-table header="退货商品">
+        <el-table :data="skuTableData || []" border="">
+          <el-table-column label="商品" width="300">
+            <img
+              :src="productImgUrl"
+              :key="index"
+              style="width:200px;height:200px;margin-right:10px"
+            >
+            {{product.itemName}}
+          </el-table-column>
+          <el-table-column
+            v-for="(item,index) in returnGoodsColumns"
+            :prop="item.prop"
+            :label="item.label"
+            :key="index"
+          ></el-table-column>
+        </el-table>
+        <el-data-table
+          ref="dataTable"
+          :url="url"
+          :columns="returnGoodsColumns"
+          :hasNew="false"
+          :hasEdit="false"
+          :hasDelete="false"
+          :hasOperation="false"
+          :isTree="false"
+          :hasPagination="false"
+          :extraParams="extraParams"
+        ></el-data-table>
+      </card-table> -->
+      <card-table header="验货结果" v-if="type != REFUND">
         <table-info :table="aftAudit"></table-info>
       </card-table>
     </el-card>
@@ -89,7 +151,7 @@ import TableInfo from '@/components/table-info'
 import {refundDetail} from '@/const/api'
 import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
-import {statusOpts} from '@/const/aft'
+import {statusOpts, REFUND, RETURN} from '@/const/aft'
 import GoBack from '@/components/GoBack'
 
 export default {
@@ -102,14 +164,18 @@ export default {
   data() {
     return {
       query: this.$route.query,
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '张三',
-          result: '通过',
-          desc: '还没提车'
-        }
-      ],
+      // tableData: [
+      //   {
+      //     date: '2016-05-02',
+      //     name: '张三',
+      //     result: '通过',
+      //     desc: '还没提车'
+      //   }
+      // ],
+      REFUND: REFUND,
+      RETURN: RETURN,
+      url: '',
+      extraParams: {},
       detail: {},
       statusOpts,
       orderStatusOptions,
@@ -155,139 +221,162 @@ export default {
         {prop: 'description', label: '退款说明'}
       ],
       returnGoodsColumns: [
-        {prop: 'name', label: '序号'},
+        // {prop: 'name', label: '序号'},
+        // {
+        //   prop: 'logoUrl',
+        //   label: '商品',
+        //   formatter: this.logoFormatter,
+        //   width: '300px'
+        // },
+        {prop: 'itemCode', label: '商品编码'},
+        {prop: 'quantity', label: '数量'},
+        {prop: 'itemMoney', label: '单价'},
         {
-          prop: 'logoUrl',
-          label: '商品',
-          formatter: this.logoFormatter,
-          width: '300px'
+          prop: 'sum',
+          label: '小计',
+          formatter: row => price(row.quantity * row.itemMoney)
         },
-        {prop: 'name', label: '商品编码'},
-        {prop: 'alias', label: '数量'},
-        {prop: 'alias', label: '单价'},
-        {prop: 'alias', label: '小计'},
-        {prop: 'alias', label: '实际退款'}
+        {prop: 'payMoney', label: '实际退款'}
       ]
     }
   },
   computed: {
     trade() {
-      return this.detail.outDtoTradeOrder || {}
+      return this.detail || {}
+    },
+    type() {
+      if (this.trade.refundTypeCode && this.trade.refundTypeCode == 1) {
+        return REFUND
+      }
+      return RETURN
     },
     orderInfoTable() {
       //单据信息
       const {
         id,
-        createdAt,
+        description,
+        tradeOrderId,
         memberName,
-        memberPhone,
-        shopName,
-        remark,
-        status,
+        itemMoney = '',
+        discountMoney = '',
+        currency = '',
+        freightMoney = '',
         payMoney = '',
-        maxDeposit = ''
+        actualRefundMoney = ''
       } = this.trade
       const data = {
-        退货单号: '',
-        退货原因: '',
-        订单编号: id,
-        退货说明: '',
-        退款单号: '',
-        会员账号: '',
-        总商品金额: '',
-        优惠金额: price(payMoney),
-        源通币: '',
-        运费: '',
-        实付金额: '',
-        实退款总金额: ''
+        退货单号: id,
+        退货原因: description,
+        订单编号: tradeOrderId,
+        退货说明: description,
+        退款单号: id,
+        会员账号: memberName,
+        总商品金额: price(itemMoney),
+        优惠金额: price(discountMoney),
+        源通币: currency,
+        运费: price(freightMoney),
+        实付金额: price(payMoney),
+        实退款总金额: price(actualRefundMoney)
+      }
+      return Object2Options(data, 'value')
+    },
+    orderInfoTableForReturn() {
+      //单据信息
+      const {
+        id,
+        description,
+        tradeOrderId,
+        memberName,
+        itemMoney = '',
+        discountMoney = '',
+        currency = '',
+        freightMoney = '',
+        payMoney = '',
+        actualRefundMoney = ''
+      } = this.trade
+      const data = {
+        退货单号: id,
+        退货原因: description,
+        订单编号: tradeOrderId,
+        退货说明: description,
+        退款单号: id,
+        会员账号: memberName,
+        总商品金额: price(itemMoney),
+        优惠金额: price(discountMoney),
+        源通币: currency,
+        运费: price(freightMoney),
+        实付金额: price(payMoney),
+        实退款总金额: price(actualRefundMoney)
       }
       return Object2Options(data, 'value')
     },
     customerInfoTable() {
-      // const {
-      //   id,
-      //   createdAt,
-      //   memberName,
-      //   memberPhone,
-      //   shopName,
-      //   remark,
-      //   status,
-      //   payMoney = '',
-      //   maxDeposit = ''
-      // } = this.trade
+      const {memberName, mobile} = this.trade
       const data = {
-        会员账号: '',
-        联系电话: ''
+        会员账号: memberName,
+        联系电话: mobile
       }
       return Object2Options(data, 'value')
     },
     deliveryInfoTable() {
-      // const {
-      //   id,
-      //   createdAt,
-      //   memberName,
-      //   memberPhone,
-      //   shopName,
-      //   remark,
-      //   status,
-      //   payMoney = '',
-      //   maxDeposit = ''
-      // } = this.trade
+      const {
+        logisticsType,
+        logisticsCompany,
+        freightMoney,
+        logisticsCode
+      } = this.trade
       const data = {
-        物流方式: '',
-        快递公司: '',
-        运费: '',
-        物流单号: ''
+        物流方式: logisticsType,
+        快递公司: logisticsCompany,
+        运费: price(freightMoney),
+        物流单号: logisticsCode
       }
       return Object2Options(data, 'value')
     },
     refundInfoTable() {
-      // const {
-      //   id,
-      //   createdAt,
-      //   memberName,
-      //   memberPhone,
-      //   shopName,
-      //   remark,
-      //   status,
-      //   payMoney = '',
-      //   maxDeposit = ''
-      // } = this.trade
+      const {
+        refundType,
+        refundChannel,
+        refundDate,
+        itemMoney,
+        freightMoney,
+        refundMoney
+      } = this.trade
       const data = {
-        退款方式: '',
-        退款渠道: '',
-        退款时间: '',
-        商品总额: '',
-        应支付金额: '',
-        运费金额: ''
+        退款方式: refundType,
+        退款渠道: refundChannel,
+        退款时间: formatDate(refundDate),
+        商品总额: price(itemMoney),
+        应支付金额: price(refundMoney),
+        运费金额: price(freightMoney)
       }
       return Object2Options(data, 'value')
     },
-    products() {
-      //商品，多个，是个数组
-      return this.detail.outDtoTradeOrderLines || []
+    product() {
+      if (this.detail.skuList && this.detail.skuList.length)
+        return this.detail.skuList[0]
+      return {}
     },
-    payment() {
-      return this.detail.outDtoOrderPayments || []
+    productImgUrl() {
+      if (
+        this.detail.skuList &&
+        this.detail.skuList.length &&
+        this.detail.skuList[0].imgUrl
+      )
+        return this.detail.skuList[0].imgUrl.split(',')[0]
+      return ''
     },
     aft() {
-      return this.detail.aftOrders || []
+      return this.detail.returns || []
     },
     aftAudit() {
       // 当订单未审核的时候 退款审核不显示内容
-      let init = {
-        updatedAt: '',
-        updatedBy: '',
-        status: '',
-        rejectRemark: ''
-      }
-      let auditData =
-        this.aft[0] && this.aft[0].status !== 'WAIT_AUDIT' ? this.aft[0] : init
+      const {result, remark, imgUrl, invoiceReturn} = this.aft
       const data = {
-        操作时间: formatDate(auditData.updatedAt),
-        审核人: auditData.updatedBy,
-        审核结果: statusOpts[auditData.status],
-        备注信息: auditData.rejectRemark
+        结果: result,
+        备注: remark,
+        图片: imgUrl,
+        发票是否退回: invoiceReturn
       }
       return Object2Options(data, 'value')
     }

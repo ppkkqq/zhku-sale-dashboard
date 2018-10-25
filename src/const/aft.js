@@ -23,15 +23,23 @@ export const searchForm = [
     $el: {
       placeholder: '请输入'
     },
-    label: '客户手机号',
-    $id: 'memberPhone',
+    label: '售后申请编号',
+    $id: 'refundOrderId',
     $type: 'input'
   },
   {
     $el: {
       placeholder: '请输入'
     },
-    label: '客户姓名',
+    label: '订单编号',
+    $id: 'tradeOrderId',
+    $type: 'input'
+  },
+  {
+    $el: {
+      placeholder: '请输入'
+    },
+    label: '会员账号',
     $id: 'memberName',
     $type: 'input'
   },
@@ -39,9 +47,37 @@ export const searchForm = [
     $el: {
       placeholder: '请输入'
     },
-    label: '退款单号',
-    $id: 'id',
-    $type: 'input'
+    label: '商品来源',
+    $id: 'source',
+    $type: 'select',
+    $options: [
+      {
+        label: '我买网',
+        value: 0
+      },
+      {
+        label: '自营',
+        value: 1
+      }
+    ]
+  },
+  {
+    $el: {
+      placeholder: '请输入'
+    },
+    label: '售后类型',
+    $id: 'refundTypeCode',
+    $type: 'select',
+    $options: [
+      {
+        label: '退款',
+        value: 1
+      },
+      {
+        label: '退货',
+        value: 3
+      }
+    ]
   }
 ]
 export const columns = [
@@ -58,7 +94,7 @@ export const columns = [
     showOverflowTooltip: true
   },
   {
-    prop: 'refundMoney',
+    prop: 'source',
     label: '商品来源',
     minWidth: 180,
     showOverflowTooltip: true
@@ -90,3 +126,8 @@ export const columns = [
     formatter: row => statusOpts[row.status]
   }
 ]
+
+export const AUDIT = 'AUDIT'
+export const RECEIVING = 'RECEIVING'
+export const REFUND = 'REFUND'
+export const RETURN = 'RETURN'

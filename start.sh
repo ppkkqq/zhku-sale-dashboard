@@ -4,7 +4,7 @@ git pull
 docker run --rm \
   -v $PWD:/home \
   -w /home \
-  node:10 sh -c "yarn --registry=https://registry.npm.taobao.org/ && yarn build"
+  node:10 sh -c "yarn --registry=http://nexus.deepexi.top/repository/npm-group/ && yarn build"
 
 #删除容器
 docker rm -f yunding-platform-dashboard &> /dev/null

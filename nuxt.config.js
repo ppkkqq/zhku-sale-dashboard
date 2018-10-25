@@ -89,7 +89,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: '云鼎商城平台管理端',
+    title: '国源通商城平台管理端',
     meta: [
       {charset: 'utf-8'},
       {name: 'viewport', content: 'width=device-width, initial-scale=1'},
@@ -100,7 +100,7 @@ module.exports = {
         rel: 'icon',
         type: 'image/x-icon',
         href:
-          '//gtytoss.oss-cn-hangzhou.aliyuncs.com/platform/logo-1539941787898.png'
+          '//gtytoss.oss-cn-hangzhou.aliyuncs.com/platform/favicon-1540276831210.png'
       }
     ]
   },

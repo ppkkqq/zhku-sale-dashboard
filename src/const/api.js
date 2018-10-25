@@ -55,12 +55,6 @@ export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
 export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
 export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
 export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
-//前台类目树
-export const frontendCatalogTree = PRODUCT_CENTER + '/pcPrecategorys/tree'
-export const frontendCatalogDetail = id =>
-  PRODUCT_CENTER + `/pcPrecategorys/${id}`
-export const frontendCatalogBaseUrl = PRODUCT_CENTER + `/pcPrecategorys`
-export const bindBackendUrl = PRODUCT_CENTER + `/pcPrecategoryCatalogs`
 
 // 会员信息
 export const mcMemberInfos = MEMBER_CENTER + '/mcMemberAccounts'
@@ -168,6 +162,8 @@ export const goodsLists = PRODUCT_CENTER + '/manager/pcItems/plat'
 // 商品审核
 export const getNeedCheckPcItem =
   PRODUCT_CENTER + '/manager/pcItems/getNeedCheckPcItem'
+export const getNeedCheckPcById =
+  PRODUCT_CENTER + '/manager/pcItems/getNeedCheckPcById'
 
 // 源通币
 export const currency = ACCOUNT_CENTER + '/admin/currency'
@@ -177,6 +173,13 @@ export const address =
   MEMBER_CENTER + `/mcDeliveryAddress/getUserDeliveryAddressInfo`
 export const collect = MEMBER_CENTER + `/mcItemCollects/getUserCollectInfo`
 export const browserHistory =
-  MEMBER_CENTER + `/mcMemberAccounts/getUserBrowseInfo`
+  MEMBER_CENTER + `/mcMemberBrowse/getUserBrowseInfo`
 export const memberBaseInfo =
   MEMBER_CENTER + `/mcMemberAccounts/getUserBasicInfo`
+
+//前台类目树
+export const frontendCatalogTree = PRODUCT_CENTER + '/pcPrecategorys/tree'
+export const frontendCatalogDetail = id =>
+  PRODUCT_CENTER + `/pcPrecategorys/${id}`
+export const frontendCatalogBaseUrl = PRODUCT_CENTER + `/pcPrecategorys`
+export const bindBackendUrl = PRODUCT_CENTER + `/pcPrecategoryCatalogs`

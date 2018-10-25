@@ -77,7 +77,7 @@ export default {
       {
         label: '商品价格',
         prop: 'price',
-        formatter: ({val}) => price(val)
+        formatter: row => price(row.price)
       },
       {
         label: '图片',
@@ -124,7 +124,29 @@ export default {
         }
       ],
       browserHistoryColumns: [
-        ...commonColumns,
+        {
+          label: '商品编号',
+          prop: 'code'
+        },
+        {
+          label: '商品名称',
+          prop: 'productName'
+        },
+        {
+          label: '商品价格',
+          prop: 'price',
+          formatter: row => price(row.price)
+        },
+        {
+          label: '图片',
+          prop: 'productPhoto',
+          formatter: ({productPhoto}) => {
+            if (productPhoto) {
+              let showFirstImg = productPhoto.split(',')[0] || ''
+              return <viewer src={showFirstImg} />
+            }
+          }
+        },
         {
           label: '访问时间',
           prop: 'createdAt',
@@ -171,7 +193,7 @@ export default {
       生日: data.birthday,
       邮箱: data.email,
       注册时间: formatDate(data.createdAt),
-      最后登录时间: formatDate(data.updatedAt)
+      最后登录时间: formatDate(data.lastLoginTime)
     }
 
     const assetsInfo = {

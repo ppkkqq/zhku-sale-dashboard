@@ -7,7 +7,8 @@
     :delete-node-button-filter="deleteNodeButtonFilter"
     :change-visible="changeVisible"
     @node-click="handleNodeClick"
-    @clear-node="handleClearNode">
+    @clear-node="handleClearNode"
+    @check-node-level="checkNodeLevel">
     <!-- 修改节点 -->
     <el-card class="box-card"
              header="类目编辑">
@@ -40,7 +41,7 @@
         <el-form-item label="是否末级类目"
                       prop="isLeaf">
           <el-radio-group v-model="editForm.isLeaf"
-                          :disabled="hasChildren || !!editForm.catalogs">
+                          :disabled="hasChildren || !!editForm.catalogs||isThirdNode||curNodeLevel==3">
             <el-radio label="1">是</el-radio>
             <el-radio label="0">否</el-radio>
           </el-radio-group>
@@ -48,6 +49,8 @@
         <el-form-item>
           <el-button type="primary"
                      @click="updateNode">保存</el-button>
+          <el-button type="normal"
+                     @click="resetNode">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -67,20 +70,18 @@
     </template>
 
     <!--设置筛选条件-->
-    <!--<template slot="detail">-->
-      <!--<el-card-->
-        <!--class="box-card"-->
-        <!--header="设置筛选条件"-->
-      <!--&gt;-->
-        <!--<bind-attribute-filter-->
-          <!--:canAdd="canAdd"-->
-          <!--:node="editForm"-->
-          <!--:props="defaultProps"-->
-          <!--:selectedFilters="selectedFilters"-->
-        <!--&gt;</bind-attribute-filter>-->
-
-      <!--</el-card>-->
-    <!--</template>-->
+    <!-- <template slot="detail">
+      <el-card
+        class="box-card"
+        header="设置筛选条件">
+        <bind-attribute-filter
+          :canAdd="canAdd"
+          :node="editForm"
+          :props="defaultProps"
+          :selectedFilters="selectedFilters">
+        </bind-attribute-filter>
+      </el-card>
+    </template> -->
 
     <!-- 新增节点 -->
     <template slot="create">
@@ -109,7 +110,7 @@
 
         <el-form-item label="是否末级类目"
                       prop="isLeaf">
-          <el-radio-group v-model="newForm.isLeaf">
+          <el-radio-group v-model="newForm.isLeaf" :disabled="isThirdNode">
             <el-radio label="1">是</el-radio>
             <el-radio label="0">否</el-radio>
           </el-radio-group>
@@ -184,13 +185,15 @@ export default {
 
       selectedFilters: [],
 
-      compareData: {} // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      isThirdNode: false, //是否三级节点
+      curNodeLevel: '' //当前选中节点级别
     }
   },
   methods: {
     //树形
     addNodeButtonFilter(node, data) {
-      return data.isLeaf === '1'
+      return data.isLeaf === '1' || node.level == '3'
     },
     deleteNodeButtonFilter(node, data) {
       return !node.isLeaf
@@ -198,9 +201,9 @@ export default {
     handleNodeClick({data, node}) {
       this.editForm = {...data}
       this.compareData = {...data}
-
-      // 获取筛选条件
-      this.getSelectedFilters()
+      this.curNodeLevel = node.level
+      // 获取筛选条件,暂时无固定条件筛选功能
+      // this.getSelectedFilters()
     },
     handleClearNode() {
       this.editForm = {}
@@ -225,7 +228,6 @@ export default {
           this.compareData = payload
         }
       }
-
       this.$refs.editForm.validate(valid => {
         if (valid) {
           const {id, name, description, isLeaf, displayUrl} = this.editForm
@@ -242,6 +244,9 @@ export default {
         }
       })
     },
+    resetNode() {
+      this.editForm = {...this.compareData}
+    },
     addNode() {
       this.$refs.newForm.validate(valid => {
         if (valid) {
@@ -250,6 +255,13 @@ export default {
           })
         }
       })
+    },
+    checkNodeLevel(level) {
+      if (level == '2') {
+        this.isThirdNode = true
+      } else {
+        this.isThirdNode = false
+      }
     },
     //form
     onUpLoadFile(value, key) {

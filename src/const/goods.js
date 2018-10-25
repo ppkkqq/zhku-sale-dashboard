@@ -142,3 +142,9 @@ export const tplStatus = {
   ENABLE: '启用',
   DISABLE: '禁用'
 }
+
+export const channel = {
+  0: '我买网',
+  1: '京东',
+  2: '自营'
+}
