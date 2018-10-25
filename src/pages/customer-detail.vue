@@ -164,7 +164,9 @@ export default {
         },
         {
           label: '所在地区',
-          prop: 'areaName'
+          prop: 'areaName',
+          formatter: row =>
+            `${row.provinceName} ${row.cityName} ${row.areaName}`
         },
         {
           label: '详细地址',
