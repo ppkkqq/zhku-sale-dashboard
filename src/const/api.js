@@ -149,7 +149,8 @@ export const orderDetail = TRADE_CENTER + '/order/shopOrderDetail'
 export const logistics = TRADE_CENTER + '/logistics'
 
 //商品
-export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
+// export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
+export const goodsLists = PRODUCT_CENTER + '/manager/pcItems/plat'
 // 商品审核
 export const getNeedCheckPcItem =
   PRODUCT_CENTER + '/manager/pcItems/getNeedCheckPcItem'
