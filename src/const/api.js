@@ -130,8 +130,8 @@ export const customerFocus = `${APPLICATION}/goodsAttentions/headquarters/person
 export const customerEvaluate = `${EVALUATE_CENTER}/ecEvaluations/tree`
 //我的证件
 export const customerCertificatess = `${MEMBER_CENTER}/mcCertificatess/list`
-// 退款
-export const refundList = TRADE_CENTER + '/refund/supplier/list'
+// 售后
+export const refundList = TRADE_CENTER + '/refund/supplier/platlist'
 export const refundAudit = TRADE_CENTER + '/refund/supplier/audit'
 export const refundDetail = TRADE_CENTER + '/refund/supplier/detail'
 
