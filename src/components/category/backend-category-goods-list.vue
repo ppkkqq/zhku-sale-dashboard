@@ -48,30 +48,68 @@
 
     <el-dialog title="后台类目"
                @open="handleOpen"
+               width="auto"
                append-to-body
                :visible.sync="dialogVisible">
-      <div class="header">
-        <el-input placeholder="输入关键字进行过滤"
-                  v-model="filterText">
-        </el-input>
-      </div>
-      <el-tree class="filter-tree"
-               show-checkbox
-               v-bind="$attrs"
-               @check="hanldeCheck"
-               :props="props"
-               node-key="id"
-               :default-checked-keys="checkedKeys"
-               :filter-node-method="filterNode"
-               ref="tree">
-      </el-tree>
+      <div class="card">
+        <div class="aside">
+          <div class="header">
+            <el-input placeholder="输入关键字进行过滤"
+                      v-model="filterText">
+            </el-input>
+          </div>
+          <el-tree class="filter-tree"
+                   show-checkbox
+                   v-bind="$attrs"
+                   @check="hanldeCheck"
+                   :props="props"
+                   node-key="id"
+                   :default-checked-keys="checkedKeys"
+                   :filter-node-method="filterNode"
+                   ref="tree">
+          </el-tree>
 
-      <div slot="footer">
-        <el-button type="primary"
-                   v-loading="isSaving"
-                   @click="handleSave">保存</el-button>
+          <div slot="footer">
+            <el-button type="primary"
+                       v-loading="isSaving"
+                       @click="handleSave">保存</el-button>
+          </div>
+        </div>
+        <div class="content">
+          <div class="up">
+            <slot>
+              <el-table
+                ref="multipleTable"
+                :data="tableData3"
+                tooltip-effect="dark"
+                @selection-change="handleSelectionChange">
+                <el-table-column
+                  type="selection"
+                  width="55">
+                </el-table-column>
+                <el-table-column
+                  label="日期"
+                  width="120">
+                  <template slot-scope="scope">{{ scope.row.date }}</template>
+                </el-table-column>
+                <el-table-column
+                  prop="name"
+                  label="姓名"
+                  width="120">
+                </el-table-column>
+                <el-table-column
+                  prop="address"
+                  label="地址"
+                  show-overflow-tooltip>
+                </el-table-column>
+              </el-table>
+            </slot>
+          </div>
+          <div class="down">
+            <slot name='detail'></slot>
+          </div>
+        </div>
       </div>
-
     </el-dialog>
 
   </div>
@@ -93,6 +131,44 @@ export default {
       filterText: '',
       checkedNodes: [],
       tags: [],
+      tableData3: [
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-04',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-01',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-08',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-06',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-07',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }
+      ],
+      multipleSelection: [],
       props: {
         label: 'name',
         children: 'children',
@@ -107,6 +183,9 @@ export default {
     }
   },
   methods: {
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
     handleClose(id) {
       const ids = this.tags.map(tag => tag.id)
       ids.splice(ids.indexOf(id), 1)
@@ -191,10 +270,33 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+  .card{
+    display flex
+    overflow auto
+  }
   .header {
     margin-bottom: 10px;
   }
+  .aside {
+    flex: 0 0 35%;
+    min-width: 430px;
+    /*height: 700px;*/
+    margin-right: 30px;
+  }
 
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .up {
+      margin-bottom: 20px;
+    }
+
+    .down {
+      flex: 1;
+    }
+  }
   .selection {
     height: 100px;
     padding: 10px 10px;
