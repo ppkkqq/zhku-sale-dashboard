@@ -46,7 +46,7 @@
 
     <el-dialog title="后台类目"
                @open="handleOpen"
-               width="auto"
+               width="70%"
                append-to-body
                :visible.sync="dialogVisible">
       <div class="card">
@@ -77,6 +77,7 @@
           <div class="up">
             <slot>
               <el-table
+                width="auto"
                 ref="multipleTable"
                 :data="tableData3"
                 tooltip-effect="dark"
@@ -86,19 +87,14 @@
                   width="55">
                 </el-table-column>
                 <el-table-column
-                  label="日期"
-                  width="120">
+                  label="商品编号"
+                  >
                   <template slot-scope="scope">{{ scope.row.date }}</template>
                 </el-table-column>
                 <el-table-column
                   prop="name"
-                  label="姓名"
-                  width="120">
-                </el-table-column>
-                <el-table-column
-                  prop="address"
-                  label="地址"
-                  show-overflow-tooltip>
+                  label="商品名称"
+                  fixed="right">
                 </el-table-column>
               </el-table>
             </slot>
@@ -289,6 +285,7 @@ export default {
 
     .up {
       margin-bottom: 20px;
+      margin-right: 20px
     }
 
     .down {
