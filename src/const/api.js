@@ -17,8 +17,6 @@ export const APPLICATION = '/mall-application-api/api/v1'
 export const EVALUATE_CENTER = '/mall-deepexi-evaluate-center/api/v1'
 export const ACCOUNT_CENTER = '/mall-deepexi-account-center/api/v1'
 
-export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
-
 export const recommendList = MALL_CONFIG + '/featuredFirsts'
 
 // 品牌管理
@@ -152,6 +150,7 @@ export const logistics = TRADE_CENTER + '/logistics'
 // export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
 export const goodsLists = PRODUCT_CENTER + '/manager/pcItems/plat'
 // 商品审核
+export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
 export const getNeedCheckPcItem =
   PRODUCT_CENTER + '/manager/pcItems/getNeedCheckPcItem'
 export const getNeedCheckPcById =
