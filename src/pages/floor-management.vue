@@ -84,10 +84,10 @@
       <template>
         <el-card class="box-card"
                  header="推荐商品">
-          <bind-backend-category
-            :data="backendTree"
+          <bind-frontend-category
+            :data="frontendTree"
             :canAdd="canAdd"
-            :baseUrl="bindBackendUrl"
+            :baseUrl="bindFrontendUrl"
             :node="editForm"
             @save="setNode"
             :props="defaultProps" />
@@ -191,10 +191,10 @@
         <template>
           <el-card class="box-card"
                    header="推荐商品">
-            <bind-backend-category
-              :data="backendTree"
+            <bind-frontend-category
+              :data="frontendTree"
               :canAdd="canAdd"
-              :baseUrl="bindBackendUrl"
+              :baseUrl="bindFrontendUrl"
               :node="newForm"
               @save="setNode"
               :props="defaultProps" />
@@ -246,20 +246,20 @@ import ElCrudTree from '@/components/floor-tree/el-crud-tree'
 import UploadToAli from 'upload-to-ali'
 import {
   frontendCatalogBaseUrl,
-  backendCatalogBaseUrl,
-  bindBackendUrl,
   selectedFilterCondition,
   AllfilterCondition
 } from '@/const/api'
-import BindBackendCategory from '@/components/category/bind-backend-category'
+
 import BindAttributeFilter from '@/components/category/bind-attribute-filter'
+import BindFrontendCategory from '../components/category/bind-frontend-category'
 
 export default {
   name: 'front-end-category',
   components: {
+    BindFrontendCategory,
     ElCrudTree,
     UploadToAli,
-    BindBackendCategory,
+    BindFrontendCategory,
     BindAttributeFilter
   },
   data() {
@@ -279,8 +279,8 @@ export default {
       pageName: 'front-end-category',
       url: `/mall-deepexi-mall-config-api/api/v1/floor`,
       // bindBackendUrl: bindBackendUrl,
-      bindBackendUrl: frontendCatalogBaseUrl,
-      backendTree: [],
+      bindFrontendUrl: '/mall-deepexi-mall-config-api/api/v1/floor',
+      frontendTree: [],
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -458,9 +458,9 @@ export default {
       this.$set(this[key], type, value)
     },
     //detail
-    loadBackendTree() {
-      this.$axios.$get(`${backendCatalogBaseUrl}/tree`).then(result => {
-        this.backendTree = result.payload
+    loadFrontendTree() {
+      this.$axios.$get(`${frontendCatalogBaseUrl}/tree`).then(result => {
+        this.frontendTree = result.payload
       })
     },
 
@@ -476,7 +476,7 @@ export default {
     }
   },
   mounted: function() {
-    this.loadBackendTree()
+    this.loadFrontendTree()
   },
   watch: {
     // newForm (val){
