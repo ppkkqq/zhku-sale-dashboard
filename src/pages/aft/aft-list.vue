@@ -76,7 +76,7 @@ export default {
   data() {
     return {
       pageName: 'aft-list',
-      url: refundList + `?shopId=${this.$store.state.shopId}`,
+      url: refundList,
       operationAttrs: {
         width: 160,
         fixed: 'right'
