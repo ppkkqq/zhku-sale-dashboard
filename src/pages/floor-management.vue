@@ -86,7 +86,6 @@
                  header="推荐商品">
           <backend-category-goods-list
             :data="backendTree"
-            :canAdd="canAdd"
             :baseUrl="bindBackendUrl"
             :node="editForm"
             @save="setNode"
@@ -193,7 +192,6 @@
                    header="推荐商品">
             <backend-category-goods-list
               :data="backendTree"
-              :canAdd="canAdd"
               :baseUrl="bindBackendUrl"
               :node="newForm"
               @save="setNode"
@@ -352,7 +350,7 @@ export default {
     },
     //树形
     addNodeButtonFilter(node, data) {
-      return data.isLeaf === '1'
+      return !data.secondFloors
     },
     deleteNodeButtonFilter(node, data) {
       return !node.isLeaf
@@ -491,18 +489,18 @@ export default {
   computed: {
     hasChildren() {
       return (this.editForm.children || []).length > 0
-    },
-
-    canAdd() {
-      if (this.editForm.isLeaf === '0') {
-        return false
-      }
-      if (this.compareData.isLeaf == 0) {
-        return false
-      }
-
-      return !!this.editForm.id
     }
+
+    // canAdd() {
+    //   if (this.editForm.isLeaf === '0') {
+    //     return false
+    //   }
+    //   if (this.compareData.isLeaf == 0) {
+    //     return false
+    //   }
+    //
+    //   return !!this.editForm.id
+    // }
   }
 }
 </script>
