@@ -2,17 +2,17 @@
   <div class="refund-detail">
     <el-card shadow="never" class="border-0">
       <div slot="header">
-        <h2 class="bar-left">
+        <!-- <h2 class="bar-left">
           {{type == REFUND ? '退款详情' : '退货退款详情'}}
-          <go-back class="ml-2"></go-back>
-        </h2>
+        </h2>-->
+        <go-back class="ml-2"></go-back>
         <h2>
           订单状态：
           <span class="red">{{toOptionsLabel(this.trade.orderStatus, orderStatusOptions)}}</span>
         </h2>
       </div>
       <h3 class="mb-1">{{type == REFUND ? '退款流转过程' : '退货流转过程'}}</h3>
-      <el-steps :active="3" align-center v-if="type != REFUND">
+      <el-steps :active="1" align-center v-if="type != REFUND">
         <el-step title="提交订单" description></el-step>
         <el-step title="商家审核通过" description></el-step>
         <el-step title="买家寄回货物" description></el-step>
@@ -20,7 +20,7 @@
         <el-step title="验收货物" description></el-step>
         <el-step title="已完成" description></el-step>
       </el-steps>
-      <el-steps :active="3" align-center v-if="type == REFUND">
+      <el-steps :active="1" align-center v-if="type == REFUND">
         <el-step title="提交申请" description></el-step>
         <el-step title="商家审核通过" description></el-step>
         <el-step title="退款已受理" description></el-step>
@@ -81,63 +81,29 @@
         </card-table>
       </div>
       <card-table header="退款商品" v-if="type == REFUND">
-        <el-data-table
-          ref="dataTable"
-          :url="url"
-          :columns="returnGoodsColumns"
-          :hasNew="false"
-          :hasEdit="false"
-          :hasDelete="false"
-          :hasOperation="false"
-          :isTree="false"
-          :hasPagination="false"
-          :extraParams="extraParams"
-        ></el-data-table>
-      </card-table>
-      <card-table header="退货商品" v-if="type != REFUND">
-        <el-data-table
-          ref="dataTable"
-          :url="url"
-          :columns="returnGoodsColumns"
-          :hasNew="false"
-          :hasEdit="false"
-          :hasDelete="false"
-          :hasOperation="false"
-          :isTree="false"
-          :hasPagination="false"
-          :extraParams="extraParams"
-        ></el-data-table>
-      </card-table>
-      <!-- <card-table header="退货商品">
-        <el-table :data="skuTableData || []" border="">
-          <el-table-column label="商品" width="300">
-            <img
-              :src="productImgUrl"
-              :key="index"
-              style="width:200px;height:200px;margin-right:10px"
-            >
-            {{product.itemName}}
-          </el-table-column>
+        <el-table :data="products || []" border="">
           <el-table-column
             v-for="(item,index) in returnGoodsColumns"
             :prop="item.prop"
             :label="item.label"
-            :key="index"
+            :key="item.prop"
+            :formatter="item.formatter"
+            :width="item.width"
           ></el-table-column>
         </el-table>
-        <el-data-table
-          ref="dataTable"
-          :url="url"
-          :columns="returnGoodsColumns"
-          :hasNew="false"
-          :hasEdit="false"
-          :hasDelete="false"
-          :hasOperation="false"
-          :isTree="false"
-          :hasPagination="false"
-          :extraParams="extraParams"
-        ></el-data-table>
-      </card-table> -->
+      </card-table>
+      <card-table header="退货商品" v-if="type != REFUND">
+        <el-table :data="products || []" border="">
+          <el-table-column
+            v-for="(item,index) in returnGoodsColumns"
+            :prop="item.prop"
+            :label="item.label"
+            :key="item.prop"
+            :formatter="item.formatter"
+            :width="item.width"
+          ></el-table-column>
+        </el-table>
+      </card-table>
       <card-table header="验货结果" v-if="type != REFUND">
         <table-info :table="aftAudit"></table-info>
       </card-table>
@@ -164,14 +130,6 @@ export default {
   data() {
     return {
       query: this.$route.query,
-      // tableData: [
-      //   {
-      //     date: '2016-05-02',
-      //     name: '张三',
-      //     result: '通过',
-      //     desc: '还没提车'
-      //   }
-      // ],
       REFUND: REFUND,
       RETURN: RETURN,
       url: '',
@@ -222,12 +180,12 @@ export default {
       ],
       returnGoodsColumns: [
         // {prop: 'name', label: '序号'},
-        // {
-        //   prop: 'logoUrl',
-        //   label: '商品',
-        //   formatter: this.logoFormatter,
-        //   width: '300px'
-        // },
+        {
+          prop: 'imgUrl',
+          label: '商品',
+          formatter: row => this.imgFormatter(row),
+          width: '300px'
+        },
         {prop: 'itemCode', label: '商品编码'},
         {prop: 'quantity', label: '数量'},
         {prop: 'itemMoney', label: '单价'},
@@ -250,7 +208,7 @@ export default {
       }
       return RETURN
     },
-    orderInfoTable() {
+    orderInfoTableForRefund() {
       //单据信息
       const {
         id,
@@ -265,9 +223,9 @@ export default {
         actualRefundMoney = ''
       } = this.trade
       const data = {
-        退货单号: id,
-        退货原因: description,
         订单编号: tradeOrderId,
+        退货原因: description,
+        退货单号: id,
         退货说明: description,
         退款单号: id,
         会员账号: memberName,
@@ -352,10 +310,10 @@ export default {
       }
       return Object2Options(data, 'value')
     },
-    product() {
+    products() {
       if (this.detail.skuList && this.detail.skuList.length)
-        return this.detail.skuList[0]
-      return {}
+        return this.detail.skuList
+      return []
     },
     productImgUrl() {
       if (
@@ -392,17 +350,42 @@ export default {
           this.$message.error('获取退款详情失败! 请稍后再试!')
         })
     },
-    logoFormatter(row) {
-      return (
-        <img
-          src={row.logoUrl ? row.logoUrl : ''}
-          style={{
-            width: '100px',
-            background: 'transparent',
-            padding: '0'
-          }}
-        />
-      )
+    getStep() {
+      switch (this.trade.status) {
+        case '确认退货':
+        case '退款中':
+          this.active = 2
+          break
+        case '确认退款':
+        case '待收货':
+          this.active = 3
+          break
+        case '待发货':
+          this.active = 5
+          break
+        case '确认退货':
+          this.active = 6
+          break
+      }
+    },
+    imgFormatter(row) {
+      if (row.imgUrl) {
+        let imgUrl = row.imgUrl.split(',')[0]
+        return (
+          <div style="display:flex;align-items:center">
+            <img
+              src={imgUrl ? imgUrl : ''}
+              style={{
+                width: '100px',
+                background: 'transparent',
+                padding: '0'
+              }}
+            />
+            <div style="margin-left:10px">{row.itemName}</div>
+          </div>
+        )
+      }
+      return ''
     },
 
     formatDate,
@@ -411,6 +394,7 @@ export default {
   },
   mounted() {
     this.getDetail()
+    this.getStep()
   }
 }
 </script>
