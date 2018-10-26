@@ -89,7 +89,7 @@ export default {
           }
         },
         {
-          prop: 'catalogName',
+          prop: 'catalogId',
           label: '后台类目'
         },
         // {
