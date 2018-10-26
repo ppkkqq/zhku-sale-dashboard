@@ -123,7 +123,7 @@ export default {
             this.$router.push({
               path: '/goods/goods-audit-detail',
               query: {
-                productId: row.itemId
+                productId: row.id
               }
             })
           }
@@ -135,7 +135,7 @@ export default {
               path: '/goods/goods-audit-detail',
               query: {
                 isView: 1,
-                productId: row.itemId
+                productId: row.id
               }
             })
           }
