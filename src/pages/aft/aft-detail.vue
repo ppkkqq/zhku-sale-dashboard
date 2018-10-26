@@ -2,10 +2,10 @@
   <div class="refund-detail">
     <el-card shadow="never" class="border-0">
       <div slot="header">
-        <h2 class="bar-left">
+        <!-- <h2 class="bar-left">
           {{type == REFUND ? '退款详情' : '退货退款详情'}}
-          <go-back class="ml-2"></go-back>
-        </h2>
+        </h2>-->
+        <go-back class="ml-2"></go-back>
         <h2>
           订单状态：
           <span class="red">{{toOptionsLabel(this.trade.orderStatus, orderStatusOptions)}}</span>
