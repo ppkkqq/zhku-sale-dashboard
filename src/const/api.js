@@ -93,9 +93,8 @@ export const feedback = MALL_CONFIG + '/feedbacks'
 //车型基础数据管理
 export const carBrandsSeries = PRODUCT_CENTER + '/pcCarBrandSeries'
 export const carModels = PRODUCT_CENTER + '/pcCarModels'
-
 //商品管理
-export const shopItems = `${PRODUCT_CENTER}/admin/items`
+export const shopItems = `${PRODUCT_CENTER}/shop/items`
 export const productDetail = id => `${PRODUCT_CENTER}/shop/items/${id}`
 
 //套餐管理
