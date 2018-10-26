@@ -61,7 +61,6 @@ export default {
       // margin-left 80px
       line-height 1
     }
-
     .ql-editor {
       img {
         display block

@@ -15,8 +15,6 @@
   </el-card>
 </template>
 <script>
-import {Card} from 'element-ui'
-
 export default {
   name: 'BaseLayout',
   props: {

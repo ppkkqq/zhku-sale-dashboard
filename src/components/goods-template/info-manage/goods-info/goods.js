@@ -1,16 +1,18 @@
 import {headImg} from '../validator'
 
-export default [
+const oppositeGroup = [
   {
-    $id: 'RelativeCar',
-    $type: 'RelativeCar',
-    label: '适配车型',
-    $el: {
-      isMultiple: true,
-      hasCheckBox: true
-    },
-    $default: []
+    label: '0', // 数字0 radio不能选中
+    value: '0',
+    defaultSlot: '是'
   },
+  {
+    label: '1',
+    value: '1',
+    defaultSlot: '否'
+  }
+]
+export default [
   {
     $id: 'name',
     $type: 'input',
@@ -27,40 +29,37 @@ export default [
     ]
   },
   {
-    $id: 'brandId',
-    $type: 'select',
-    label: '品牌',
-    $el: {
-      placeholder: '请选择'
-    },
-    $options: []
-  },
-  {
     $id: 'title',
     $type: 'input',
-    label: '广告语',
+    label: '商品标签',
     $el: {
       placeholder: '请输入'
     },
     rules: [
       {
         required: true,
-        message: '广告语不能为空',
+        message: '商品标签不能为空',
         trigger: 'blur'
       }
     ]
   },
   {
-    $id: 'isVisible',
-    $type: 'switch',
-    label: '前台客户可见',
-    $default: true
+    $id: 'supportExchangeGoods',
+    $type: 'radio-group',
+    label: '支持换货',
+    $options: oppositeGroup
   },
   {
-    $id: 'isSoldSeparately',
-    $type: 'switch',
-    label: '可单独出售',
-    $default: true
+    $id: 'supportReturnGoods',
+    $type: 'radio-group',
+    label: '支持退货',
+    $options: oppositeGroup
+  },
+  {
+    $id: 'supportInvoice',
+    $type: 'radio-group',
+    label: '支持开发票',
+    $options: oppositeGroup
   },
   {
     $id: 'productPhoto',
@@ -69,6 +68,7 @@ export default [
     $default: [''],
     rules: [
       {
+        required: true,
         validator: headImg
       }
     ]
