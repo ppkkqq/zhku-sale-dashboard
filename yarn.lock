@@ -5392,9 +5392,9 @@ postcss@^6.0, postcss@^6.0.0, postcss@^6.0.1, postcss@^6.0.16, postcss@^6.0.18, 
     source-map "^0.6.1"
     supports-color "^5.4.0"
 
-power-quill-editor@^0.0.4:
-  version "0.0.4"
-  resolved "http://nexus.deepexi.top/repository/npm-group/power-quill-editor/-/power-quill-editor-0.0.4.tgz#0fdd0c42589c215fd01cc82198bfc87adbd7d32e"
+power-quill-editor@^0.1.1:
+  version "0.1.1"
+  resolved "http://nexus.deepexi.top/repository/npm-group/power-quill-editor/-/power-quill-editor-0.1.1.tgz#ecf68f5681047067ca6165af4ec4d8396da5edf5"
   dependencies:
     upload-to-ali "^2.0.0"
     vue-quill-editor "^3.0.6"
