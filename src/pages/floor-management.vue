@@ -88,7 +88,9 @@
             :data="backendTree"
             :baseUrl="bindBackendUrl"
             :node="editForm"
+            :rootId="rootId"
             @save="setNode"
+            @refresh="loadBackendTree"
             :props="defaultProps" />
         </el-card>
       </template>
@@ -194,7 +196,9 @@
               :data="backendTree"
               :baseUrl="bindBackendUrl"
               :node="newForm"
+              :rootId="rootId"
               @save="setNode"
+              @refresh="loadBackendTree"
               :props="defaultProps" />
           </el-card>
         </template>
@@ -318,15 +322,12 @@ export default {
 
       selectedFilters: [],
 
-      compareData: {} // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      rootId: ''
     }
   },
   methods: {
     createData(id, name) {
-      // this.$set(this.newForm, 'parentId', id)
-      // this.$set(this.newForm, 'parentName', name)
-      console.log(id, name)
-      console.log(this.newForm)
       this.newForm.parentId = id
       this.newForm.parentName = name
     },
@@ -346,6 +347,9 @@ export default {
     },
     setAddType(type) {
       this.isAddRoot = type === 'addRoot' ? true : false
+      // if(!this.isAddRoot){
+      //   this.rootId = ''
+      // }
       //type 值有两种情况 'addChild'   addRoot
     },
     //树形
@@ -356,9 +360,11 @@ export default {
       return !node.isLeaf
     },
     handleNodeClick({data, node}) {
+      console.log(data, node)
       this.editForm = {...data}
       this.compareData = {...data}
       this.isEditRoot = node.parent.parent ? false : true
+      this.rootId = data.id
       // 获取筛选条件
       this.getSelectedFilters()
     },
@@ -387,43 +393,35 @@ export default {
     setNode(data) {
       this.$refs.tree.mergeNode(this.editForm.id, data)
     },
+    //todo  编辑  还没有对
     updateNode() {
-      // 新增节点保存成功
-      const done = payload => {
-        if (payload && payload.id) {
-          this.compareData = payload
-        }
-      }
-
-      this.$refs.newForm.validate(valid => {
-        if (valid) {
-          const {name, description, parentId} = this.newForm
-          if (this.isAddRoot) {
-            //root的数据结构
-            this.$refs.tree.updateNode(
-              {
-                parentId: '',
-                name,
-                description,
-                classifyIcon: this.newForm.categoryUrl,
-                advertisementPhoto: this.newForm.advertiseUrl
-              },
-              done
-            )
-          } else {
-            // 子节点的数据结构
-            this.$refs.tree.updateNode(
-              {
-                parentId,
-                name,
-                description
-                // categoryIdList
-              },
-              done
-            )
-          }
-        }
-      })
+      console.log(this.compareData.id)
+      // 节点保存成功
+      // this.$refs.newForm.validate(valid => {
+      //   if (valid) {
+      //     const {name, description, parentId, categoryIdList} = this.newForm
+      //     let obj = {}
+      //     let url = this.url
+      //     if (this.isAddRoot) {
+      //       obj = {
+      //         categoryId: '',
+      //         name,
+      //         description,
+      //         classifyIcon: this.newForm.categoryUrl,
+      //         advertisementPhoto: this.newForm.advertiseUrl
+      //       }
+      //       url = url + `/updateFloor?id=${this.compareData.id}`
+      //     } else {
+      //       obj = {
+      //         name,
+      //         description,
+      //         categoryIdList: categoryIdList || []
+      //       }
+      //       url = url + `/updateSecondFloor?id=${this.compareData.id}`
+      //     }
+      //     this.$refs.tree.updateNode(obj, url)
+      //   }
+      // })
     },
     addNode() {
       // 新增节点保存成功
@@ -490,22 +488,18 @@ export default {
     hasChildren() {
       return (this.editForm.children || []).length > 0
     }
-
-    // canAdd() {
-    //   if (this.editForm.isLeaf === '0') {
-    //     return false
-    //   }
-    //   if (this.compareData.isLeaf == 0) {
-    //     return false
-    //   }
-    //
-    //   return !!this.editForm.id
-    // }
   }
 }
 </script>
 
 <style lang="stylus">
+  .el-dialog__wrapper{
+    .el-dialog{
+      .el-dialog__footer{
+        text-align center
+      }
+    }
+  }
   .floor-management {
     display: flex;
 

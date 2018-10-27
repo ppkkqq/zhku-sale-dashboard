@@ -277,23 +277,20 @@ export default {
         this.$set(pre, key, data[key])
       })
     },
-
+    //todo 验证
     //更新节点
-    async updateNode(formData) {
+    async updateNode(data, url) {
+      //新增节点发送相关相求
       this.loading = true
-      //从表单数据中获取id
-      const id = formData.id
       try {
-        const {payload} = await this.$axios.$post(
-          `${this.url}/createFloor`,
-          formData
-        )
-        //更新成功后更新tree节点数据
-        this.mergeNode(id, formData)
+        const {payload} = await this.$axios.$post(url, data)
+        this.loadTree()
+        // this[this.status](payload)
+        this.$refs.tree.hideDialogForm()
+        this.loading = false
+        this.clearCurrent()
       } catch (error) {
-        console.info(error)
-      } finally {
-        //更新结束后清除数据
+        this.$message.error(error.message)
         this.loading = false
         this.clearCurrent()
       }

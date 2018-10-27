@@ -36,7 +36,7 @@
     <div class="selection border">
       <el-tag closable
               :key="tag.id"
-              v-for="tag in tags"
+              v-for="tag in node.goodsInfos"
               :disable-transitions="false"
               @close="handleClose(tag.id)"
       >
@@ -67,11 +67,6 @@
                    ref="tree">
           </el-tree>
 
-          <div slot="footer">
-            <el-button type="primary"
-                       v-loading="isSaving"
-                       @click="handleSave">保存</el-button>
-          </div>
         </div>
         <div class="content">
           <div class="up">
@@ -87,14 +82,15 @@
                   width="55">
                 </el-table-column>
                 <el-table-column
+                  prop="id"
                   label="商品编号"
-                  >
-                  <template slot-scope="scope">{{ scope.row.date }}</template>
+                  show-overflow-tooltip
+                >
                 </el-table-column>
                 <el-table-column
                   prop="name"
                   label="商品名称"
-                  fixed="right">
+                >
                 </el-table-column>
               </el-table>
             </slot>
@@ -104,6 +100,10 @@
           </div>
         </div>
       </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCancel">取 消</el-button>
+        <el-button type="primary" v-loading="isSaving" @click="handleConfirm">确 定</el-button>
+      </span>
     </el-dialog>
 
   </div>
@@ -114,7 +114,7 @@ import {Tree} from 'element-ui'
 
 export default {
   name: 'backend-category-goods-list',
-  props: ['baseUrl', 'node'],
+  props: ['baseUrl', 'node', 'rootId'],
   components: {
     'el-tree': Tree
   },
@@ -125,43 +125,7 @@ export default {
       filterText: '',
       checkedNodes: [],
       tags: [],
-      tableData3: [
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-08',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-07',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }
-      ],
+      tableData3: [],
       multipleSelection: [],
       props: {
         label: 'name',
@@ -173,24 +137,74 @@ export default {
             (!data.children || (data.children && data.children.length === 0))
           )
         }
-      }
+      },
+      addItems: []
     }
   },
   methods: {
+    handleCancel() {
+      console.log(this.node)
+    },
+    // handleConfirm(){},
+    handleConfirm() {
+      this.isSaving = true
+      this.$axios
+        .$post('/mall-deepexi-mall-config-api/api/v1/floor/addItem', {
+          floorId: this.rootId,
+          itemIds: this.addItems
+        })
+        .then(res => {
+          console.log(res)
+          this.dialogVisible = false
+          this.$emit('refresh')
+        })
+        .catch(err => {
+          console.log(err)
+          this.dialogVisible = false
+        })
+      this.isSaving = false
+      // const ids = this.nodes.map(node => node.id)
+      // this.__doSave(ids)
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val
+      if (!this.multipleSelection.length) {
+        // this.tableData3=[]
+        return
+      }
+      this.multipleSelection.forEach(item => {
+        this.addItems.push(item.id)
+      })
     },
     handleClose(id) {
-      const ids = this.tags.map(tag => tag.id)
-      ids.splice(ids.indexOf(id), 1)
-      this.__doSave(ids)
+      this.$axios
+        .$delete('/mall-deepexi-mall-config-api/api/v1/floor/deleteItem', {
+          floorId: this.rootId,
+          itemIdList: [id]
+        })
+        .then(result => {})
+        .catch(err => {})
+      // const ids = this.tags.map(tag => tag.id)
+      // ids.splice(ids.indexOf(id), 1)
+      // this.__doSave(ids)
     },
     filterNode(value, data) {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
     handleClear() {
-      this.__doSave([])
+      this.$axios
+        .$delete(
+          `/mall-deepexi-mall-config-api/api/v1/floor/clearItem?floorId=${
+            this.rootId
+          }`
+        )
+        .then(result => {
+          console.log(result)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     handleAdd() {
       this.dialogVisible = true
@@ -217,13 +231,32 @@ export default {
           this.dialogVisible = false
         })
     },
-    handleSave() {
-      this.isSaving = true
-      const ids = this.nodes.map(node => node.id)
-      this.__doSave(ids)
-    },
+
     hanldeCheck(data, props) {
+      console.log(props)
+      if (!props.checkedNodes.length) {
+        this.tableData3 = []
+        return
+      }
       this.checkedNodes = props.checkedNodes
+      let temp = []
+      this.checkedNodes.forEach(item => {
+        if (!item.children) {
+          temp.push(item.id)
+        }
+      })
+      console.log(temp)
+      this.$axios
+        .$put('/mall-deepexi-mall-config-api/api/v1/floor/getItem', {
+          catalogIds: temp
+        })
+        .then(result => {
+          console.log(result.payload)
+          this.tableData3 = result.payload
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   },
   computed: {
@@ -264,6 +297,9 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+
+
+
   .card{
     display flex
     overflow auto
@@ -305,4 +341,5 @@ export default {
   .el-tag + .el-tag {
     margin-top: 10px;
   }
+
 </style>
