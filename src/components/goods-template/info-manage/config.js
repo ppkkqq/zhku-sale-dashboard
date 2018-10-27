@@ -7,5 +7,5 @@ export const goods = {
 
 export const api = {
   pcBrands,
-  carBrandsSeries: carBrandsSeries + '/tree'
+  carBrandsSeries: carBrandsSeries + '/new/tree'
 }
