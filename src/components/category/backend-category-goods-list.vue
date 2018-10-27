@@ -35,10 +35,10 @@
     </div>
     <div class="selection border">
       <el-tag closable
-              :key="tag.id"
+              :key="tag.goodsId"
               v-for="tag in node.goodsInfos"
               :disable-transitions="false"
-              @close="handleClose(tag.id)"
+              @close="handleClose(tag.goodsId)"
       >
         {{tag.name}}
       </el-tag>
@@ -179,8 +179,10 @@ export default {
     handleClose(id) {
       this.$axios
         .$delete('/mall-deepexi-mall-config-api/api/v1/floor/deleteItem', {
-          floorId: this.rootId,
-          itemIdList: [id]
+          data: {
+            floorId: this.rootId,
+            itemIdList: [id]
+          }
         })
         .then(result => {})
         .catch(err => {})

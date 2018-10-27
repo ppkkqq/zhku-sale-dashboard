@@ -69,10 +69,16 @@
             <!--建议尺寸：215*605，显示在楼层左侧位置-->
             <!--</div>-->
           </el-form-item>
-          <!--<el-form-item label="关联类目"-->
-          <!--prop="name">-->
-          <!--<el-input v-model="editForm.name"></el-input>-->
-          <!--</el-form-item>-->
+          <el-form-item label="关联类目"
+          prop="name">
+            <!--//todo-->
+            <bind-frontend-category
+              :data="frontendTree"
+              :baseUrl="frontendCatalogBaseUrl"
+              :isRoot="true"
+              @catalogIds="setCatalogIds"
+              />
+          </el-form-item>
           <el-form-item>
             <el-button type="primary"
                        @click="updateNode">保存</el-button>
@@ -121,7 +127,13 @@
 
           <el-form-item label="关联类目"
                         prop="name">
-            <!--<el-input v-model="editForm.name"></el-input>-->
+            <!--//todo-->
+            <bind-frontend-category
+              :data="frontendTree"
+              :baseUrl="frontendCatalogBaseUrl"
+              :isRoot="false"
+              @catalogIds="setCatalogIds"
+            />
           </el-form-item>
           <el-form-item>
             <el-button type="primary"
@@ -177,10 +189,16 @@
               <!--建议尺寸：215*605，显示在楼层左侧位置-->
               <!--</div>-->
             </el-form-item>
-            <!--<el-form-item label="关联类目"-->
-            <!--prop="name">-->
-            <!--<el-input v-model="newForm.name"></el-input>-->
-            <!--</el-form-item>-->
+            <el-form-item label="关联类目"
+                          prop="name">
+              <!--//todo-->
+              <bind-frontend-category
+                :data="frontendTree"
+                :baseUrl="frontendCatalogBaseUrl"
+                :isRoot="true"
+                @catalogIds="setCatalogIds"
+              />
+            </el-form-item>
             <el-form-item>
               <el-button type="primary"
                          @click="addNode">保存</el-button>
@@ -226,8 +244,14 @@
             </el-form-item>
 
             <el-form-item label="关联类目"
-                          prop="categoryIdList">
-              <!--<el-input v-model="newForm.categoryIdList"></el-input>-->
+                          prop="name">
+              <!--//todo-->
+              <bind-frontend-category
+                :data="frontendTree"
+                :baseUrl="frontendCatalogBaseUrl"
+                :isRoot="false"
+                @catalogIds="setCatalogIds"
+              />
             </el-form-item>
             <el-form-item>
               <el-button type="primary"
@@ -248,9 +272,10 @@ import ElCrudTree from '@/components/floor-tree/el-crud-tree'
 import UploadToAli from 'upload-to-ali'
 import {
   backendCatalogBaseUrl,
-  // frontendCatalogBaseUrl,
+  frontendCatalogBaseUrl,
   selectedFilterCondition,
-  AllfilterCondition
+  AllfilterCondition,
+  frontendCatalogTree
 } from '@/const/api'
 
 import BindAttributeFilter from '@/components/category/bind-attribute-filter'
@@ -258,13 +283,14 @@ import BindAttributeFilter from '@/components/category/bind-attribute-filter'
 //这个组件 bind-frontend-category  用来显示楼层关联的类目
 // import BindFrontendCategory from '../components/category/bind-frontend-category'
 import BackendCategoryGoodsList from '../components/category/backend-category-goods-list'
+import BindFrontendCategory from '../components/category/bind-frontend-category'
 
 export default {
   name: 'floor-management',
   components: {
     ElCrudTree,
     UploadToAli,
-    // BindFrontendCategory,   //   前台类目  用于楼层关联
+    BindFrontendCategory, //   前台类目  用于楼层关联
     BindAttributeFilter,
     BackendCategoryGoodsList //后台商品  返回商品列表   用于一级楼层 推荐
   },
@@ -285,9 +311,10 @@ export default {
       pageName: 'floor-management',
       url: `/mall-deepexi-mall-config-api/api/v1/floor`,
       // bindBackendUrl: bindBackendUrl,
-      // bindFrontendUrl: '/mall-deepexi-mall-config-api/api/v1/floor',
+      frontendCatalogBaseUrl: frontendCatalogBaseUrl,
       bindBackendUrl: '/mall-deepexi-mall-config-api/api/v1/floor',
       backendTree: [],
+      frontendTree: [],
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -302,7 +329,6 @@ export default {
         categoryUrl: '',
         advertiseUrl: '',
         isLeaf: '1'
-        // categoryIdList:[]
       },
       newFormRules: {
         name: [{required: true, trigger: 'blur', validator: checkName}]
@@ -316,17 +342,20 @@ export default {
         categoryUrl: '',
         advertiseUrl: '',
         categoryId: '',
-        // categoryIdList:[],
         isLeaf: '1'
       },
 
       selectedFilters: [],
 
       compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
-      rootId: ''
+      rootId: '',
+      catalogIds: ''
     }
   },
   methods: {
+    setCatalogIds(isRoot, ids) {
+      this.catalogIds = ids
+    },
     createData(id, name) {
       this.newForm.parentId = id
       this.newForm.parentName = name
@@ -341,7 +370,6 @@ export default {
         categoryUrl: '',
         advertiseUrl: '',
         categoryId: '',
-        // categoryIdList:[],
         isLeaf: '1'
       }
     },
@@ -397,31 +425,31 @@ export default {
     updateNode() {
       console.log(this.compareData.id)
       // 节点保存成功
-      // this.$refs.newForm.validate(valid => {
-      //   if (valid) {
-      //     const {name, description, parentId, categoryIdList} = this.newForm
-      //     let obj = {}
-      //     let url = this.url
-      //     if (this.isAddRoot) {
-      //       obj = {
-      //         categoryId: '',
-      //         name,
-      //         description,
-      //         classifyIcon: this.newForm.categoryUrl,
-      //         advertisementPhoto: this.newForm.advertiseUrl
-      //       }
-      //       url = url + `/updateFloor?id=${this.compareData.id}`
-      //     } else {
-      //       obj = {
-      //         name,
-      //         description,
-      //         categoryIdList: categoryIdList || []
-      //       }
-      //       url = url + `/updateSecondFloor?id=${this.compareData.id}`
-      //     }
-      //     this.$refs.tree.updateNode(obj, url)
-      //   }
-      // })
+      this.$refs.editForm.validate(valid => {
+        if (valid) {
+          const {name, description} = this.editForm
+          let obj = {}
+          let url = this.url
+          if (this.isEditRoot) {
+            obj = {
+              categoryId: this.catalogIds,
+              name,
+              description,
+              classifyIcon: this.editForm.categoryUrl,
+              advertisementPhoto: this.editForm.advertiseUrl
+            }
+            url = url + `/updateFloor?id=${this.compareData.id}`
+          } else {
+            obj = {
+              name,
+              description,
+              categoryIdList: this.catalogIds || []
+            }
+            url = url + `/updateSecondFloor?id=${this.compareData.id}`
+          }
+          this.$refs.tree.updateNode(obj, url)
+        }
+      })
     },
     addNode() {
       // 新增节点保存成功
@@ -435,6 +463,7 @@ export default {
               parentId: '',
               name,
               description,
+              categoryId: this.catalogIds,
               classifyIcon: this.newForm.categoryUrl,
               advertisementPhoto: this.newForm.advertiseUrl
             }
@@ -444,7 +473,7 @@ export default {
               parentId,
               name,
               description,
-              categoryIdList: categoryIdList || []
+              categoryIdList: this.catalogIds || []
             }
             url = url + '/createSecondFloor'
           }
@@ -464,7 +493,11 @@ export default {
         this.backendTree = result.payload
       })
     },
-
+    loadFrontendTree() {
+      this.$axios.$get(frontendCatalogTree).then(result => {
+        this.frontendTree = result.payload
+      })
+    },
     // 获取筛选条件
     async getSelectedFilters() {
       // let url = selectedFilterCondition + `?preCategoryId=${this.editForm.id}`
@@ -478,6 +511,7 @@ export default {
   },
   mounted: function() {
     this.loadBackendTree()
+    this.loadFrontendTree()
   },
   watch: {
     // newForm (val){
