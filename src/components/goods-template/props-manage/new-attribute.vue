@@ -47,7 +47,7 @@
 
 <script>
 import {api} from './config.js'
-import cloneDeep from 'lodash.cloneDeep'
+import cloneDeep from 'lodash/cloneDeep'
 const required = {
   1: '是',
   0: '否'
