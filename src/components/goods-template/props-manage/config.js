@@ -62,7 +62,7 @@ export const columns = {
               {
                 attrs: {
                   effect: 'dark',
-                  content: '销售属性对应客户端商品详情的规格',
+                  content: '规格属性对应客户端商品详情的规格',
                   placement: 'top'
                 }
               },

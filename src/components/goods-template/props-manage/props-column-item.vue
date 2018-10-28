@@ -47,7 +47,7 @@
 <script>
 const attrTypes = {
   base: '基本属性',
-  sale: '销售属性'
+  sale: '规格属性'
 }
 const SALE = 'sale'
 
@@ -84,7 +84,7 @@ export default {
     handleChange(value) {
       const row = this.row
 
-      // 销售属性，更新options
+      // 规格属性，更新options
       if (row.attrType === SALE) {
         this.skuGroupOptions[row.propName] = value
         this.skuPropCodes[row.propName] = value
@@ -142,7 +142,7 @@ export default {
           return
         }
         if (this.skuPropCodes[propName]) {
-          this.$message.info('不支持添加同名的销售属性!')
+          this.$message.info('不支持添加同名的规格属性!')
           this.row.attrType = 'base'
           return
         }
