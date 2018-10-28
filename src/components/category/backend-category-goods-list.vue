@@ -28,9 +28,11 @@
   <div>
     <div style="margin-bottom: 20px">
       <el-button type="primary"
+                 :disabled="disabled"
                  @click="handleAdd"
                  size="small">添加</el-button>
       <el-button @click="handleClear"
+                 :disabled="disabled"
                  size="small">清空</el-button>
     </div>
     <div class="selection border">
@@ -114,7 +116,7 @@ import {Tree} from 'element-ui'
 
 export default {
   name: 'backend-category-goods-list',
-  props: ['baseUrl', 'node', 'rootId'],
+  props: ['baseUrl', 'node', 'rootId', 'disabled'],
   components: {
     'el-tree': Tree
   },

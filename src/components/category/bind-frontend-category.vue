@@ -26,7 +26,7 @@
 
 <template>
   <div>
-    <span>{{name}}</span>
+    <span v-if="!disabled">{{name}}</span>
     <el-button
       @click="dialogVisible=true"
     >选择关联类目</el-button>
@@ -76,7 +76,7 @@ import {Tree} from 'element-ui'
 
 export default {
   name: 'bind-frontend-category',
-  props: ['isRoot'],
+  props: ['isRoot', 'disabled'],
   components: {
     'el-tree': Tree
   },

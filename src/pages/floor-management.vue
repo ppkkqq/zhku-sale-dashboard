@@ -21,10 +21,6 @@
                  ref="editForm"
                  label-width="100px"
                  class="demo-editForm">
-          <!--<el-form-item label="父级节点"-->
-                        <!--prop="name">-->
-            <!--<el-input disabled v-model="editForm.parentName"></el-input>-->
-          <!--</el-form-item>-->
           <el-form-item label="节点名称"
                         prop="name">
             <el-input v-model="editForm.name"></el-input>
@@ -33,66 +29,48 @@
                         prop="description">
             <el-input v-model="editForm.description"></el-input>
           </el-form-item>
-
-          <!--<el-form-item label="是否末级类目"-->
-          <!--prop="isLeaf">-->
-          <!--<el-radio-group v-model="editForm.isLeaf"-->
-          <!--:disabled="hasChildren || editForm.hasAttributeGroups">-->
-          <!--<el-radio label="1">是</el-radio>-->
-          <!--<el-radio label="0">否</el-radio>-->
-          <!--</el-radio-group>-->
-          <!--</el-form-item>-->
-
           <el-form-item label="分类图标"
-                        prop="displayUrl">
-            <upload-to-ali @load="onUpLoadFile($event, 'editForm','categoryUrl')"
+                        prop="classifyIcon">
+            <upload-to-ali @load="onUpLoadFile($event, 'editForm','classifyIcon')"
                            accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="editForm.displayUrl">
+                           :fileUrl="editForm.classifyIcon">
             </upload-to-ali>
-            <!--<div class="el-form-item__warning">-->
-            <!--建议尺寸：26*34，仅支持png格式，图片大小1M以内。-->
-            <!--</div>-->
           </el-form-item>
-
           <el-form-item label="广告图"
-                        prop="displayUrl">
-            <!--<div class="el-form-item__warning">-->
-            <!--建议尺寸：1190*109，显示在楼层底部位置-->
-            <!--</div>-->
-            <upload-to-ali @load="onUpLoadFile($event, 'editForm','advertiseUrl')"
+                        prop="advertisementPhoto">
+            <upload-to-ali @load="onUpLoadFile($event, 'editForm','advertisementPhoto')"
                            accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="editForm.displayUrl">
+                           :fileUrl="editForm.advertisementPhoto">
             </upload-to-ali>
-            <el-input placeholder="请输入广告位地址" v-model.trim="editForm.displayUrl"></el-input>
-            <el-button><a :href="editForm.displayUrl" target="_blank">测试</a></el-button>
-            <!--<div class="el-form-item__warning">-->
-            <!--建议尺寸：215*605，显示在楼层左侧位置-->
-            <!--</div>-->
+            <el-input placeholder="请输入广告位地址" v-model.trim="editForm.advertisementPhoto"></el-input>
+            <el-button><a :href="editForm.advertisementPhoto" target="_blank">测试</a></el-button>
           </el-form-item>
           <el-form-item label="关联类目"
-          prop="name">
-            <!--//todo-->
+                        prop="category">
             <bind-frontend-category
               :data="frontendTree"
               :baseUrl="frontendCatalogBaseUrl"
+              :disabled="!editForm.id"
               :isRoot="true"
               @catalogIds="setCatalogIds"
-              />
+            />
           </el-form-item>
           <el-form-item>
             <el-button type="primary"
                        @click="updateNode">保存</el-button>
             <el-button type="normal"
-                       @click="resetNode">重置</el-button>
+                       @click="resetNode('edit')">重置</el-button>
           </el-form-item>
         </el-form>
       </el-card>
       <template>
         <el-card class="box-card"
+                 :disabled="!editForm.id"
                  header="推荐商品">
           <backend-category-goods-list
             :data="backendTree"
             :baseUrl="bindBackendUrl"
+            :disabled="!editForm.id"
             :node="editForm"
             :rootId="rootId"
             @save="setNode"
@@ -320,15 +298,17 @@ export default {
         label: 'name'
       },
       editFormRules: {
-        name: [{required: true, message: '请输入类目名称', trigger: 'blur'}]
+        name: [{required: true, message: '请输入类目名称', trigger: 'blur'}],
+        advertisementPhoto: [
+          {required: true, message: '请上传广告图', trigger: 'blur'}
+        ]
       },
       editForm: {
         parentName: '',
         name: '',
         description: '',
-        categoryUrl: '',
-        advertiseUrl: '',
-        isLeaf: '1'
+        classifyIcon: '',
+        advertisementPhoto: ''
       },
       newFormRules: {
         name: [{required: true, trigger: 'blur', validator: checkName}]
@@ -360,7 +340,11 @@ export default {
       this.newForm.parentId = id
       this.newForm.parentName = name
     },
-    resetNode() {
+    resetNode(type) {
+      if (type == 'edit') {
+        this.editForm = this.compareData
+        return
+      }
       this.newForm = {
         id: '',
         parentId: '',
@@ -389,8 +373,9 @@ export default {
     },
     handleNodeClick({data, node}) {
       console.log(data, node)
-      this.editForm = {...data}
-      this.compareData = {...data}
+      this.editForm = {...data, parentName: node.parent.data.name || ''}
+      this.compareData = {...data, parentName: node.parent.data.name || ''}
+
       this.isEditRoot = node.parent.parent ? false : true
       this.rootId = data.id
       // 获取筛选条件
@@ -435,8 +420,8 @@ export default {
               categoryId: this.catalogIds,
               name,
               description,
-              classifyIcon: this.editForm.categoryUrl,
-              advertisementPhoto: this.editForm.advertiseUrl
+              classifyIcon: this.editForm.classifyIcon,
+              advertisementPhoto: this.editForm.advertisementPhoto
             }
             url = url + `/updateFloor?id=${this.compareData.id}`
           } else {
