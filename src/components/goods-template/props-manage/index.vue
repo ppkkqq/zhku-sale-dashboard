@@ -3,13 +3,15 @@
     <base-layout
       :title="title"
       :hasEdit="!isView"
-      btn-text="以下属性不满足？点我添加自定义产品属性"
-      @click="dialogVisible = true"
+      btn-text="添加属性"
+      @click="addBasicAttr"
     >
+
       <el-table :data="propsData" maxHeight="500">
         <el-table-column
           v-for="col in propsColumns"
           :key="col.prop"
+          minWidth="130px"
           v-bind="col">
           <template slot-scope="scope">
             <props-column-item
@@ -18,6 +20,7 @@
               :col="col"
               :row="scope.row"
               :skuPropCodes="skuPropCodes"
+              :skuGroupOptions="skuGroupOptions"
               @addColumn="addSkuCol"
               @removeColumn="delSkuCol"
             />
@@ -26,8 +29,8 @@
 
         <el-table-column label="操作" fixed="right" width="220" v-if="!isView">
           <template slot-scope="scope">
-            <el-button size="mini" v-show="scope.$index !== 0" @click="sortRow(scope.$index, 'up')">上移</el-button>
-            <el-button size="mini" v-show="scope.$index !== (propsData.length - 1)" @click="sortRow(scope.$index, 'down')">下移</el-button>
+            <!--<el-button size="mini" v-show="scope.$index !== 0" @click="sortRow(scope.$index, 'up')">上移</el-button>-->
+            <!--<el-button size="mini" v-show="scope.$index !== (propsData.length - 1)" @click="sortRow(scope.$index, 'down')">下移</el-button>-->
             <el-button size="mini" type="danger" @click="delRow(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -35,18 +38,21 @@
     </base-layout>
 
     <base-layout
-      v-if="(skusData.length > 0 || salesColumns.lenth > 0 || skuColumns.length > 0) && !isCombo"
-      title="规格组合"
+      title="规格属性"
       :hasEdit="!isView"
       btn-text="添加规格"
       @click="addSkuRow"
+      v-loading="skuLoading"
     >
       <el-table :data="skusData">
 
+        <!-- 销售属性列 -->
+        <!-- key 不能使用index，切换销售属性会造成prop没更新 -->
         <el-table-column
           v-if="salesColumns.length > 0"
           v-for="(col, index) in salesColumns"
-          :key="index"
+          :key="col.prop"
+          minWidth="130px"
           v-bind="col">
           <template slot-scope="scope">
             <sku-column-group
@@ -59,29 +65,48 @@
           </template>
         </el-table-column>
 
+        <!-- 固定销售列 -->
         <el-table-column
-          v-if="skuColumns.length > 0"
-          v-for="(col, index) in skuColumns"
+          v-if="skuFixedColumns.length > 0"
+          v-for="(col, index) in skuFixedColumns"
           :key="col.prop"
+          minWidth="130px"
           v-bind="col">
           <template slot-scope="scope">
             <sku-column-item
-              v-if="col.type !== 'price-range'"
               v-model="scope.row[col.prop]"
-              :isView="isView"
+              :compType="type"
+              :row="scope.row"
+              :prop="col.prop"
+              :disabled="isView || col.disabled"
               :type="col.type"
-              :options="skuGroupOptions[col.optionName] || []"
-            />
-            <input-range
-              v-else
-              :disabled="isView"
-              :min.sync="scope.row.minPrice"
-              :max.sync="scope.row.maxPrice"
+              :customQuery="customQuery"
             />
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" v-if="!isView">
+        <!-- 固定列 -->
+        <el-table-column
+          v-if="skuColumns.length > 0"
+          v-for="(col, index) in skuColumns"
+          :key="col.prop"
+          minWidth="130px"
+          v-bind="col">
+          <template slot-scope="scope">
+            <sku-column-item
+              v-model="scope.row[col.prop]"
+              :compType="type"
+              :row="scope.row"
+              :prop="col.prop"
+              :disabled="isView || col.disabled"
+              :type="col.type"
+              :customQuery="customQuery"
+              :options="skuGroupOptions[col.optionName] || col.option"
+            />
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" fixed="right" v-if="!isView">
           <template slot-scope="scope">
             <el-button size="mini" type="danger" @click="delSkuRow(scope.$index, scope.row)">删除</el-button>
           </template>
@@ -89,23 +114,33 @@
       </el-table>
     </base-layout>
 
-    <el-dialog title="选择属性" :visible.sync="dialogVisible">
+    <el-dialog title="选择属性" :visible.sync="dialogVisible" width="70%">
       <add-attribute @select="addRow" />
     </el-dialog>
   </div>
 </template>
 <script>
+import {checkSkuReference} from '@/const/api'
+
+import Bus from '../event-bus.js'
 import PropsColumnItem from './props-column-item'
 import SkuColumnGroup from './sku-column-group'
 import SkuColumnItem from './sku-column-item'
 import InputRange from './input-range'
-import AddAttribute from './add-attribute'
 import BaseLayout from '../base-layout'
+import FormRenderer from '@/components/el-form-renderer/index.js'
+import AddAttribute from './add-attribute'
 
 import {columns} from './config.js'
+import uniq from 'lodash/uniq'
 
-const COMBO = 'combo'
-const GOODS = 'goods'
+const GOODS = 'GOODS'
+const SALE = 'sale'
+const BASIC = 'basic'
+const isRequired = 1
+
+// 能够上架卖的类型
+const hasSaleProps = ['GOODS']
 
 export default {
   name: 'PropsManage',
@@ -135,6 +170,14 @@ export default {
     }
   },
   data() {
+    const formatPropName = (cell, value, callback) => {
+      value = value ? value.trim() : value
+      if (!value) {
+        callback('属性名不能为空')
+      } else {
+        callback()
+      }
+    }
     return {
       skuGroupOptions: {}, // 用于保存属性类型为销售属性的属性值
 
@@ -142,32 +185,66 @@ export default {
 
       salesColumns: [],
 
+      customQuery: {},
+
+      skuLoading: false,
+
+      attrType: SALE,
+
+      // 添加属性弹窗
       dialogVisible: false
     }
   },
   computed: {
     skuColumns() {
-      return columns.skuColumns[this.type] || {}
+      return columns.skuColumns[this.type] || []
+    },
+    skuFixedColumns() {
+      return columns.skuFixedColumns[this.type] || []
     },
     propsColumns() {
-      if (this.isCombo) {
-        return columns.fixedColumns[COMBO]
-      }
       return columns.fixedColumns[GOODS]
+    },
+    shopCode() {
+      return this.$store.state.shopCode
     }
+  },
+  watch: {
+    dialogVisible: function(val) {}
   },
   components: {
     PropsColumnItem,
     SkuColumnItem,
     SkuColumnGroup,
     InputRange,
-    AddAttribute,
-    BaseLayout
+    BaseLayout,
+    FormRenderer,
+    AddAttribute
   },
   created() {
     this.updateSkuCol()
+
+    Bus.$on('modelChange', this.handleModelChange)
+  },
+  beforeDestroy() {
+    Bus.$off('modelChange', this.handleModelChange)
   },
   methods: {
+    // 基础属性
+    addBasicAttr() {
+      this.attrType = BASIC
+      this.dialogVisible = true
+    },
+
+    handleModelChange(model) {
+      if (model === this.customQuery.modelCode) {
+        return
+      }
+      this.customQuery = {
+        modelCode: model
+      }
+    },
+
     // 模板属性
     sortRow(index, type) {
       const row = this.propsData.splice(index, 1)[0]
@@ -181,7 +258,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.propsData.splice(index, 1)
-        this.delSkuCol(row)
+        if (row.attrType === SALE) {
+          this.skuPropCodes[row.propName] = ''
+          this.delSkuCol(row)
+        }
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -190,37 +270,36 @@ export default {
     },
     addRow(row) {
       this.propsData.push({
-        groupName: '自定义',
+        // require: row.require,
+        // groupName: '自定义',
+        // sort: null,
+        editMode: row.editMode,
         initValue:
           (row.attributeValue &&
             row.attributeValue.map(attrValue => attrValue.value).join(',')) ||
           '',
-        initCode:
-          (row.attributeValue &&
-            row.attributeValue.map(attrValue => attrValue.code).join(',')) ||
-          '',
-        editMode: row.editMode,
-        propCode: row.code,
-        propName: row.name,
+        // initCode:
+        //   (row.attributeValue &&
+        //     row.attributeValue.map(attrValue => attrValue.code).join(',')) ||
+        //   '',
         propValue: '',
-        sort: null,
-        type: 'base'
+        // propCode: row.code,
+        propName: row.name,
+        attrType: 'base'
       })
       this.dialogVisible = false
     },
 
     // 规格组合行
     addSkuRow() {
+      this.attrType = SALE
+      // this.dialogVisible = true
       this.skusData.push({
+        // key: [],
+        // value: [],
         propNames: '',
-        propValues: '',
-        propCodes: '',
-        guidePrice: null, // 指导价
-        preferentialPrice: null, // 优惠价
-        materialCode: '', // 物料编码
-        packagePrice: null, // 套餐价
-        minPrice: null, // 价格区间最小值
-        maxPrice: null // 价格区间最大值
+        propValues: ''
+        // propCodes: ''
       })
     },
     delSkuRow(index, row) {
@@ -229,36 +308,56 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.skusData.splice(index, 1)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
+        const del = () => {
+          this.skusData.splice(index, 1)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        }
+        del()
       })
     },
 
     // 规格组合列（销售属性）
     updateSkuCol() {
       this.propsData.forEach(item => {
-        if (item.type === 'sale') {
-          this.addSkuCol(item)
+        if (item.attrType === SALE) {
+          this.addSkuCol(item, false)
         }
       })
     },
-    addSkuCol({groupName, propName, propValue, editMode, propCode}) {
+    addSkuCol(
+      {groupName, propName, propValue, editMode, propCode},
+      isReverse = true
+    ) {
       // 添加的是多选销售属性，添加到skuGroupOptions供规格组合使用
       // 预留名字，怕后期会修改支持同名
       // const optionName = `${groupName}-${propName}`
       const optionName = propName
-      this.skuGroupOptions[optionName] =
-        editMode === 'SELECT' ? propValue && propValue.split(',') : propValue
-      this.skuPropCodes[optionName] = propCode
 
-      this.salesColumns.push({
+      // this.skuGroupOptions[optionName] =
+      // editMode === 'SELECT' ? propValue && propValue.split(',') : propValue
+      // 响应式更新，为了属性改变，规格组合跟着变
+      this.$set(
+        this.skuGroupOptions,
+        optionName,
+        editMode === 'SELECT' ? propValue && propValue.split(',') : propValue
+      )
+
+      // this.$set(this.skuPropCodes, optionName, propCode)
+      // this.skuPropCodes[optionName] = propCode
+
+      const column = {
         label: propName,
         prop: propName,
         optionName: optionName
-      })
+      }
+
+      // 排序需要顺序插入
+      isReverse
+        ? this.salesColumns.unshift(column)
+        : this.salesColumns.push(column)
     },
     delSkuCol({propName}) {
       const index = this.salesColumns.findIndex(item => item.prop === propName)
@@ -278,7 +377,7 @@ export default {
       this.skusData.forEach(item => {
         if (!item.propNames) {
           item.propValues = ''
-          item.propCodes = ''
+          // item.propCodes = ''
           return
         }
         const index = item.propNames
@@ -288,64 +387,95 @@ export default {
         if (index > -1) {
           const propNames = item.propNames.split(',')
           const propValues = item.propValues.split(',')
-          const propCodes = (item.propCodes && item.propCodes.split(',')) || []
+          // const propCodes = (item.propCodes && item.propCodes.split(',')) || []
           propNames.splice(index, 1)
           propValues.splice(index, 1)
-          propCodes.splice(index, 1)
+          // propCodes.splice(index, 1)
 
           item.propNames = propNames.join(',')
           item.propValues = propValues.join(',')
-          item.propCodes = propCodes.join(',')
+          // item.propCodes = propCodes.join(',')
           return
         }
       })
     },
 
+    clear() {
+      this.salesColumns = []
+      this.skuGroupOptions = {}
+      this.skuPropCodes = {}
+    },
     getValue() {
       return {
-        skus: this.skusData,
-        itemAttributes: this.propsData.map((item, index) => {
+        skuDtos: this.skusData.map((item, index) => {
           return {
             ...item,
-            sort: index
+            shopCode: this.shopCode
+            // sort: index
+          }
+        }),
+        attributes: this.propsData.map((item, index) => {
+          return {
+            ...item
+            // sort: index
           }
         })
       }
     },
     validate() {
-      const itemAttributes = this.propsData
+      const attributes = this.propsData
       const skus = this.skusData
+      const isSaleStatus = hasSaleProps.indexOf(this.type) > -1
 
-      if (!itemAttributes || itemAttributes.length < 1) {
-        this.$message.warning('请先添加属性！')
+      if (
+        attributes.some(item => item.require === isRequired && !item.propValue)
+      ) {
+        this.$message.warning('必填属性不能为空!')
         return false
       }
 
-      if (itemAttributes.some(item => !item.propValue)) {
-        this.$message.warning('属性值不能为空!')
-        return false
+      // 可以上架商品验证
+      if (isSaleStatus) {
+        if (!attributes || attributes.length < 1) {
+          this.$message.warning('请先添加属性！')
+          return false
+        }
+
+        // 上架商品必须有销售属性
+        if (this.salesColumns.length < 1) {
+          this.$message.warning('至少有一个销售属性!')
+          return false
+        }
       }
 
-      if (!this.isCombo && (!skus || skus.length < 1)) {
+      if (!skus || skus.length < 1) {
         this.$message.warning('规格组合必须有一项!')
         return false
       }
 
       if (
-        !this.isCombo &&
         skus.some(item => {
           // 固定列值判断
           if (
+            this.skuColumns.length > 0 &&
             this.skuColumns.some(col => {
-              if (col.prop === 'priceRange') {
-                // 价格区间判断
-                return item.maxPrice < 0 || item.minPrice < 0
-              }
-              return item[col.prop] === '' || item[col.prop] === null
+              return item[col.prop] === null || item[col.prop] === ''
             })
           ) {
             return true
           }
+
+          // 固定销售列判断
+          // todo 确认是否需要
+          // if (this.skuFixedColumns.length > 0) {
+          //   if (
+          //     !item.value ||
+          //     this.skuFixedColumns.length !== item.value.length ||
+          //     item.value.some(val => val === null || val === '')
+          //   ) {
+          //     return true
+          //   }
+          // }
 
           // 销售属性判断
           if (this.salesColumns.length > 0) {
@@ -353,7 +483,10 @@ export default {
             if (!propValues) {
               return true
             }
-            if (propValues.split(',').length !== this.salesColumns.length) {
+            if (
+              propValues.split(',').filter(v => v !== '').length !==
+              this.salesColumns.length
+            ) {
               return true
             }
             return false
@@ -366,7 +499,35 @@ export default {
         return false
       }
 
+      if (this.salesColumns.length > 0) {
+        // 属性值的添加顺序不同，会造成出错，先排序
+        const values = this.skusData.map(
+          item =>
+            item.propValues &&
+            item.propValues
+              .split(',')
+              .sort()
+              .join(',')
+        )
+        const filterValues = uniq(values)
+
+        // 去重后length相等，表示有重复的sku
+        if (filterValues.length !== values.length) {
+          this.$message.warning('请勿添加销售属性值完全相同的规格组合！')
+          return false
+        }
+      }
+
       return true
+    },
+
+    // 添加属性弹窗
+    saveAttribute() {
+      this.$refs.formRender.validate(valid => {
+        if (valid) {
+          this.dialogVisible = false
+        }
+      })
     }
   }
 }

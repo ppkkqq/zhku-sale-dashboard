@@ -2,7 +2,7 @@
   <div class="goods-template">
     <h1>{{ title }}</h1>
 
-    <template  v-if="useTpl">
+    <template v-if="useTpl">
       <h3 v-if="editStatus==='isEdit'" class="padding-tb">第二步 查看并调整商品信息</h3>
     </template>
     <template v-else>
@@ -21,38 +21,34 @@
     <base-layout :title="prependName + '信息'">
       <info-manage
         ref="infoManage"
-        :value="templateInfo"
+        :prependName="prependName"
+        :value="infoData"
         :tempType="currentTempType"
-        :isView="isView"
+        :editStatus="editStatus"
         @typeChange="onTypeChange"
-        :isCombo="isCombo"
+        :isCombo="false"
       />
     </base-layout>
 
     <props-manage
+      v-if="!noPropsManage"
       :title="prependName + '属性'"
-      :propsData="templateInfo.itemAttributes"
-      :skusData="templateInfo.skus || []"
+      :propsData="propsData"
+      :skusData="skusData || []"
       :type="currentTempType"
       :isView="isView"
-      :isCombo="isCombo"
       class="margin-top"
       ref="PropsManage"
     />
 
-    
-    
-
-    
-
     <base-layout
       v-if="hasRichText"
-      :title="(isCombo ? name.combo : name.goods) + '介绍'"
+      :title="name.goods + '介绍'"
     >
       <product-description
         ref="richText"
-        :content="templateInfo.detail"
-        :disabled="isView"
+        :content="description"
+        :editorDisabled="editorDisabled"
       />
     </base-layout>
 
@@ -66,18 +62,18 @@
 import InfoManage from './info-manage/index.vue'
 import PropsManage from './props-manage/index.vue'
 import ProductDescription from './product-description'
-
 import BaseLayout from './base-layout'
+
 import {backendCatalogTree, backendCatalogDetail} from '@/const/api'
 
-import BackEndCategory from '@/container/back-end-category'
+import BackEndCategory from '@/container/back-end-category-select'
 
-const hasGoodsRichTexts = ['NEW_CARS', 'BOUTIQUE', 'UNKEEP']
-const hasComboRichTexts = ['UNKEEP', 'BOUTIQUE', 'MAINTENANCE']
+const hasGoodsRichTexts = ['GOODS']
 
 const TEMPLATE_NAME = '模板'
 const GOODS_NAME = '商品'
-const COMBO_NAME = '套餐'
+
+const GOODS = 'GOODS'
 
 export default {
   name: 'goodsTemplate',
@@ -95,11 +91,6 @@ export default {
       type: Boolean,
       default: true
     },
-    isCombo: {
-      // 是否套餐
-      type: Boolean,
-      default: false
-    },
 
     useTpl: {
       type: Boolean,
@@ -110,25 +101,30 @@ export default {
     source: {
       type: String,
       default: 'head_template'
+    },
+
+    // ITEM：商品，TEMPLATE：模板商品
+    templateId: {
+      type: String,
+      default: 'ITEM'
     }
   },
   data() {
     return {
       propsManageLoading: false,
       categories: [],
-      currentTempType: 'NEW_CARS',
+      currentTempType: GOODS,
       schemeTableData: [],
-      templateInfo: {
-        info: {},
-        itemAttributes: [],
-        skus: []
-      },
 
+      infoData: {},
+      skusData: [],
+      propsData: [],
       bundleContent: {},
+      description: '',
+      catalogId: '',
 
       isLoading: false,
-
-      catalogId: ''
+      editorDisabled: false
     }
   },
   components: {
@@ -136,7 +132,6 @@ export default {
     PropsManage,
     ProductDescription,
     BackEndCategory,
-
     BaseLayout
   },
   computed: {
@@ -145,90 +140,56 @@ export default {
     },
     hasRichText() {
       const type = this.currentTempType
-      if (this.isCombo) {
-        return hasComboRichTexts.indexOf(type) > -1
-      }
+
       return hasGoodsRichTexts.indexOf(type) > -1
     },
     prependName() {
       const append = this.isTemp ? TEMPLATE_NAME : ''
-      if (this.isCombo) {
-        return COMBO_NAME + append
-      }
+
       return GOODS_NAME + append
+    },
+    noPropsManage() {
+      return false
     }
   },
   watch: {
     content(newVal) {
-      // 处理字段不统一的问题
-      if (this.isCombo) {
-        this.templateInfo = {
-          ...newVal,
-          catalogId: newVal.catagoryId,
-          type: newVal.type && newVal.type.toUpperCase(),
-          itemAttributes: newVal.bundleAttributes
-          // propsData: newVal.bundleAttributes
-        }
-
-        this.bundleContent = {
-          bundleItemList: newVal.pcBundleContentList || [],
-          itemBundleList: newVal.itemBundleList || []
-        }
-
-        this.catalogId = newVal.catagoryId
-        // this.propsData = newVal.itemAttributes
-
-        this.currentTempType = newVal.type && newVal.type.toUpperCase()
-      } else {
-        this.templateInfo = newVal
-        this.catalogId = newVal.catalogId
-        // this.propsData = newVal.itemAttributes
-
-        this.schemeTableData = newVal.bundleContent || []
-
-        this.currentTempType = newVal.type
+      if (this.editStatus === 'isEdit') {
+        this.controlEditorFocus()
       }
-
-      this.$nextTick(() => {
-        this.$refs.PropsManage && this.$refs.PropsManage.updateSkuCol()
-      })
+      this.setData(newVal)
     }
   },
   created() {
-    if (this.isCombo) {
-      this.currentTempType = 'UNKEEP'
-    }
     this.cache = {}
 
     this.name = {
       template: TEMPLATE_NAME,
-      goods: GOODS_NAME,
-      combo: COMBO_NAME
+      goods: GOODS_NAME
     }
-    // this.templateInfo = this.content
-    // this.propsData = this.content.itemAttributes || []
+
+    this.setData(this.content)
   },
   methods: {
-    handlePriceChange(price) {
-      this.$refs.infoManage &&
-        this.$refs.infoManage.setValue({
-          id: 'bundlePrice',
-          value: price
-        })
+    handlePriceChange(val) {
+      this.$refs.infoManage && this.$refs.infoManage.setBundlePrice(val)
     },
+
     handleSelect(val) {
       if (val && val.length) {
         this.catalogId = val[val.length - 1]
-        this.getTemplate(this.catalogId)
+        this.getCatalogDetail(this.catalogId)
+
+        this.$refs.PropsManage && this.$refs.PropsManage.clear()
       }
     },
-    getTemplate(id) {
+    getCatalogDetail(id) {
       this.catalogId = id
 
       this.propsManageLoading = true
 
       if (this.cache[id]) {
-        this.initData(this.cache[id])
+        this.setPropData(this.cache[id])
         return
       }
 
@@ -240,66 +201,91 @@ export default {
           if (!payload) {
             return
           }
-          this.initData(payload)
+          this.setPropData(payload)
           this.cache[id] = payload
         })
         .catch(e => {
           this.propsManageLoading = false
         })
     },
-    initData(payload) {
+    setPropData(payload) {
       const catalog = payload.catalog
-      // this.templateInfo.info = resp.payload
-      this.templateInfo = {
-        brandId: '',
-        name: catalog.name,
-        productPhoto: '',
-        title: catalog.description,
-        type: this.currentTempType,
-        subscription: null,
-        depositPercent: null,
-        carBrandId: '',
-        carModelId: '',
-        carSeriesId: '',
-        itemAttributes:
-          (payload.attributeGroups &&
-            payload.attributeGroups.reduce((con, group, index) => {
-              if (!group.attributeList || group.attributeList.length < 1) {
-                return con
-              }
-              return con.concat(
-                group.attributeList.map(attr => {
-                  return {
-                    groupName: group.name,
-                    sort: index,
-                    editMode: attr.editMode,
-                    initCode:
-                      (attr.attributeValue &&
-                        attr.attributeValue
-                          .map(attrValue => attrValue.code)
-                          .join(',')) ||
-                      '',
-                    propCode: '',
-                    propValue: '',
-                    initValue:
-                      (attr.attributeValue &&
-                        attr.attributeValue
-                          .map(attrValue => attrValue.value)
-                          .join(',')) ||
-                      '',
-                    type: 'base',
-                    propName: attr.name
-                  }
-                })
-              )
-            }, [])) ||
-          [],
-        skus: []
-      }
+
+      this.propsData =
+        (payload.attributeGroups &&
+          payload.attributeGroups.reduce((con, group, index) => {
+            if (!group.attributeList || group.attributeList.length < 1) {
+              return con
+            }
+            return con.concat(
+              group.attributeList.map(attr => {
+                return {
+                  // require: attr.require,
+                  // groupName: group.name,
+                  // sort: index,
+                  editMode: attr.editMode,
+                  initCode:
+                    (attr.attributeValue &&
+                      attr.attributeValue
+                        .map(attrValue => attrValue.code)
+                        .join(',')) ||
+                    '',
+                  propCode: '',
+                  propValue: '',
+                  initValue:
+                    (attr.attributeValue &&
+                      attr.attributeValue
+                        .map(attrValue => attrValue.value)
+                        .join(',')) ||
+                    '',
+                  type: 'base',
+                  propName: attr.name
+                }
+              })
+            )
+          }, [])) ||
+        []
+
+      this.skusData = []
+    },
+
+    setData(newVal) {
+      let propsData
+
+      this.infoData = newVal
+      this.catalogId = newVal.catalogId
+      this.description = newVal.detail
+
+      // 处理字段不统一的问题
+      propsData = newVal.attributes
+
+      this.schemeTableData = newVal.bundleContent || []
+      this.currentTempType = newVal.type || GOODS
+
+      this.skusData =
+        (newVal.skuDtos &&
+          newVal.skuDtos.sort((a, b) => {
+            return a.sort > b.sort
+          })) ||
+        []
+
+      this.propsData =
+        (propsData &&
+          propsData.sort((a, b) => {
+            return a.sort > b.sort
+          })) ||
+        []
+
+      this.$nextTick(() => {
+        this.$refs.PropsManage && this.$refs.PropsManage.updateSkuCol()
+      })
     },
 
     onTypeChange(type) {
+      this.propsData = []
       this.currentTempType = type
+      this.skusData = []
+      this.$refs.PropsManage && this.$refs.PropsManage.clear()
     },
     onSubmit() {
       if (!this.useTpl && !this.catalogId) {
@@ -312,12 +298,10 @@ export default {
       }
 
       this.$refs.infoManage &&
-        this.$refs.infoManage.validate(valid => {
+        this.$refs.infoManage.validate().then(valid => {
           if (!valid) {
-            this.$message.warning('模板信息填写有误!')
             return
           }
-
           this.handleSubmit()
         })
     },
@@ -332,30 +316,21 @@ export default {
       const catalogId = this.catalogId
 
       const data = {
-        source: this.source,
-        type: this.currentTempType,
+        // source: this.source,
+        templateId: this.templateId,
+        // type: this.currentTempType,
         detail: richText,
         ...infoManage
       }
 
-      if (this.isCombo) {
-        this.submit({
-          ...data,
-          catagoryId: catalogId, // 套餐字段待统一
-          type: this.currentTempType.toLowerCase(), // 待修改
-
-          source: this.source.toUpperCase(), // 商品待修改，统一大写
-
-          bundleAttributes: PropsManage.itemAttributes
-        })
-      } else {
-        this.submit({
-          ...data,
-          catalogId,
-          type: this.currentTempType,
-          ...PropsManage
-        })
-      }
+      this.submit({
+        ...data,
+        catalogId,
+        status: 'unaudited',
+        goodsType: '142', //142常温(默认值) ，143生鲜
+        // type: this.currentTempType,
+        ...PropsManage
+      })
     },
     submit(data) {
       let fetch
@@ -378,6 +353,17 @@ export default {
           .catch(e => {
             this.isLoading = false
           })
+    },
+
+    // 手动控制编辑器是否可以输入
+    // 解决点击编辑按钮进入页面时，填充editor，触发change事件，导致进入页面会滚动到底部的bug
+    controlEditorFocus() {
+      this.editorDisabled = !this.editorDisabled
+    }
+  },
+  mounted() {
+    if (this.editStatus === 'isEdit' || this.editStatus === 'isView') {
+      this.controlEditorFocus()
     }
   }
 }
@@ -390,6 +376,9 @@ export default {
     .margin-top {
       margin-top 30px
     }
+    .margin-top-sm {
+      margin-top 10px
+    }
     .padding-tb {
       padding-top 30px
       padding-bottom 30px
@@ -399,6 +388,9 @@ export default {
       border-bottom 1px solid #eee
       margin-bottom 20px
       font-size 1.5em
+    }
+    .block {
+      display block
     }
   }
 </style>

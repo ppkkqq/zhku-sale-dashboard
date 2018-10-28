@@ -17,8 +17,6 @@ export const APPLICATION = '/mall-application-api/api/v1'
 export const EVALUATE_CENTER = '/mall-deepexi-evaluate-center/api/v1'
 export const ACCOUNT_CENTER = '/mall-deepexi-account-center/api/v1'
 
-export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
-
 export const recommendList = MALL_CONFIG + '/featuredFirsts'
 
 // 品牌管理
@@ -47,14 +45,6 @@ export const skusOn = id => {
 export const skusOff = id => {
   return fakeProductCenter + `/seller/items/${id}/skus/off`
 }
-
-//后台类目树
-
-export const prdCatalogs = PRODUCT_CENTER + '/prdCatalogs/tree'
-export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
-export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
-export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
-export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
 
 // 会员信息
 export const mcMemberInfos = MEMBER_CENTER + '/mcMemberAccounts'
@@ -103,9 +93,8 @@ export const feedback = MALL_CONFIG + '/feedbacks'
 //车型基础数据管理
 export const carBrandsSeries = PRODUCT_CENTER + '/pcCarBrandSeries'
 export const carModels = PRODUCT_CENTER + '/pcCarModels'
-
 //商品管理
-export const shopItems = `${PRODUCT_CENTER}/admin/items`
+export const shopItems = `${PRODUCT_CENTER}/shop/items`
 export const productDetail = id => `${PRODUCT_CENTER}/shop/items/${id}`
 
 //套餐管理
@@ -130,8 +119,8 @@ export const customerFocus = `${APPLICATION}/goodsAttentions/headquarters/person
 export const customerEvaluate = `${EVALUATE_CENTER}/ecEvaluations/tree`
 //我的证件
 export const customerCertificatess = `${MEMBER_CENTER}/mcCertificatess/list`
-// 退款
-export const refundList = TRADE_CENTER + '/refund/supplier/list'
+// 售后
+export const refundList = TRADE_CENTER + '/refund/supplier/platlist'
 export const refundAudit = TRADE_CENTER + '/refund/supplier/audit'
 export const refundDetail = TRADE_CENTER + '/refund/supplier/detail'
 
@@ -157,8 +146,10 @@ export const orderDetail = TRADE_CENTER + '/order/shopOrderDetail'
 export const logistics = TRADE_CENTER + '/logistics'
 
 //商品
-export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
+// export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
+export const goodsLists = PRODUCT_CENTER + '/manager/pcItems/plat'
 // 商品审核
+export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
 export const getNeedCheckPcItem =
   PRODUCT_CENTER + '/manager/pcItems/getNeedCheckPcItem'
 export const getNeedCheckPcById =
@@ -182,3 +173,10 @@ export const frontendCatalogDetail = id =>
   PRODUCT_CENTER + `/pcPrecategorys/${id}`
 export const frontendCatalogBaseUrl = PRODUCT_CENTER + `/pcPrecategorys`
 export const bindBackendUrl = PRODUCT_CENTER + `/pcPrecategoryCatalogs`
+
+//后台类目树
+export const prdCatalogs = PRODUCT_CENTER + '/prdCatalogs/tree'
+export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
+export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
+export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
+export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`

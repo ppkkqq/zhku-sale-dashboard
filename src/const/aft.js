@@ -122,8 +122,8 @@ export const columns = [
   },
   {
     prop: 'status',
-    label: '订单状态',
-    formatter: row => statusOpts[row.status]
+    label: '订单状态'
+    // formatter: row => statusOpts[row.status]
   }
 ]
 
