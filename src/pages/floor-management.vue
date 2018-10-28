@@ -48,10 +48,12 @@
           <el-form-item label="关联类目"
                         prop="category">
             <bind-frontend-category
-              :data="frontendTree"
+              :data="backendTree"
               :baseUrl="frontendCatalogBaseUrl"
               :disabled="!editForm.id"
               :isRoot="true"
+              :categoryName="editForm.categoryName"
+              ref="BindFrontendCategory"
               @catalogIds="setCatalogIds"
             />
           </el-form-item>
@@ -107,7 +109,7 @@
                         prop="name">
             <!--//todo-->
             <bind-frontend-category
-              :data="frontendTree"
+              :data="backendTree"
               :baseUrl="frontendCatalogBaseUrl"
               :isRoot="false"
               @catalogIds="setCatalogIds"
@@ -171,7 +173,7 @@
                           prop="name">
               <!--//todo-->
               <bind-frontend-category
-                :data="frontendTree"
+                :data="backendTree"
                 :baseUrl="frontendCatalogBaseUrl"
                 :isRoot="true"
                 @catalogIds="setCatalogIds"
@@ -225,7 +227,7 @@
                           prop="name">
               <!--//todo-->
               <bind-frontend-category
-                :data="frontendTree"
+                :data="backendTree"
                 :baseUrl="frontendCatalogBaseUrl"
                 :isRoot="false"
                 @catalogIds="setCatalogIds"
@@ -308,7 +310,8 @@ export default {
         name: '',
         description: '',
         classifyIcon: '',
-        advertisementPhoto: ''
+        advertisementPhoto: '',
+        categoryName: ''
       },
       newFormRules: {
         name: [{required: true, trigger: 'blur', validator: checkName}]
@@ -342,6 +345,7 @@ export default {
     },
     resetNode(type) {
       if (type == 'edit') {
+        this.$refs.BindFrontendCategory.resetName()
         this.editForm = this.compareData
         return
       }

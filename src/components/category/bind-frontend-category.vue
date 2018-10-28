@@ -26,7 +26,7 @@
 
 <template>
   <div>
-    <span v-if="!disabled">{{name}}</span>
+    <span v-if="!disabled">{{name||categoryName}}</span>
     <el-button
       @click="dialogVisible=true"
     >选择关联类目</el-button>
@@ -76,7 +76,7 @@ import {Tree} from 'element-ui'
 
 export default {
   name: 'bind-frontend-category',
-  props: ['isRoot', 'disabled'],
+  props: ['isRoot', 'disabled', 'categoryName'],
   components: {
     'el-tree': Tree
   },
@@ -151,6 +151,9 @@ export default {
       this.$nextTick(() => {
         this.checkedNodes = this.$refs.tree.getCheckedNodes()
       })
+    },
+    resetName() {
+      this.name = ''
     }
   },
   computed: {
