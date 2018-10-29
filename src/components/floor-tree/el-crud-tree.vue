@@ -136,7 +136,7 @@ export default {
     },
 
     //新增
-    async addNode(data, url) {
+    async addNode(isAddRoot, data, url) {
       //新增节点发送相关相求
       this.loading = true
       try {
@@ -147,9 +147,16 @@ export default {
         this.loadTree()
 
         // this[this.status](payload)
-        this.$refs.tree.hideDialogForm()
-        this.loading = false
-        this.clearCurrent()
+        if (isAddRoot) {
+          console.log('isAddRoot', isAddRoot)
+          console.log(payload.id)
+          this.$emit('addItems', payload.id)
+
+          this.loading = false
+          this.clearCurrent()
+        } else {
+          this.$refs.tree.hideDialogForm()
+        }
       } catch (error) {
         this.$message.error(error.message)
         this.loading = false
@@ -157,17 +164,14 @@ export default {
       }
     },
 
-    async removeNode(data) {
+    async removeNode(id) {
       this.loading = true
-      const {id, parentId} = data
-      const url = parentId
-        ? `${this.url}/${id}?parentId=${parentId}`
-        : `${this.url}/${id}`
+      const url = `/mall-deepexi-mall-config-api/api/v1/floor/deleteFloor?id=${id}`
 
       try {
         const {payload} = await this.$axios.$delete(url)
         //删除树形节点
-        this._remove(this.idMap[id])
+        this.loadTree()
         this.loading = false
         this.clearCurrent()
       } catch (error) {
@@ -177,10 +181,10 @@ export default {
     },
 
     //删除
-    async handleRemoveNode(data) {
+    async handleRemoveNode(id) {
       customConfirm({
         cb: this.removeNode,
-        payload: data
+        payload: id
       })
     },
 

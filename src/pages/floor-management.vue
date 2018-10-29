@@ -10,7 +10,7 @@
     @clear-node="handleClearNode"
     @create-type="setAddType"
     @createData="createData"
-
+    @addItems="addItems"
   >
     <!--编辑主楼层  确认无误-->
     <div v-if="isEditRoot">
@@ -117,7 +117,7 @@
               :data="frontendTree"
               :disabled="!editForm.id"
               :isRoot="false"
-              :categoryName="newForm.categoryName"
+              :categoryName="editForm.secondCategoryName"
               ref="BindFrontendCategory"
               @catalogIds="setCatalogIds"
             />
@@ -136,9 +136,9 @@
     <!-- 新增节点 -->
     <template slot="create">
       <div v-if="isAddRoot">
-        <el-card
-          class="box-card"
-          header="新增楼层">
+        <el-card v-if="isFirstStep"
+                 class="box-card"
+                 header="新增楼层">
           <el-form :model="newForm"
                    :rules="newFormRules"
                    ref="newForm"
@@ -152,34 +152,24 @@
                           prop="description">
               <el-input v-model="newForm.description"></el-input>
             </el-form-item>
-
             <el-form-item label="分类图标"
-                          prop="categoryUrl">
-              <upload-to-ali @load="onUpLoadFile($event, 'newForm','categoryUrl')"
+                          prop="classifyIcon">
+              <upload-to-ali @load="onUpLoadFile($event, 'newForm','classifyIcon')"
                              accept="image/png, image/jpeg, image/jpg"
-                             :fileUrl="newForm.categoryUrl">
+                             :fileUrl="newForm.classifyIcon">
               </upload-to-ali>
             </el-form-item>
-
             <el-form-item label="广告图"
-                          prop="advertiseUrl">
-              <!--<div class="el-form-item__warning">-->
-              <!--建议尺寸：1190*109，显示在楼层底部位置-->
-              <!--</div>-->
-              <upload-to-ali @load="onUpLoadFile($event, 'newForm','advertiseUrl')"
+                          prop="advertisementPhoto">
+              <upload-to-ali @load="onUpLoadFile($event, 'newForm','advertisementPhoto')"
                              accept="image/png, image/jpeg, image/jpg"
-                             :fileUrl="newForm.advertiseUrl">
+                             :fileUrl="newForm.advertisementPhoto">
               </upload-to-ali>
-              <el-input placeholder="请输入广告位地址" v-model.trim="newForm.advertiseUrl"></el-input>
-              <el-button><a :href="newForm.advertiseUrl" target="_blank">测试</a></el-button>
-              <!--<div class="el-form-item__warning">-->
-              <!--建议尺寸：215*605，显示在楼层左侧位置-->
-              <!--</div>-->
+              <el-input placeholder="请输入广告位地址" v-model.trim="newForm.advertisementPhoto"></el-input>
+              <el-button><a :href="newForm.advertisementPhoto" target="_blank">测试</a></el-button>
             </el-form-item>
-
             <el-form-item label="关联类目"
-                          prop="name">
-              <!--//todo-->
+                          prop="category">
               <bind-frontend-category
                 :data="frontendTree"
                 :disabled="false"
@@ -197,19 +187,19 @@
             </el-form-item>
           </el-form>
         </el-card>
-        <!--<template>-->
-          <!--<el-card class="box-card"-->
-                   <!--header="推荐商品">-->
-            <!--<backend-category-goods-list-->
-              <!--:data="backendTree"-->
-              <!--:baseUrl="bindBackendUrl"-->
-              <!--:node="newForm"-->
-              <!--:rootId="rootId"-->
-              <!--@save="setNode"-->
-              <!--@refresh="loadBackendTree"-->
-              <!--:props="defaultProps" />-->
-          <!--</el-card>-->
-        <!--</template>-->
+        <template v-else>
+          <el-card class="box-card"
+                   header="推荐商品">
+            <backend-category-goods-list
+              :data="backendTree"
+              :baseUrl="bindBackendUrl"
+              :node="newForm"
+              :rootId="rootId"
+              @save="setNode"
+              @refresh="loadBackendTree"
+              :props="defaultProps" />
+          </el-card>
+        </template>
       </div>
       <div v-else>
         <el-card
@@ -299,6 +289,7 @@ export default {
       }
     }
     return {
+      isFirstStep: false,
       isAddRoot: false,
       isEditRoot: true,
       pageName: 'floor-management',
@@ -319,6 +310,7 @@ export default {
         ]
       },
       editForm: {
+        secondCategoryName: '',
         id: '',
         parentName: '',
         name: '',
@@ -339,20 +331,25 @@ export default {
         parentName: '',
         name: '',
         description: '',
-        categoryUrl: '',
-        advertiseUrl: '',
+        classifyIcon: '',
+        advertisementPhoto: '',
         categoryId: '',
         categoryName: ''
       },
 
       selectedFilters: [],
-
+      floorId: '',
       compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
       rootId: '',
       catalogIds: ''
     }
   },
   methods: {
+    addItems(id) {
+      this.isFirstStep = false
+      this.floorId = id
+      console.log('isFirstStep', this.isFirstStep)
+    },
     setCatalogIds(isRoot, ids) {
       this.catalogIds = ids
     },
@@ -383,9 +380,22 @@ export default {
     },
     setAddType(type) {
       this.isAddRoot = type === 'addRoot' ? true : false
-      // if(!this.isAddRoot){
-      //   this.rootId = ''
-      // }
+      if (this.isAddRoot) {
+        this.isFirstStep = true
+      }
+      this.newForm = {
+        id: '',
+        parentId: '',
+        parentName: '',
+        name: '',
+        description: '',
+        classifyIcon: '',
+        advertisementPhoto: '',
+        categoryId: '',
+        categoryName: ''
+      }
+      console.log('isAddRoot', this.isAddRoot)
+      console.log('isFirstStep', this.isFirstStep)
       //type 值有两种情况 'addChild'   addRoot
     },
     //树形
@@ -401,6 +411,9 @@ export default {
       this.compareData = {...data, parentName: node.parent.data.name || ''}
 
       this.isEditRoot = node.parent.parent ? false : true
+      if (this.isEditRoot) {
+        this.floorId = data.id
+      }
       this.rootId = data.id
       // 获取筛选条件
       this.getSelectedFilters()
@@ -452,7 +465,7 @@ export default {
             obj = {
               name,
               description,
-              categoryIdList: this.catalogIds || []
+              secondCategoryId: this.catalogIds
             }
             url = url + `/updateSecondFloor?id=${this.compareData.id}`
           }
@@ -464,7 +477,7 @@ export default {
       // 新增节点保存成功
       this.$refs.newForm.validate(valid => {
         if (valid) {
-          const {name, description, parentId, categoryIdList} = this.newForm
+          const {name, description, parentId} = this.newForm
           let obj = {}
           let url = this.url
           if (this.isAddRoot) {
@@ -482,11 +495,11 @@ export default {
               parentId,
               name,
               description,
-              categoryIdList: this.catalogIds || []
+              secondCategoryId: this.catalogIds
             }
             url = url + '/createSecondFloor'
           }
-          this.$refs.tree.addNode(obj, url)
+          this.$refs.tree.addNode(this.isAddRoot, obj, url)
         }
       })
     },
@@ -498,9 +511,15 @@ export default {
     },
     //detail
     loadBackendTree() {
-      this.$axios.$get(`${backendCatalogBaseUrl}/tree`).then(result => {
-        this.backendTree = result.payload
-      })
+      this.$axios
+        .$get(
+          `/mall-deepexi-mall-config-api/api/v1/floor/category?floorId=${
+            this.floorId
+          }`
+        )
+        .then(result => {
+          this.backendTree = result.payload
+        })
     },
     loadFrontendTree() {
       this.$axios.$get(frontendCatalogTree).then(result => {
@@ -519,13 +538,18 @@ export default {
     }
   },
   mounted: function() {
-    this.loadBackendTree()
+    // this.loadBackendTree()
     this.loadFrontendTree()
   },
   watch: {
     // newForm (val){
     //   console.log('我是watch',val)
     // }
+    floorId(val) {
+      if (val) {
+        this.loadBackendTree()
+      }
+    }
   },
   computed: {
     hasChildren() {

@@ -129,15 +129,15 @@ export default {
     },
     append(data) {
       // console.log(data)
-      let temp
-      if (this.isRoot) {
-        temp = data.id
-      } else {
-        temp = []
-        data.children.forEach(item => {
-          temp.push(item.id)
-        })
-      }
+      let temp = data.id
+      // if (this.isRoot) {
+      //   temp = data.id
+      // } else {
+      //   temp = []
+      //   data.children.forEach(item => {
+      //     temp.push(item.id)
+      //   })
+      // }
       console.log(temp)
       this.$emit('catalogIds', this.isRoot, temp)
       this.name = data.name
