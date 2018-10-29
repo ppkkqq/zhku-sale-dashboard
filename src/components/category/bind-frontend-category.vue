@@ -120,7 +120,6 @@ export default {
         if (this.isRoot) {
           return false
         } else {
-          console.log(node)
           if (!node.childNodes.length) {
             return false
           }
@@ -129,16 +128,17 @@ export default {
       }
     },
     append(data) {
-      console.log(data)
+      // console.log(data)
       let temp
       if (this.isRoot) {
         temp = data.id
       } else {
         temp = []
         data.children.forEach(item => {
-          temp.push = item.id
+          temp.push(item.id)
         })
       }
+      console.log(temp)
       this.$emit('catalogIds', this.isRoot, temp)
       this.name = data.name
       this.dialogVisible = false

@@ -10,7 +10,9 @@
     @clear-node="handleClearNode"
     @create-type="setAddType"
     @createData="createData"
+
   >
+    <!--编辑主楼层  确认无误-->
     <div v-if="isEditRoot">
       <el-card
         class="box-card"
@@ -31,16 +33,20 @@
           </el-form-item>
           <el-form-item label="分类图标"
                         prop="classifyIcon">
-            <upload-to-ali @load="onUpLoadFile($event, 'editForm','classifyIcon')"
-                           accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="editForm.classifyIcon">
+            <upload-to-ali
+              :disabled="!editForm.id"
+              @load="onUpLoadFile($event, 'editForm','classifyIcon')"
+              accept="image/png, image/jpeg, image/jpg"
+              :fileUrl="editForm.classifyIcon">
             </upload-to-ali>
           </el-form-item>
           <el-form-item label="广告图"
                         prop="advertisementPhoto">
-            <upload-to-ali @load="onUpLoadFile($event, 'editForm','advertisementPhoto')"
-                           accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="editForm.advertisementPhoto">
+            <upload-to-ali
+              :disabled="!editForm.id"
+              @load="onUpLoadFile($event, 'editForm','advertisementPhoto')"
+              accept="image/png, image/jpeg, image/jpg"
+              :fileUrl="editForm.advertisementPhoto">
             </upload-to-ali>
             <el-input placeholder="请输入广告位地址" v-model.trim="editForm.advertisementPhoto"></el-input>
             <el-button><a :href="editForm.advertisementPhoto" target="_blank">测试</a></el-button>
@@ -48,8 +54,7 @@
           <el-form-item label="关联类目"
                         prop="category">
             <bind-frontend-category
-              :data="backendTree"
-              :baseUrl="frontendCatalogBaseUrl"
+              :data="frontendTree"
               :disabled="!editForm.id"
               :isRoot="true"
               :categoryName="editForm.categoryName"
@@ -109,9 +114,11 @@
                         prop="name">
             <!--//todo-->
             <bind-frontend-category
-              :data="backendTree"
-              :baseUrl="frontendCatalogBaseUrl"
+              :data="frontendTree"
+              :disabled="!editForm.id"
               :isRoot="false"
+              :categoryName="newForm.categoryName"
+              ref="BindFrontendCategory"
               @catalogIds="setCatalogIds"
             />
           </el-form-item>
@@ -119,7 +126,7 @@
             <el-button type="primary"
                        @click="updateNode">保存</el-button>
             <el-button type="normal"
-                       @click="resetNode">重置</el-button>
+                       @click="resetNode('edit')">重置</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -169,13 +176,16 @@
               <!--建议尺寸：215*605，显示在楼层左侧位置-->
               <!--</div>-->
             </el-form-item>
+
             <el-form-item label="关联类目"
                           prop="name">
               <!--//todo-->
               <bind-frontend-category
-                :data="backendTree"
-                :baseUrl="frontendCatalogBaseUrl"
+                :data="frontendTree"
+                :disabled="false"
                 :isRoot="true"
+                :categoryName="newForm.categoryName"
+                ref="BindFrontendCategory"
                 @catalogIds="setCatalogIds"
               />
             </el-form-item>
@@ -187,32 +197,32 @@
             </el-form-item>
           </el-form>
         </el-card>
-        <template>
-          <el-card class="box-card"
-                   header="推荐商品">
-            <backend-category-goods-list
-              :data="backendTree"
-              :baseUrl="bindBackendUrl"
-              :node="newForm"
-              :rootId="rootId"
-              @save="setNode"
-              @refresh="loadBackendTree"
-              :props="defaultProps" />
-          </el-card>
-        </template>
+        <!--<template>-->
+          <!--<el-card class="box-card"-->
+                   <!--header="推荐商品">-->
+            <!--<backend-category-goods-list-->
+              <!--:data="backendTree"-->
+              <!--:baseUrl="bindBackendUrl"-->
+              <!--:node="newForm"-->
+              <!--:rootId="rootId"-->
+              <!--@save="setNode"-->
+              <!--@refresh="loadBackendTree"-->
+              <!--:props="defaultProps" />-->
+          <!--</el-card>-->
+        <!--</template>-->
       </div>
       <div v-else>
         <el-card
           class="box-card"
           header="新增子楼层">
-          <el-form :model="newForm"
-                   :rules="newFormRules"
-                   ref="newForm"
-                   label-width="100px"
-                   class="demo-newForm">
+          <el-form
+            :model="newForm"
+            :rules="newFormRules"
+            ref="newForm"
+            label-width="100px"
+            class="demo-newForm">
             <el-form-item label="父级节点"
                           prop="parentName">{{newForm.parentName}}
-              <!--<el-input disabled v-model=""></el-input>-->
             </el-form-item>
             <el-form-item label="楼层名称"
                           prop="name">
@@ -223,13 +233,16 @@
               <el-input v-model="newForm.description"></el-input>
             </el-form-item>
 
-            <el-form-item label="关联类目"
-                          prop="name">
-              <!--//todo-->
+            <!--//todo :categoryName="newForm.categoryName" 这里还没有对好  -->
+            <el-form-item
+              label="关联类目"
+              prop="category">
               <bind-frontend-category
-                :data="backendTree"
-                :baseUrl="frontendCatalogBaseUrl"
+                :data="frontendTree"
+                :disabled="false"
                 :isRoot="false"
+                :categoryName="newForm.categoryName"
+                ref="BindFrontendCategory"
                 @catalogIds="setCatalogIds"
               />
             </el-form-item>
@@ -237,7 +250,7 @@
               <el-button type="primary"
                          @click="addNode">保存</el-button>
               <el-button type="normal"
-                         @click="resetNode">重置</el-button>
+                         @click="resetNode('add')">重置</el-button>
             </el-form-item>
           </el-form>
         </el-card>
@@ -306,6 +319,7 @@ export default {
         ]
       },
       editForm: {
+        id: '',
         parentName: '',
         name: '',
         description: '',
@@ -314,7 +328,10 @@ export default {
         categoryName: ''
       },
       newFormRules: {
-        name: [{required: true, trigger: 'blur', validator: checkName}]
+        name: [{required: true, trigger: 'blur', validator: checkName}],
+        advertisementPhoto: [
+          {required: true, message: '请上传广告图', trigger: 'blur'}
+        ]
       },
       newForm: {
         id: '',
@@ -325,7 +342,7 @@ export default {
         categoryUrl: '',
         advertiseUrl: '',
         categoryId: '',
-        isLeaf: '1'
+        categoryName: ''
       },
 
       selectedFilters: [],
@@ -349,16 +366,19 @@ export default {
         this.editForm = this.compareData
         return
       }
-      this.newForm = {
-        id: '',
-        parentId: '',
-        parentName: '',
-        name: '',
-        description: '',
-        categoryUrl: '',
-        advertiseUrl: '',
-        categoryId: '',
-        isLeaf: '1'
+      if (type == 'add') {
+        this.newForm = {
+          id: '',
+          parentId: '',
+          parentName: '',
+          name: '',
+          description: '',
+          categoryUrl: '',
+          advertiseUrl: '',
+          categoryId: '',
+          categoryName: ''
+        }
+        this.$refs.BindFrontendCategory.resetName()
       }
     },
     setAddType(type) {

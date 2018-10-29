@@ -145,6 +145,7 @@ export default {
         }
         const {payload} = await this.$axios.$post(url, data)
         this.loadTree()
+
         // this[this.status](payload)
         this.$refs.tree.hideDialogForm()
         this.loading = false
