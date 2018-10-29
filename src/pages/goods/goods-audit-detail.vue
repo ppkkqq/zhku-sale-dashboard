@@ -9,7 +9,6 @@
       :isTemp="false"
       templateId="ITEM"
     />
-
     <base-layout title="审核信息" v-if="!isView">
       <el-form label-width="120px">
         <el-form-item label="审核结果">
@@ -17,6 +16,9 @@
             <el-radio :label="true">通过</el-radio>
             <el-radio :label="false">拒绝</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="拒接原因" v-if="!auditStatus">
+          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="rejectReason"></el-input>
         </el-form-item>
         <div class="text-right margin-top">
           <el-button @click="$router.back()">取消</el-button>
@@ -45,6 +47,7 @@ export default {
       url: shopItems,
       templateDetail: {},
       auditStatus: false,
+      rejectReason: '',
 
       // editStatus: this.$route.query.isEdit > 0 ? ' isEdit' : 'isNew',
       editStatus: 'isView', // 总部端只能查看
@@ -62,21 +65,20 @@ export default {
   },
   methods: {
     onSubmit() {
-      if (this.auditStatus) {
-        let url = goodsAudit(this.$route.query.productId)
-        this.$axios
-          .$put(url, {
-            agree: this.auditStatus
+      let url = goodsAudit(this.$route.query.productId)
+      this.$axios
+        .$put(url, {
+          agree: this.auditStatus,
+          rejectReason: this.rejectReason
+        })
+        .then(result => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
           })
-          .then(result => {
-            this.$message({
-              type: 'success',
-              message: '操作成功'
-            })
-            this.$router.back()
-          })
-          .catch()
-      }
+          this.$router.back()
+        })
+        .catch()
     }
   },
   created() {

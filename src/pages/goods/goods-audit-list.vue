@@ -93,11 +93,6 @@ export default {
           label: '后台类目'
         },
         // {
-        //   prop: 'status',
-        //   label: '状态',
-        //   formatter: row => status2String[row.status]
-        // },
-        // {
         //   prop: 'shelf',
         //   label: '上架/下架',
         //   formatter: row => {
@@ -111,6 +106,11 @@ export default {
           formatter: row => {
             return formatDate(row.createdAt, 'YYYY-MM-DD HH:mm:ss')
           }
+        },
+        {
+          prop: 'status',
+          label: '状态',
+          formatter: row => status2String[row.status]
         }
       ],
       dialogVisible: false,

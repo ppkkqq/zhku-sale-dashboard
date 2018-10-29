@@ -26,12 +26,12 @@ export default {
     default() {
       this.options = this.default
       if (Array.isArray(this.default)) {
-        // 更新销售属性列不触发更新
+        // 更新规格属性列不触发更新
         if (this.propValue === '') {
           return
         }
 
-        // 删除销售属性的属性值时触发清空
+        // 删除规格属性的属性值时触发清空
         if (this.default.indexOf(this.propValue) < 0) {
           this.propCode = ''
           this.propValue = ''
