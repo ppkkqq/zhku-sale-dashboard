@@ -167,11 +167,20 @@ export default {
           'show-overflow-tooltip': true
         },
         {
-          prop: 'shopName',
-          label: '门店'
+          prop: 'channel',
+          label: '门店',
+          formatter: ({channel}) => {
+            let name = '我买网'
+            if (channel === 1) {
+              name = '京东'
+            } else if (channel === 2) {
+              name = '自营'
+            }
+            return name
+          }
         },
         {
-          prop: 'prdCatalog.name',
+          prop: 'catalogName',
           label: '后台类目'
         }
       ],
