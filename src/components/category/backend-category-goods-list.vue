@@ -131,14 +131,7 @@ export default {
       multipleSelection: [],
       props: {
         label: 'name',
-        children: 'children',
-        disabled: function(data, node) {
-          // 禁用为父节点没有子节点的后台类目
-          return (
-            data.isLeaf === '0' &&
-            (!data.children || (data.children && data.children.length === 0))
-          )
-        }
+        children: 'list'
       },
       addItems: []
     }
@@ -245,7 +238,7 @@ export default {
       this.checkedNodes = props.checkedNodes
       let temp = []
       this.checkedNodes.forEach(item => {
-        if (!item.children) {
+        if (!item.list) {
           temp.push(item.id)
         }
       })

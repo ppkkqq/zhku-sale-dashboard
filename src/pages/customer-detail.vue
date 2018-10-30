@@ -197,7 +197,7 @@ export default {
     }
 
     const assetsInfo = {
-      源通币: payload.userBalance,
+      国源通币: payload.userBalance,
       积分: `${payload.userPoint}分`
     }
     return {
