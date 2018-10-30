@@ -151,7 +151,7 @@ export default {
         .then(res => {
           console.log(res)
           this.dialogVisible = false
-          this.$emit('refresh')
+          this.$emit('refresh', this.node.id)
         })
         .catch(err => {
           console.log(err)
@@ -179,7 +179,9 @@ export default {
             itemIdList: [id]
           }
         })
-        .then(result => {})
+        .then(result => {
+          this.$emit('refresh', this.node.id)
+        })
         .catch(err => {})
       // const ids = this.tags.map(tag => tag.id)
       // ids.splice(ids.indexOf(id), 1)
@@ -198,6 +200,7 @@ export default {
         )
         .then(result => {
           console.log(result)
+          this.$emit('refresh', this.node.id)
         })
         .catch(err => {
           console.log(err)

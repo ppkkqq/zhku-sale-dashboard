@@ -81,7 +81,7 @@
             :node="editForm"
             :rootId="rootId"
             @save="setNode"
-            @refresh="loadBackendTree"
+            @refresh="refreshEditRoot"
             :props="defaultProps" />
         </el-card>
       </template>
@@ -196,7 +196,7 @@
               :node="newForm"
               :rootId="rootId"
               @save="setNode"
-              @refresh="loadBackendTree"
+              @refresh="refreshEditRoot"
               :props="defaultProps" />
           </el-card>
         </template>
@@ -345,6 +345,16 @@ export default {
     }
   },
   methods: {
+    async refreshEditRoot(id) {
+      await this.$refs.tree.loadTree()
+      this.$refs.tree.tree.forEach(item => {
+        if (item.id == id) {
+          console.log('item', item)
+          this.editForm = item
+        }
+      })
+      console.log('editForm', this.editForm)
+    },
     addItems(id) {
       this.isFirstStep = false
       this.floorId = id
