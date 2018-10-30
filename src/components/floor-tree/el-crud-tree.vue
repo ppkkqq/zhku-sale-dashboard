@@ -136,7 +136,7 @@ export default {
     },
 
     //新增
-    async addNode(data, url) {
+    async addNode(isAddRoot, data, url) {
       //新增节点发送相关相求
       this.loading = true
       try {
@@ -145,10 +145,18 @@ export default {
         }
         const {payload} = await this.$axios.$post(url, data)
         this.loadTree()
+
         // this[this.status](payload)
-        this.$refs.tree.hideDialogForm()
-        this.loading = false
-        this.clearCurrent()
+        if (isAddRoot) {
+          console.log('isAddRoot', isAddRoot)
+          console.log(payload.id)
+          this.$emit('addItems', payload.id)
+
+          this.loading = false
+          this.clearCurrent()
+        } else {
+          this.$refs.tree.hideDialogForm()
+        }
       } catch (error) {
         this.$message.error(error.message)
         this.loading = false
@@ -156,17 +164,14 @@ export default {
       }
     },
 
-    async removeNode(data) {
+    async removeNode(id) {
       this.loading = true
-      const {id, parentId} = data
-      const url = parentId
-        ? `${this.url}/${id}?parentId=${parentId}`
-        : `${this.url}/${id}`
+      const url = `/mall-deepexi-mall-config-api/api/v1/floor/deleteFloor?id=${id}`
 
       try {
         const {payload} = await this.$axios.$delete(url)
         //删除树形节点
-        this._remove(this.idMap[id])
+        this.loadTree()
         this.loading = false
         this.clearCurrent()
       } catch (error) {
@@ -176,10 +181,10 @@ export default {
     },
 
     //删除
-    async handleRemoveNode(data) {
+    async handleRemoveNode(id) {
       customConfirm({
         cb: this.removeNode,
-        payload: data
+        payload: id
       })
     },
 
@@ -222,7 +227,11 @@ export default {
           this.loading = true
 
           try {
-            const {payload} = await this.$axios.$put(this.url, sorted)
+            const {payload} = await this.$axios.$post(
+              `/mall-deepexi-mall-config-api/api/v1/floor/moveFloor?operation=${sortType}&id=${
+                node.id
+              }`
+            )
             const nodes = keys.map(id => {
               const data = {...this.idMap[id]}
               //树形节点不会根据数据响应，导致需要先删除节点，然后再生成，性能低
@@ -277,23 +286,20 @@ export default {
         this.$set(pre, key, data[key])
       })
     },
-
+    //todo 验证
     //更新节点
-    async updateNode(formData) {
+    async updateNode(data, url) {
+      //新增节点发送相关相求
       this.loading = true
-      //从表单数据中获取id
-      const id = formData.id
       try {
-        const {payload} = await this.$axios.$post(
-          `${this.url}/createFloor`,
-          formData
-        )
-        //更新成功后更新tree节点数据
-        this.mergeNode(id, formData)
+        const {payload} = await this.$axios.$post(url, data)
+        this.loadTree()
+        // this[this.status](payload)
+        this.$refs.tree.hideDialogForm()
+        this.loading = false
+        this.clearCurrent()
       } catch (error) {
-        console.info(error)
-      } finally {
-        //更新结束后清除数据
+        this.$message.error(error.message)
         this.loading = false
         this.clearCurrent()
       }

@@ -28,7 +28,7 @@
           <el-form-item prop="mobile" label="手机号">
             {{topUpform.mobile}}
           </el-form-item>
-          <el-form-item prop="balance" label="当前源通币">
+          <el-form-item prop="balance" label="当前国源通币">
             {{topUpform.balance}}
           </el-form-item>
           <el-form-item prop="money">
@@ -80,7 +80,7 @@ import {integer, positiveInteger, telPattern} from '@/const/pattern'
 
 const dialogTitle = {
   batch: '批量充值',
-  single: '源通币充值'
+  single: '国源通币充值'
 }
 const single = 'single'
 const batch = 'batch'
@@ -186,7 +186,7 @@ export default {
       ],
       extraButtons: [
         {
-          text: '源通币充值',
+          text: '国源通币充值',
           type: 'primary',
           atClick: this.showTopUp
         },

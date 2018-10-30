@@ -132,10 +132,7 @@ export default {
       return false
     },
     remove(node, data) {
-      this.$emit('remove-node', {
-        id: data.id,
-        parentId: node.parent.data.id
-      })
+      this.$emit('remove-node', data.id)
       return false
     },
     updateNode(data) {
