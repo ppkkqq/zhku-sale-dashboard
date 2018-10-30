@@ -227,7 +227,11 @@ export default {
           this.loading = true
 
           try {
-            const {payload} = await this.$axios.$put(this.url, sorted)
+            const {payload} = await this.$axios.$post(
+              `/mall-deepexi-mall-config-api/api/v1/floor/moveFloor?operation=${sortType}&id=${
+                node.id
+              }`
+            )
             const nodes = keys.map(id => {
               const data = {...this.idMap[id]}
               //树形节点不会根据数据响应，导致需要先删除节点，然后再生成，性能低
