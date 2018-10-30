@@ -231,7 +231,7 @@ export default {
         会员账号: memberName,
         总商品金额: price(itemMoney),
         优惠金额: price(discountMoney),
-        源通币: currency,
+        国源通币: currency,
         运费: price(freightMoney),
         实付金额: price(payMoney),
         实退款总金额: price(actualRefundMoney)
@@ -261,7 +261,7 @@ export default {
         会员账号: memberName,
         总商品金额: price(itemMoney),
         优惠金额: price(discountMoney),
-        源通币: currency,
+        国源通币: currency,
         运费: price(freightMoney),
         实付金额: price(payMoney),
         实退款总金额: price(actualRefundMoney)

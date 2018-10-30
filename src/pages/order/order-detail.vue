@@ -61,7 +61,7 @@
                   v-if="payList.length>0">
         <el-row  class="row-bg">
           <el-col :span="12" style="margin-bottom: 20px">订单编号: {{detail.orderCode}}</el-col>
-          <el-col :span="12" style="margin-bottom: 20px">源通币支付: {{detail.currencyPay}}</el-col>
+          <el-col :span="12" style="margin-bottom: 20px">国源通币支付: {{detail.currencyPay}}</el-col>
           <el-col :span="12" style="margin-bottom: 20px">现金支付: {{detail.crashPay}}</el-col>
         </el-row>
         <el-table :data="payList"

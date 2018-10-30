@@ -3,7 +3,7 @@ const prefix = '/mock'
 // const MALL_CONFIG = '/car-deepexi-mall-config-api/api/v1'
 // const PRODUCT_CENTER = '/car-deepexi-product-center/api/v1'
 // const MEMBER_CENTER = '/car-deepexi-member-center/api/v1'
-const shopCenter = '/car-deepexi-shop-center/api/v1'
+const shopCenter = '/mall-deepexi-shop-center/api/v1'
 // const TRADE_CENTER = '/car-deepexi-trade-center/api/v1'
 // const APPLICATION = '/moby-application-api/api/v1' //应用中心
 // const EVALUATE_CENTER = '/car-deepexi-evaluate-center/api/v1' //评价中心
@@ -17,17 +17,12 @@ export const APPLICATION = '/mall-application-api/api/v1'
 export const EVALUATE_CENTER = '/mall-deepexi-evaluate-center/api/v1'
 export const ACCOUNT_CENTER = '/mall-deepexi-account-center/api/v1'
 
-export const recommendList = MALL_CONFIG + '/featuredFirsts'
-
 // 品牌管理
 // 根据id 修改品牌信息
 export const productBrandEdit = id => PRODUCT_CENTER + `/pcBrands/${id}`
 // 获取所有品牌列表
 // export const productBrandList = deepexiProductCenter + '/pcBrands/list'
 export const pcBrands = PRODUCT_CENTER + `/pcBrands`
-
-// 门店列表
-export const shopList = shopCenter + '/shops'
 
 // 商品上下架管理
 export const skusStocklist = fakeProductCenter + '/admin/items/skus/stocklist'
@@ -137,6 +132,9 @@ export const AllfilterCondition =
 // 首页广告页面
 export const bannerList = MALL_CONFIG + '/advertisements'
 export const bannerEdit = id => MALL_CONFIG + `/advertisements/${id}`
+
+//首页推荐位
+export const recommendList = MALL_CONFIG + '/featuredFirsts'
 //订单列表
 //(平台查询订单列表)
 export const orderList = TRADE_CENTER + '/order/shopOrderList'
@@ -180,3 +178,6 @@ export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
 export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
 export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
 export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
+
+// 门店列表
+export const shopList = shopCenter + '/shops'

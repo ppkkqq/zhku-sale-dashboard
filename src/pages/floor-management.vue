@@ -10,7 +10,9 @@
     @clear-node="handleClearNode"
     @create-type="setAddType"
     @createData="createData"
+    @addItems="addItems"
   >
+    <!--编辑主楼层  确认无误-->
     <div v-if="isEditRoot">
       <el-card
         class="box-card"
@@ -21,10 +23,6 @@
                  ref="editForm"
                  label-width="100px"
                  class="demo-editForm">
-          <!--<el-form-item label="父级节点"-->
-                        <!--prop="name">-->
-            <!--<el-input disabled v-model="editForm.parentName"></el-input>-->
-          <!--</el-form-item>-->
           <el-form-item label="节点名称"
                         prop="name">
             <el-input v-model="editForm.name"></el-input>
@@ -33,63 +31,57 @@
                         prop="description">
             <el-input v-model="editForm.description"></el-input>
           </el-form-item>
-
-          <!--<el-form-item label="是否末级类目"-->
-          <!--prop="isLeaf">-->
-          <!--<el-radio-group v-model="editForm.isLeaf"-->
-          <!--:disabled="hasChildren || editForm.hasAttributeGroups">-->
-          <!--<el-radio label="1">是</el-radio>-->
-          <!--<el-radio label="0">否</el-radio>-->
-          <!--</el-radio-group>-->
-          <!--</el-form-item>-->
-
           <el-form-item label="分类图标"
-                        prop="displayUrl">
-            <upload-to-ali @load="onUpLoadFile($event, 'editForm','categoryUrl')"
-                           accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="editForm.displayUrl">
+                        prop="classifyIcon">
+            <upload-to-ali
+              :disabled="!editForm.id"
+              @load="onUpLoadFile($event, 'editForm','classifyIcon')"
+              accept="image/png, image/jpeg, image/jpg"
+              :fileUrl="editForm.classifyIcon">
             </upload-to-ali>
-            <!--<div class="el-form-item__warning">-->
-            <!--建议尺寸：26*34，仅支持png格式，图片大小1M以内。-->
-            <!--</div>-->
           </el-form-item>
-
           <el-form-item label="广告图"
-                        prop="displayUrl">
-            <!--<div class="el-form-item__warning">-->
-            <!--建议尺寸：1190*109，显示在楼层底部位置-->
-            <!--</div>-->
-            <upload-to-ali @load="onUpLoadFile($event, 'editForm','advertiseUrl')"
-                           accept="image/png, image/jpeg, image/jpg"
-                           :fileUrl="editForm.displayUrl">
+                        prop="advertisementPhoto">
+            <upload-to-ali
+              :disabled="!editForm.id"
+              @load="onUpLoadFile($event, 'editForm','advertisementPhoto')"
+              accept="image/png, image/jpeg, image/jpg"
+              :fileUrl="editForm.advertisementPhoto">
             </upload-to-ali>
-            <el-input placeholder="请输入广告位地址" v-model.trim="editForm.displayUrl"></el-input>
-            <el-button><a :href="editForm.displayUrl" target="_blank">测试</a></el-button>
-            <!--<div class="el-form-item__warning">-->
-            <!--建议尺寸：215*605，显示在楼层左侧位置-->
-            <!--</div>-->
+            <el-input placeholder="请输入广告位地址" v-model.trim="editForm.advertisementPhoto"></el-input>
+            <el-button><a :href="editForm.advertisementPhoto" target="_blank">测试</a></el-button>
           </el-form-item>
-          <!--<el-form-item label="关联类目"-->
-          <!--prop="name">-->
-          <!--<el-input v-model="editForm.name"></el-input>-->
-          <!--</el-form-item>-->
+          <el-form-item label="关联类目"
+                        prop="category">
+            <bind-frontend-category
+              :data="frontendTree"
+              :disabled="!editForm.id"
+              :isRoot="true"
+              :categoryName="editForm.categoryName"
+              ref="BindFrontendCategory"
+              @catalogIds="setCatalogIds"
+            />
+          </el-form-item>
           <el-form-item>
             <el-button type="primary"
                        @click="updateNode">保存</el-button>
             <el-button type="normal"
-                       @click="resetNode">重置</el-button>
+                       @click="resetNode('edit')">重置</el-button>
           </el-form-item>
         </el-form>
       </el-card>
       <template>
         <el-card class="box-card"
+                 :disabled="!editForm.id"
                  header="推荐商品">
           <backend-category-goods-list
             :data="backendTree"
-            :canAdd="canAdd"
             :baseUrl="bindBackendUrl"
+            :disabled="!editForm.id"
             :node="editForm"
+            :rootId="rootId"
             @save="setNode"
+            @refresh="refreshEditRoot"
             :props="defaultProps" />
         </el-card>
       </template>
@@ -120,13 +112,21 @@
 
           <el-form-item label="关联类目"
                         prop="name">
-            <!--<el-input v-model="editForm.name"></el-input>-->
+            <!--//todo-->
+            <bind-frontend-category
+              :data="frontendTree"
+              :disabled="!editForm.id"
+              :isRoot="false"
+              :categoryName="editForm.secondCategoryName"
+              ref="BindFrontendCategory"
+              @catalogIds="setCatalogIds"
+            />
           </el-form-item>
           <el-form-item>
             <el-button type="primary"
                        @click="updateNode">保存</el-button>
             <el-button type="normal"
-                       @click="resetNode">重置</el-button>
+                       @click="resetNode('edit')">重置</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -136,9 +136,9 @@
     <!-- 新增节点 -->
     <template slot="create">
       <div v-if="isAddRoot">
-        <el-card
-          class="box-card"
-          header="新增楼层">
+        <el-card v-if="isFirstStep"
+                 class="box-card"
+                 header="新增楼层">
           <el-form :model="newForm"
                    :rules="newFormRules"
                    ref="newForm"
@@ -152,34 +152,33 @@
                           prop="description">
               <el-input v-model="newForm.description"></el-input>
             </el-form-item>
-
             <el-form-item label="分类图标"
-                          prop="categoryUrl">
-              <upload-to-ali @load="onUpLoadFile($event, 'newForm','categoryUrl')"
+                          prop="classifyIcon">
+              <upload-to-ali @load="onUpLoadFile($event, 'newForm','classifyIcon')"
                              accept="image/png, image/jpeg, image/jpg"
-                             :fileUrl="newForm.categoryUrl">
+                             :fileUrl="newForm.classifyIcon">
               </upload-to-ali>
             </el-form-item>
-
             <el-form-item label="广告图"
-                          prop="advertiseUrl">
-              <!--<div class="el-form-item__warning">-->
-              <!--建议尺寸：1190*109，显示在楼层底部位置-->
-              <!--</div>-->
-              <upload-to-ali @load="onUpLoadFile($event, 'newForm','advertiseUrl')"
+                          prop="advertisementPhoto">
+              <upload-to-ali @load="onUpLoadFile($event, 'newForm','advertisementPhoto')"
                              accept="image/png, image/jpeg, image/jpg"
-                             :fileUrl="newForm.advertiseUrl">
+                             :fileUrl="newForm.advertisementPhoto">
               </upload-to-ali>
-              <el-input placeholder="请输入广告位地址" v-model.trim="newForm.advertiseUrl"></el-input>
-              <el-button><a :href="newForm.advertiseUrl" target="_blank">测试</a></el-button>
-              <!--<div class="el-form-item__warning">-->
-              <!--建议尺寸：215*605，显示在楼层左侧位置-->
-              <!--</div>-->
+              <el-input placeholder="请输入广告位地址" v-model.trim="newForm.advertisementPhoto"></el-input>
+              <el-button><a :href="newForm.advertisementPhoto" target="_blank">测试</a></el-button>
             </el-form-item>
-            <!--<el-form-item label="关联类目"-->
-            <!--prop="name">-->
-            <!--<el-input v-model="newForm.name"></el-input>-->
-            <!--</el-form-item>-->
+            <el-form-item label="关联类目"
+                          prop="category">
+              <bind-frontend-category
+                :data="frontendTree"
+                :disabled="false"
+                :isRoot="true"
+                :categoryName="newForm.categoryName"
+                ref="BindFrontendCategory"
+                @catalogIds="setCatalogIds"
+              />
+            </el-form-item>
             <el-form-item>
               <el-button type="primary"
                          @click="addNode">保存</el-button>
@@ -188,15 +187,16 @@
             </el-form-item>
           </el-form>
         </el-card>
-        <template>
+        <template v-else>
           <el-card class="box-card"
                    header="推荐商品">
             <backend-category-goods-list
               :data="backendTree"
-              :canAdd="canAdd"
               :baseUrl="bindBackendUrl"
               :node="newForm"
+              :rootId="rootId"
               @save="setNode"
+              @refresh="refreshEditRoot"
               :props="defaultProps" />
           </el-card>
         </template>
@@ -205,14 +205,14 @@
         <el-card
           class="box-card"
           header="新增子楼层">
-          <el-form :model="newForm"
-                   :rules="newFormRules"
-                   ref="newForm"
-                   label-width="100px"
-                   class="demo-newForm">
+          <el-form
+            :model="newForm"
+            :rules="newFormRules"
+            ref="newForm"
+            label-width="100px"
+            class="demo-newForm">
             <el-form-item label="父级节点"
                           prop="parentName">{{newForm.parentName}}
-              <!--<el-input disabled v-model=""></el-input>-->
             </el-form-item>
             <el-form-item label="楼层名称"
                           prop="name">
@@ -223,15 +223,24 @@
               <el-input v-model="newForm.description"></el-input>
             </el-form-item>
 
-            <el-form-item label="关联类目"
-                          prop="categoryIdList">
-              <!--<el-input v-model="newForm.categoryIdList"></el-input>-->
+            <!--//todo :categoryName="newForm.categoryName" 这里还没有对好  -->
+            <el-form-item
+              label="关联类目"
+              prop="category">
+              <bind-frontend-category
+                :data="frontendTree"
+                :disabled="false"
+                :isRoot="false"
+                :categoryName="newForm.categoryName"
+                ref="BindFrontendCategory"
+                @catalogIds="setCatalogIds"
+              />
             </el-form-item>
             <el-form-item>
               <el-button type="primary"
                          @click="addNode">保存</el-button>
               <el-button type="normal"
-                         @click="resetNode">重置</el-button>
+                         @click="resetNode('add')">重置</el-button>
             </el-form-item>
           </el-form>
         </el-card>
@@ -246,9 +255,10 @@ import ElCrudTree from '@/components/floor-tree/el-crud-tree'
 import UploadToAli from 'upload-to-ali'
 import {
   backendCatalogBaseUrl,
-  // frontendCatalogBaseUrl,
+  frontendCatalogBaseUrl,
   selectedFilterCondition,
-  AllfilterCondition
+  AllfilterCondition,
+  frontendCatalogTree
 } from '@/const/api'
 
 import BindAttributeFilter from '@/components/category/bind-attribute-filter'
@@ -256,13 +266,14 @@ import BindAttributeFilter from '@/components/category/bind-attribute-filter'
 //这个组件 bind-frontend-category  用来显示楼层关联的类目
 // import BindFrontendCategory from '../components/category/bind-frontend-category'
 import BackendCategoryGoodsList from '../components/category/backend-category-goods-list'
+import BindFrontendCategory from '../components/category/bind-frontend-category'
 
 export default {
   name: 'floor-management',
   components: {
     ElCrudTree,
     UploadToAli,
-    // BindFrontendCategory,   //   前台类目  用于楼层关联
+    BindFrontendCategory, //   前台类目  用于楼层关联
     BindAttributeFilter,
     BackendCategoryGoodsList //后台商品  返回商品列表   用于一级楼层 推荐
   },
@@ -278,32 +289,41 @@ export default {
       }
     }
     return {
+      isFirstStep: false,
       isAddRoot: false,
       isEditRoot: true,
       pageName: 'floor-management',
       url: `/mall-deepexi-mall-config-api/api/v1/floor`,
       // bindBackendUrl: bindBackendUrl,
-      // bindFrontendUrl: '/mall-deepexi-mall-config-api/api/v1/floor',
+      frontendCatalogBaseUrl: frontendCatalogBaseUrl,
       bindBackendUrl: '/mall-deepexi-mall-config-api/api/v1/floor',
       backendTree: [],
+      frontendTree: [],
       defaultProps: {
         children: 'children',
         label: 'name'
       },
       editFormRules: {
-        name: [{required: true, message: '请输入类目名称', trigger: 'blur'}]
+        name: [{required: true, message: '请输入类目名称', trigger: 'blur'}],
+        advertisementPhoto: [
+          {required: true, message: '请上传广告图', trigger: 'blur'}
+        ]
       },
       editForm: {
+        secondCategoryName: '',
+        id: '',
         parentName: '',
         name: '',
         description: '',
-        categoryUrl: '',
-        advertiseUrl: '',
-        isLeaf: '1'
-        // categoryIdList:[]
+        classifyIcon: '',
+        advertisementPhoto: '',
+        categoryName: ''
       },
       newFormRules: {
-        name: [{required: true, trigger: 'blur', validator: checkName}]
+        name: [{required: true, trigger: 'blur', validator: checkName}],
+        advertisementPhoto: [
+          {required: true, message: '请上传广告图', trigger: 'blur'}
+        ]
       },
       newForm: {
         id: '',
@@ -311,56 +331,112 @@ export default {
         parentName: '',
         name: '',
         description: '',
-        categoryUrl: '',
-        advertiseUrl: '',
+        classifyIcon: '',
+        advertisementPhoto: '',
         categoryId: '',
-        // categoryIdList:[],
-        isLeaf: '1'
+        categoryName: ''
       },
 
       selectedFilters: [],
-
-      compareData: {} // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      floorId: '',
+      compareData: {}, // 点击节点时初始化出数据同editForm，用于判断新增属性是否可点击
+      rootId: '',
+      catalogIds: ''
     }
   },
   methods: {
+    async refreshEditRoot(id) {
+      await this.$refs.tree.loadTree()
+      let temp = {}
+      this.$refs.tree.tree.forEach(item => {
+        if (item.id == id) {
+          console.log('item', item)
+          temp = item
+        }
+      })
+      if (!this.isAddRoot) {
+        this.editForm = temp
+        console.log('editForm', this.editForm)
+      } else {
+        this.newForm = temp
+        console.log('newForm', this.newForm)
+      }
+    },
+    addItems(id) {
+      this.isFirstStep = false
+      this.rootId = id
+      this.floorId = id
+      console.log('isFirstStep', this.isFirstStep)
+    },
+    setCatalogIds(isRoot, ids) {
+      console.log('测试', ids)
+      this.catalogIds = ids
+    },
     createData(id, name) {
-      // this.$set(this.newForm, 'parentId', id)
-      // this.$set(this.newForm, 'parentName', name)
-      console.log(id, name)
-      console.log(this.newForm)
       this.newForm.parentId = id
       this.newForm.parentName = name
     },
-    resetNode() {
+    resetNode(type) {
+      if (type == 'edit') {
+        this.$refs.BindFrontendCategory.resetName()
+        this.editForm = this.compareData
+        return
+      }
+      if (type == 'add') {
+        this.newForm = {
+          id: '',
+          parentId: '',
+          parentName: '',
+          name: '',
+          description: '',
+          categoryUrl: '',
+          advertiseUrl: '',
+          categoryId: '',
+          categoryName: ''
+        }
+        this.$refs.BindFrontendCategory.resetName()
+      }
+    },
+    setAddType(type) {
+      this.isAddRoot = type === 'addRoot' ? true : false
+      this.catalogIds = ''
+      if (this.isAddRoot) {
+        this.isFirstStep = true
+        this.isEditRoot = false
+      }
       this.newForm = {
         id: '',
         parentId: '',
         parentName: '',
         name: '',
         description: '',
-        categoryUrl: '',
-        advertiseUrl: '',
+        classifyIcon: '',
+        advertisementPhoto: '',
         categoryId: '',
-        // categoryIdList:[],
-        isLeaf: '1'
+        categoryName: ''
       }
-    },
-    setAddType(type) {
-      this.isAddRoot = type === 'addRoot' ? true : false
+      console.log('isAddRoot', this.isAddRoot)
+      console.log('isFirstStep', this.isFirstStep)
       //type 值有两种情况 'addChild'   addRoot
     },
     //树形
     addNodeButtonFilter(node, data) {
-      return data.isLeaf === '1'
+      return !data.secondFloors
     },
     deleteNodeButtonFilter(node, data) {
       return !node.isLeaf
     },
     handleNodeClick({data, node}) {
-      this.editForm = {...data}
-      this.compareData = {...data}
+      console.log(data, node)
+      this.editForm = {...data, parentName: node.parent.data.name || ''}
+      this.compareData = {...data, parentName: node.parent.data.name || ''}
+
       this.isEditRoot = node.parent.parent ? false : true
+      if (this.isEditRoot) {
+        this.floorId = data.id
+        this.isAddRoot = false
+      }
+      this.rootId = data.id
       // 获取筛选条件
       this.getSelectedFilters()
     },
@@ -389,41 +465,33 @@ export default {
     setNode(data) {
       this.$refs.tree.mergeNode(this.editForm.id, data)
     },
+    //todo  编辑  还没有对
     updateNode() {
-      // 新增节点保存成功
-      const done = payload => {
-        if (payload && payload.id) {
-          this.compareData = payload
-        }
-      }
-
-      this.$refs.newForm.validate(valid => {
+      console.log(this.compareData.id)
+      // 节点保存成功
+      this.$refs.editForm.validate(valid => {
         if (valid) {
-          const {name, description, parentId} = this.newForm
-          if (this.isAddRoot) {
-            //root的数据结构
-            this.$refs.tree.updateNode(
-              {
-                parentId: '',
-                name,
-                description,
-                classifyIcon: this.newForm.categoryUrl,
-                advertisementPhoto: this.newForm.advertiseUrl
-              },
-              done
-            )
+          const {name, description} = this.editForm
+          let obj = {}
+          let url = this.url
+          if (this.isEditRoot) {
+            obj = {
+              categoryId: this.catalogIds,
+              name,
+              description,
+              classifyIcon: this.editForm.classifyIcon,
+              advertisementPhoto: this.editForm.advertisementPhoto
+            }
+            url = url + `/updateFloor?id=${this.compareData.id}`
           } else {
-            // 子节点的数据结构
-            this.$refs.tree.updateNode(
-              {
-                parentId,
-                name,
-                description
-                // categoryIdList
-              },
-              done
-            )
+            obj = {
+              name,
+              description,
+              secondCategoryId: this.catalogIds
+            }
+            url = url + `/updateSecondFloor?id=${this.compareData.id}`
           }
+          this.$refs.tree.updateNode(obj, url)
         }
       })
     },
@@ -431,7 +499,7 @@ export default {
       // 新增节点保存成功
       this.$refs.newForm.validate(valid => {
         if (valid) {
-          const {name, description, parentId, categoryIdList} = this.newForm
+          const {name, description, parentId} = this.newForm
           let obj = {}
           let url = this.url
           if (this.isAddRoot) {
@@ -439,8 +507,9 @@ export default {
               parentId: '',
               name,
               description,
-              classifyIcon: this.newForm.categoryUrl,
-              advertisementPhoto: this.newForm.advertiseUrl
+              categoryId: this.catalogIds,
+              classifyIcon: this.newForm.classifyIcon,
+              advertisementPhoto: this.newForm.advertisementPhoto
             }
             url = url + '/createFloor'
           } else {
@@ -448,11 +517,11 @@ export default {
               parentId,
               name,
               description,
-              categoryIdList: categoryIdList || []
+              secondCategoryId: this.catalogIds
             }
             url = url + '/createSecondFloor'
           }
-          this.$refs.tree.addNode(obj, url)
+          this.$refs.tree.addNode(this.isAddRoot, obj, url)
         }
       })
     },
@@ -464,11 +533,21 @@ export default {
     },
     //detail
     loadBackendTree() {
-      this.$axios.$get(`${backendCatalogBaseUrl}/tree`).then(result => {
-        this.backendTree = result.payload
+      this.$axios
+        .$get(
+          `/mall-deepexi-mall-config-api/api/v1/floor/category?floorId=${
+            this.floorId
+          }`
+        )
+        .then(result => {
+          this.backendTree = result.payload
+        })
+    },
+    loadFrontendTree() {
+      this.$axios.$get(frontendCatalogTree).then(result => {
+        this.frontendTree = result.payload
       })
     },
-
     // 获取筛选条件
     async getSelectedFilters() {
       // let url = selectedFilterCondition + `?preCategoryId=${this.editForm.id}`
@@ -481,33 +560,35 @@ export default {
     }
   },
   mounted: function() {
-    this.loadBackendTree()
+    // this.loadBackendTree()
+    this.loadFrontendTree()
   },
   watch: {
     // newForm (val){
     //   console.log('我是watch',val)
     // }
+    floorId(val) {
+      if (val) {
+        this.loadBackendTree()
+      }
+    }
   },
   computed: {
     hasChildren() {
       return (this.editForm.children || []).length > 0
-    },
-
-    canAdd() {
-      if (this.editForm.isLeaf === '0') {
-        return false
-      }
-      if (this.compareData.isLeaf == 0) {
-        return false
-      }
-
-      return !!this.editForm.id
     }
   }
 }
 </script>
 
 <style lang="stylus">
+  .el-dialog__wrapper{
+    .el-dialog{
+      .el-dialog__footer{
+        text-align center
+      }
+    }
+  }
   .floor-management {
     display: flex;
 

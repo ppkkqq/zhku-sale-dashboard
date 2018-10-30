@@ -35,6 +35,7 @@
     <el-dialog title="新增推荐位" :visible.sync="dialogVisible">
       <el-data-table
         ref="goodsDataTable"
+        dataPath="payload.list"
         :url="goodsUrl"
         :columns="goodsColumns"
         :hasNew="false"
@@ -158,7 +159,7 @@ export default {
         }
       ],
       dialogVisible: false,
-      goodsUrl: `${goodsLists}?status=passed&type=NEW_CARS`,
+      goodsUrl: `${goodsLists}`,
       goodsColumns: [
         {
           prop: 'name',
@@ -166,11 +167,20 @@ export default {
           'show-overflow-tooltip': true
         },
         {
-          prop: 'shopName',
-          label: '门店'
+          prop: 'channel',
+          label: '门店',
+          formatter: ({channel}) => {
+            let name = '我买网'
+            if (channel === 1) {
+              name = '京东'
+            } else if (channel === 2) {
+              name = '自营'
+            }
+            return name
+          }
         },
         {
-          prop: 'prdCatalog.name',
+          prop: 'catalogName',
           label: '后台类目'
         }
       ],
@@ -184,7 +194,7 @@ export default {
             const selectArr = this.currentRec.filter(item => {
               return item.goodsInfo.gooodsId === row.id
             })
-            return selectArr.length === 0
+            return selectArr.length != 0
           }
         }
       ],
@@ -229,7 +239,7 @@ export default {
           break
       }
 
-      this.goodsUrl = `${goodsLists}?status=passed&type=${type}`
+      this.goodsUrl = `${goodsLists}`
     },
     onDelete(row, index) {
       if (!row) {
@@ -248,9 +258,9 @@ export default {
     },
     onChooseGood(row) {
       this.$axios
-        .$post(`${recommendList}`, {
+        .$post(`${recommendList}/createFeaturedFirst`, {
           programa: this.currentCol,
-          itemId: row.id
+          itemId: row.itemId
         })
         .then(res => {
           this.dialogVisible = false
@@ -287,16 +297,18 @@ export default {
 }
 </script>
 <style lang="stylus">
-  .index-recommend { 
-    .column-list {
-      border-right: none; 
-    }   
-    .el-tree {
-      // margin-top: 10px;
-      margin-right: 20px;
-    }
-    .el-data-table {
-      width: 100%;
-    }
+.index-recommend {
+  .column-list {
+    border-right: none;
   }
+
+  .el-tree {
+    // margin-top: 10px;
+    margin-right: 20px;
+  }
+
+  .el-data-table {
+    width: 100%;
+  }
+}
 </style>
