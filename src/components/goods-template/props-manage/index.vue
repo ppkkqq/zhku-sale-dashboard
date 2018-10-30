@@ -46,8 +46,8 @@
     >
       <el-table :data="skusData">
 
-        <!-- 销售属性列 -->
-        <!-- key 不能使用index，切换销售属性会造成prop没更新 -->
+        <!-- 规格属性列 -->
+        <!-- key 不能使用index，切换规格属性会造成prop没更新 -->
         <el-table-column
           v-if="salesColumns.length > 0"
           v-for="(col, index) in salesColumns"
@@ -179,7 +179,7 @@ export default {
       }
     }
     return {
-      skuGroupOptions: {}, // 用于保存属性类型为销售属性的属性值
+      skuGroupOptions: {}, // 用于保存属性类型为规格属性的属性值
 
       skuPropCodes: {},
 
@@ -319,7 +319,7 @@ export default {
       })
     },
 
-    // 规格组合列（销售属性）
+    // 规格组合列（规格属性）
     updateSkuCol() {
       this.propsData.forEach(item => {
         if (item.attrType === SALE) {
@@ -331,7 +331,7 @@ export default {
       {groupName, propName, propValue, editMode, propCode},
       isReverse = true
     ) {
-      // 添加的是多选销售属性，添加到skuGroupOptions供规格组合使用
+      // 添加的是多选规格属性，添加到skuGroupOptions供规格组合使用
       // 预留名字，怕后期会修改支持同名
       // const optionName = `${groupName}-${propName}`
       const optionName = propName
@@ -441,9 +441,9 @@ export default {
           return false
         }
 
-        // 上架商品必须有销售属性
+        // 上架商品必须有规格属性
         if (this.salesColumns.length < 1) {
-          this.$message.warning('至少有一个销售属性!')
+          this.$message.warning('至少有一个规格属性!')
           return false
         }
       }
@@ -477,7 +477,7 @@ export default {
           //   }
           // }
 
-          // 销售属性判断
+          // 规格属性判断
           if (this.salesColumns.length > 0) {
             const propValues = item.propValues
             if (!propValues) {
@@ -513,7 +513,7 @@ export default {
 
         // 去重后length相等，表示有重复的sku
         if (filterValues.length !== values.length) {
-          this.$message.warning('请勿添加销售属性值完全相同的规格组合！')
+          this.$message.warning('请勿添加规格属性值完全相同的规格组合！')
           return false
         }
       }
