@@ -28,7 +28,7 @@
   <div>
     <span v-if="!disabled">{{name||categoryName}}</span>
     <el-button
-      @click="dialogVisible=true"
+      @click="chooseCategory"
     >选择关联类目</el-button>
 
     <el-dialog :title="title"
@@ -109,6 +109,9 @@ export default {
     }
   },
   methods: {
+    chooseCategory() {
+      this.dialogVisible = false
+    },
     showButton(node, data) {
       if (!node.parent.parent) {
         if (this.isRoot) {

@@ -369,6 +369,7 @@ export default {
       console.log('isFirstStep', this.isFirstStep)
     },
     setCatalogIds(isRoot, ids) {
+      console.log('测试', ids)
       this.catalogIds = ids
     },
     createData(id, name) {
@@ -398,7 +399,7 @@ export default {
     },
     setAddType(type) {
       this.isAddRoot = type === 'addRoot' ? true : false
-
+      this.catalogIds = ''
       if (this.isAddRoot) {
         this.isFirstStep = true
         this.isEditRoot = false
