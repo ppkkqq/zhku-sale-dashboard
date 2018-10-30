@@ -138,7 +138,7 @@ export default {
   },
   methods: {
     handleCancel() {
-      console.log(this.node)
+      this.dialogVisible = false
     },
     // handleConfirm(){},
     handleConfirm() {
@@ -151,7 +151,8 @@ export default {
         .then(res => {
           console.log(res)
           this.dialogVisible = false
-          this.$emit('refresh', this.node.id)
+          console.log()
+          this.$emit('refresh', this.rootId)
         })
         .catch(err => {
           console.log(err)

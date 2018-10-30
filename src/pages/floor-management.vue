@@ -347,16 +347,24 @@ export default {
   methods: {
     async refreshEditRoot(id) {
       await this.$refs.tree.loadTree()
+      let temp = {}
       this.$refs.tree.tree.forEach(item => {
         if (item.id == id) {
           console.log('item', item)
-          this.editForm = item
+          temp = item
         }
       })
-      console.log('editForm', this.editForm)
+      if (!this.isAddRoot) {
+        this.editForm = temp
+        console.log('editForm', this.editForm)
+      } else {
+        this.newForm = temp
+        console.log('newForm', this.newForm)
+      }
     },
     addItems(id) {
       this.isFirstStep = false
+      this.rootId = id
       this.floorId = id
       console.log('isFirstStep', this.isFirstStep)
     },
@@ -390,8 +398,10 @@ export default {
     },
     setAddType(type) {
       this.isAddRoot = type === 'addRoot' ? true : false
+
       if (this.isAddRoot) {
         this.isFirstStep = true
+        this.isEditRoot = false
       }
       this.newForm = {
         id: '',
@@ -423,6 +433,7 @@ export default {
       this.isEditRoot = node.parent.parent ? false : true
       if (this.isEditRoot) {
         this.floorId = data.id
+        this.isAddRoot = false
       }
       this.rootId = data.id
       // 获取筛选条件
@@ -496,8 +507,8 @@ export default {
               name,
               description,
               categoryId: this.catalogIds,
-              classifyIcon: this.newForm.categoryUrl,
-              advertisementPhoto: this.newForm.advertiseUrl
+              classifyIcon: this.newForm.classifyIcon,
+              advertisementPhoto: this.newForm.advertisementPhoto
             }
             url = url + '/createFloor'
           } else {
