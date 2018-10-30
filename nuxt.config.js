@@ -5,7 +5,8 @@ require('dotenv').config()
 // }
 
 const gateway = process.env.GATEWAY || 'http://malldev.gtytong.com'
-
+let publicPath =
+  process.env.PUBLIC_PATH || gateway + '/gtytong-platform-dashboard/'
 const config = {
   projectNo: '1339d494e3b0474d90c232c882f173e7',
   aliIconFont: '',
@@ -121,7 +122,7 @@ module.exports = {
    ** Build configuration
    */
   build: {
-    publicPath: gateway + context,
+    publicPath: publicPath,
     extractCSS: true,
     babel: {
       plugins: [
