@@ -17,8 +17,6 @@ export const APPLICATION = '/mall-application-api/api/v1'
 export const EVALUATE_CENTER = '/mall-deepexi-evaluate-center/api/v1'
 export const ACCOUNT_CENTER = '/mall-deepexi-account-center/api/v1'
 
-export const recommendList = MALL_CONFIG + '/featuredFirsts'
-
 // 品牌管理
 // 根据id 修改品牌信息
 export const productBrandEdit = id => PRODUCT_CENTER + `/pcBrands/${id}`
@@ -137,6 +135,9 @@ export const AllfilterCondition =
 // 首页广告页面
 export const bannerList = MALL_CONFIG + '/advertisements'
 export const bannerEdit = id => MALL_CONFIG + `/advertisements/${id}`
+
+//首页推荐位
+export const recommendList = MALL_CONFIG + '/featuredFirsts'
 //订单列表
 //(平台查询订单列表)
 export const orderList = TRADE_CENTER + '/order/shopOrderList'
