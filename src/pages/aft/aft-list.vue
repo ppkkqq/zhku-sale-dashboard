@@ -76,7 +76,7 @@ export default {
   data() {
     return {
       pageName: 'aft-list',
-      url: refundList + `?shopId=${this.$store.state.shopId}`,
+      url: refundList,
       operationAttrs: {
         width: 160,
         fixed: 'right'
@@ -93,13 +93,6 @@ export default {
           text: '查看',
           type: 'primary',
           atClick: this.go2Detail
-        },
-        {
-          text: '审核',
-          show: row => row.status === 'WAIT_AUDIT',
-          atClick: row => {
-            this.go2Review(row)
-          }
         }
       ],
       dateRange: '',
@@ -144,11 +137,6 @@ export default {
     go2Detail(row) {
       //查看
       this.$router.push(`${aftDetail}?refundId=${row.id}`)
-    },
-    go2Review(row) {
-      //审核
-      this.dialogVisible = true
-      this.reviewRow = row
     },
     handleConfirm() {
       this.$refs.comboForm.validate(valid => {

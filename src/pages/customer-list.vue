@@ -246,22 +246,22 @@ export default {
     },
     topUp() {
       this.$refs.topUpform.validate(valid => {
-        let data = {
-          mobiles: this.topUpform.mobile,
-          money: this.topUpform.money
-        }
-
-        if (this.currentDialog === this.batch) {
-          data = {
-            mobiles: this.topUpform.mobiles
-              .split(',')
-              .filter(v => !!v)
-              .join(','),
+        if (valid) {
+          let data = {
+            mobiles: this.topUpform.mobile,
             money: this.topUpform.money
           }
-        }
 
-        if (valid) {
+          if (this.currentDialog === this.batch) {
+            data = {
+              mobiles: this.topUpform.mobiles
+                .split(',')
+                .filter(v => !!v)
+                .join(','),
+              money: this.topUpform.money
+            }
+          }
+
           this.topUpLoading = true
 
           let url = `${currency}`

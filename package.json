@@ -37,7 +37,7 @@
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.10",
     "nuxt-edge": "^2.0.0-25428457.c59acdd",
-    "power-quill-editor": "^0.0.4",
+    "power-quill-editor": "^0.1.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "upload-to-ali": "^2.2.0",

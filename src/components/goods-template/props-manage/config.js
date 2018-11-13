@@ -11,127 +11,81 @@ export const api = {
 
 export const columns = {
   skuColumns: {
-    NEW_CARS: [
-      {
-        label: '指导价',
-        prop: 'guidePrice',
-        type: 'price'
-      },
-      {
-        label: '优惠价',
-        prop: 'preferentialPrice',
-        type: 'price'
-      }
-    ],
-    FINANCE: [
-      {
-        label: '服务费',
-        prop: 'preferentialPrice',
-        type: 'price'
-      },
-      {
-        label: '物料编码',
-        prop: 'materialCode'
-      }
-    ],
-    BOUTIQUE: [
-      {
-        label: '指导价',
-        prop: 'guidePrice',
-        type: 'price'
-      },
-      {
-        label: '优惠价',
-        prop: 'preferentialPrice',
-        type: 'price'
-      },
-      {
-        label: '套餐价',
-        prop: 'packagePrice',
-        type: 'price'
-      },
-      {
-        label: '物料编码',
-        prop: 'materialCode'
-      }
-    ],
-    UNKEEP: [
+    GOODS: [
+      // {
+      //   label: '指导价',
+      //   prop: 'guidePrice',
+      //   type: 'price'
+      // },
+      // {
+      //   label: '优惠价',
+      //   prop: 'preferentialPrice',
+      //   type: 'price'
+      // }
+    ]
+  },
+  skuFixedColumns: {
+    GOODS: [
       {
         label: '价格',
-        prop: 'preferentialPrice',
+        prop: 'sellPrice',
         type: 'price'
+        // type: 'fixed',
       },
       {
-        label: '物料编码',
-        prop: 'materialCode'
-      }
-    ],
-    SERVICE: [
-      {
-        label: '价格',
-        prop: 'preferentialPrice',
-        type: 'price'
-      },
-      {
-        label: '物料编码',
-        prop: 'materialCode'
-      }
-    ],
-    INSURANCE: [
-      {
-        label: '物料编码',
-        prop: 'materialCode'
-      },
-      {
-        label: '价格',
-        prop: 'preferentialPrice',
-        type: 'price'
-      }
-    ],
-    MANHOUR: [
-      {
-        label: '价格',
-        prop: 'preferentialPrice',
-        type: 'price'
-      },
-      {
-        label: '物料编码',
-        prop: 'materialCode'
+        label: '数量',
+        prop: 'stockCount',
+        type: 'number'
+        // type: 'fixed',
       }
     ]
   },
   fixedColumns: {
-    combo: [
-      {
-        label: '属性组',
-        prop: 'groupName'
-      },
+    GOODS: [
       {
         label: '属性名',
         prop: 'propName'
       },
       {
         label: '属性值',
-        prop: 'propValue'
-      }
-    ],
-    goods: [
-      {
-        label: '属性组',
-        prop: 'groupName'
-      },
-      {
-        label: '属性名',
-        prop: 'propName'
-      },
-      {
-        label: '属性值',
-        prop: 'propValue'
+        prop: 'propValue',
+        minWidth: '150px'
       },
       {
         label: '属性类型',
-        prop: 'type'
+        prop: 'attrType',
+        renderHeader: (h, {column, $index}) => {
+          return h('span', {}, [
+            column.label,
+            h(
+              'el-tooltip',
+              {
+                attrs: {
+                  effect: 'dark',
+                  content: '规格属性对应客户端商品详情的规格',
+                  placement: 'top'
+                }
+              },
+              [
+                h('i', {
+                  class: 'el-icon-question'
+                })
+              ]
+            )
+          ])
+        }
       }
     ]
+  }
+}
+
+export const columnItemConfig = {
+  interiorExterior: {
+    url: '',
+    columns: [],
+    hasNew: false,
+    hasEdit: false,
+    hasDelete: false,
+    searchForm: []
   }
 }

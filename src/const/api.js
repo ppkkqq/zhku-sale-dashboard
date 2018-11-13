@@ -3,7 +3,7 @@ const prefix = '/mock'
 // const MALL_CONFIG = '/car-deepexi-mall-config-api/api/v1'
 // const PRODUCT_CENTER = '/car-deepexi-product-center/api/v1'
 // const MEMBER_CENTER = '/car-deepexi-member-center/api/v1'
-const shopCenter = '/car-deepexi-shop-center/api/v1'
+const shopCenter = '/mall-deepexi-shop-center/api/v1'
 // const TRADE_CENTER = '/car-deepexi-trade-center/api/v1'
 // const APPLICATION = '/moby-application-api/api/v1' //应用中心
 // const EVALUATE_CENTER = '/car-deepexi-evaluate-center/api/v1' //评价中心
@@ -16,10 +16,7 @@ export const MALL_CONFIG = '/mall-deepexi-mall-config-api/api/v1'
 export const APPLICATION = '/mall-application-api/api/v1'
 export const EVALUATE_CENTER = '/mall-deepexi-evaluate-center/api/v1'
 export const ACCOUNT_CENTER = '/mall-deepexi-account-center/api/v1'
-
-export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
-
-export const recommendList = MALL_CONFIG + '/featuredFirsts'
+export const MARKETING_CENTER = '/mall-deepexi-marking-center/api/v1'
 
 // 品牌管理
 // 根据id 修改品牌信息
@@ -27,9 +24,6 @@ export const productBrandEdit = id => PRODUCT_CENTER + `/pcBrands/${id}`
 // 获取所有品牌列表
 // export const productBrandList = deepexiProductCenter + '/pcBrands/list'
 export const pcBrands = PRODUCT_CENTER + `/pcBrands`
-
-// 门店列表
-export const shopList = shopCenter + '/shops'
 
 // 商品上下架管理
 export const skusStocklist = fakeProductCenter + '/admin/items/skus/stocklist'
@@ -47,14 +41,6 @@ export const skusOn = id => {
 export const skusOff = id => {
   return fakeProductCenter + `/seller/items/${id}/skus/off`
 }
-
-//后台类目树
-
-export const prdCatalogs = PRODUCT_CENTER + '/prdCatalogs/tree'
-export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
-export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
-export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
-export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
 
 // 会员信息
 export const mcMemberInfos = MEMBER_CENTER + '/mcMemberAccounts'
@@ -103,9 +89,8 @@ export const feedback = MALL_CONFIG + '/feedbacks'
 //车型基础数据管理
 export const carBrandsSeries = PRODUCT_CENTER + '/pcCarBrandSeries'
 export const carModels = PRODUCT_CENTER + '/pcCarModels'
-
 //商品管理
-export const shopItems = `${PRODUCT_CENTER}/admin/items`
+export const shopItems = `${PRODUCT_CENTER}/shop/items`
 export const productDetail = id => `${PRODUCT_CENTER}/shop/items/${id}`
 
 //套餐管理
@@ -130,8 +115,8 @@ export const customerFocus = `${APPLICATION}/goodsAttentions/headquarters/person
 export const customerEvaluate = `${EVALUATE_CENTER}/ecEvaluations/tree`
 //我的证件
 export const customerCertificatess = `${MEMBER_CENTER}/mcCertificatess/list`
-// 退款
-export const refundList = TRADE_CENTER + '/refund/supplier/list'
+// 售后
+export const refundList = TRADE_CENTER + '/refund/supplier/platlist'
 export const refundAudit = TRADE_CENTER + '/refund/supplier/audit'
 export const refundDetail = TRADE_CENTER + '/refund/supplier/detail'
 
@@ -148,6 +133,9 @@ export const AllfilterCondition =
 // 首页广告页面
 export const bannerList = MALL_CONFIG + '/advertisements'
 export const bannerEdit = id => MALL_CONFIG + `/advertisements/${id}`
+
+//首页推荐位
+export const recommendList = MALL_CONFIG + '/featuredFirsts'
 //订单列表
 //(平台查询订单列表)
 export const orderList = TRADE_CENTER + '/order/shopOrderList'
@@ -160,6 +148,7 @@ export const logistics = TRADE_CENTER + '/logistics'
 // export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
 export const goodsLists = PRODUCT_CENTER + '/manager/pcItems/plat'
 // 商品审核
+export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
 export const getNeedCheckPcItem =
   PRODUCT_CENTER + '/manager/pcItems/getNeedCheckPcItem'
 export const getNeedCheckPcById =
@@ -183,3 +172,17 @@ export const frontendCatalogDetail = id =>
   PRODUCT_CENTER + `/pcPrecategorys/${id}`
 export const frontendCatalogBaseUrl = PRODUCT_CENTER + `/pcPrecategorys`
 export const bindBackendUrl = PRODUCT_CENTER + `/pcPrecategoryCatalogs`
+
+//后台类目树
+export const prdCatalogs = PRODUCT_CENTER + '/prdCatalogs/tree'
+export const backendCatalogTree = PRODUCT_CENTER + '/prdCatalogs/tree'
+export const backendCatalogDetail = id => PRODUCT_CENTER + `/prdCatalogs/${id}`
+export const backendCatalogBaseUrl = PRODUCT_CENTER + `/prdCatalogs`
+export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
+
+// 门店列表
+export const shopList = shopCenter + '/shops'
+
+// 营销
+// 促销活动
+export const activityList = MARKETING_CENTER + '/activity/list'

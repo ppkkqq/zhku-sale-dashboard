@@ -89,14 +89,9 @@ export default {
           }
         },
         {
-          prop: 'catalogName',
+          prop: 'catalogId',
           label: '后台类目'
         },
-        // {
-        //   prop: 'status',
-        //   label: '状态',
-        //   formatter: row => status2String[row.status]
-        // },
         // {
         //   prop: 'shelf',
         //   label: '上架/下架',
@@ -111,6 +106,11 @@ export default {
           formatter: row => {
             return formatDate(row.createdAt, 'YYYY-MM-DD HH:mm:ss')
           }
+        },
+        {
+          prop: 'status',
+          label: '状态',
+          formatter: row => status2String[row.status]
         }
       ],
       dialogVisible: false,
@@ -123,7 +123,7 @@ export default {
             this.$router.push({
               path: '/goods/goods-audit-detail',
               query: {
-                productId: row.itemId
+                productId: row.id
               }
             })
           }
@@ -135,7 +135,7 @@ export default {
               path: '/goods/goods-audit-detail',
               query: {
                 isView: 1,
-                productId: row.itemId
+                productId: row.id
               }
             })
           }

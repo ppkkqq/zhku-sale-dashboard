@@ -12,5 +12,5 @@ docker rm -f yunding-platform-dashboard &> /dev/null
 # 运行容器
 docker run -d --restart=on-failure:5 \
     -p 3340:80 \
-    -v $PWD/dist:/usr/share/nginx/html/yunding-platform-dashboard:ro \
+    -v $PWD/dist:/usr/share/nginx/html/gtytong-platform-dashboard:ro \
     --name yunding-platform-dashboard nginx:1.13

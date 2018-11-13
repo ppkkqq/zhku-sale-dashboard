@@ -1,8 +1,9 @@
 <template>
   <sku-column-item
     v-model="propValue"
+    :row="row"
     :options="options"
-    :isView="isView"
+    :disabled="isView"
   />
 </template>
 <script>
@@ -18,12 +19,25 @@ export default {
   },
   data() {
     return {
-      options: Array.isArray(this.default) ? this.default : []
+      options: Array.isArray(this.default) ? this.default : ''
     }
   },
   watch: {
     default() {
-      this.options = Array.isArray(this.default) ? this.default : []
+      this.options = this.default
+      if (Array.isArray(this.default)) {
+        // 更新规格属性列不触发更新
+        if (this.propValue === '') {
+          return
+        }
+
+        // 删除规格属性的属性值时触发清空
+        if (this.default.indexOf(this.propValue) < 0) {
+          this.propCode = ''
+          this.propValue = ''
+        }
+        return
+      }
     }
   },
   computed: {
@@ -54,31 +68,33 @@ export default {
           (this.row.propNames && this.row.propNames.split(',')) || []
         const propValues =
           (this.row.propValues && this.row.propValues.split(',')) || []
-        const propCodes =
-          (this.row.propCodes && this.row.propCodes.split(',')) || []
+        // const propCodes =
+        //   (this.row.propCodes && this.row.propCodes.split(',')) || []
 
         const propIndex = propNames.indexOf(this.prop)
-        const codeIndex = this.options.indexOf(val)
+        // const codeIndex = this.options.indexOf(val)
 
-        const propCode =
-          this.curSkuPropCodes[codeIndex] ||
-          this.curSkuPropCodes.join(',') ||
-          ''
+        // this.curSkuPropCodes[0] 为设置input类型的设置code
+        // const propCode =
+        //   this.curSkuPropCodes[codeIndex] ||
+        //   this.curSkuPropCodes[0] ||
+        //   // this.curSkuPropCodes.join(',') ||
+        //   ''
 
         if (propIndex > -1) {
           propValues.splice(propIndex, 1, val)
-          propCodes.splice(propIndex, 1, propCode)
+          // propCodes.splice(propIndex, 1, propCode)
 
           this.row.propValues = propValues.join(',')
-          this.row.propCodes = propCodes.join(',')
+          // this.row.propCodes = propCodes.join(',')
         } else {
           propNames.push(this.prop)
           propValues.push(val)
-          propCodes.push(propCode)
+          // propCodes.push(propCode)
 
           this.row.propNames = propNames.join(',')
           this.row.propValues = propValues.join(',')
-          this.row.propCodes = propCodes.join(',')
+          // this.row.propCodes = propCodes.join(',')
         }
       }
     }
