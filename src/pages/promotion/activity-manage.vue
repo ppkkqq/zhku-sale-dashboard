@@ -91,7 +91,7 @@
 <script>
 import {} from '@/const/config'
 import {columns, searchForm} from '@/const/marketing'
-import {} from '@/const/api'
+import {activityList} from '@/const/api'
 import {} from '@/const/path'
 
 export default {
@@ -100,7 +100,7 @@ export default {
   data() {
     return {
       pageName: 'activity-manage',
-      url: '', //aftList + `?shopId=${this.$store.state.shopId}`,
+      url: activityList, //aftList + `?shopId=${this.$store.state.shopId}`,
       dateRange: '',
       customQuery: {
         startDate: '',
