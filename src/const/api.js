@@ -16,6 +16,7 @@ export const MALL_CONFIG = '/mall-deepexi-mall-config-api/api/v1'
 export const APPLICATION = '/mall-application-api/api/v1'
 export const EVALUATE_CENTER = '/mall-deepexi-evaluate-center/api/v1'
 export const ACCOUNT_CENTER = '/mall-deepexi-account-center/api/v1'
+export const MARKETING_CENTER = '/mall-deepexi-marking-center/api/v1'
 
 // 品牌管理
 // 根据id 修改品牌信息
@@ -181,3 +182,7 @@ export const catalogAttr = PRODUCT_CENTER + `/catalogAttr`
 
 // 门店列表
 export const shopList = shopCenter + '/shops'
+
+// 营销
+// 促销活动
+export const activityList = MARKETING_CENTER + '/activity/list'
