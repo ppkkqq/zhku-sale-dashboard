@@ -21,22 +21,23 @@
         </el-collapse>
       </el-card>
       <el-card class="box-card" header="活动基础信息">
-        <el-form ref="form" :model="form" label-width="100px" :disabled="isView">
-          <el-form-item label="活动标题">
-            <el-input v-model="form.name"></el-input>
+        <el-form ref="form" :model="form" :rules="rules" label-width="100px" :disabled="isView">
+          <el-form-item label="活动标题" prop="tmaTitle">
+            <el-input v-model.trim="form.tmaTitle"></el-input>
           </el-form-item>
           <el-form-item label="活动有效时间">
             <el-date-picker
-              v-model="form.name"
+              v-model="dateRange"
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               value-format="yyyy-MM-dd"
+              :clearable='false'
             ></el-date-picker>
           </el-form-item>
           <el-form-item label="活动链接地址">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.tmaLinkAddress"></el-input>
           </el-form-item>
           <el-form-item label="推广平台">
             <el-checkbox-group v-model="form.name">
@@ -46,23 +47,23 @@
           </el-form-item>
           <el-form-item label="活动展示图片">
             <upload-to-ali
-              v-if="!form.photoUrl"
+              v-if="!form.tmaPicture"
               @load="onUpLoadFile($event)"
               accept="image/png, image/jpeg, image/jpg"
-              :fileUrl="form.photoUrl"
+              :fileUrl="form.tmaPicture"
             ></upload-to-ali>
-            <viewer v-if="form.photoUrl" :src="form.photoUrl"/>
+            <viewer v-if="form.tmaPicture" :src="form.tmaPicture"/>
           </el-form-item>
           <el-form-item label="活动描述">
-            <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="form.description"></el-input>
+            <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="form.tmaDescribe"></el-input>
           </el-form-item>
           <el-form-item label="活动优先级">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model.trim.number="form.tmaPriority" type="number"></el-input>
           </el-form-item>
           <el-form-item label="活动状态">
-            <el-radio-group v-model="form.name">
-              <el-radio :label="1">启用</el-radio>
-              <el-radio :label="0">禁用</el-radio>
+            <el-radio-group v-model="form.tmaStatus">
+              <el-radio label="1">启用</el-radio>
+              <el-radio label="0">禁用</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item>
@@ -98,7 +99,7 @@ export default {
     return {
       pageName: 'activity-publish',
       url: '', //aftList + `?shopId=${this.$store.state.shopId}`,
-      dateRange: '',
+      dateRange: [],
       customQuery: {
         startDate: '',
         endDate: ''
@@ -172,11 +173,30 @@ export default {
       activeNames: '',
       radio2: 1,
       form: {
+        tmaTitle: '',
+        tmaStmartTime: '',
+        tmaEndTime: '',
+        tmaLinkAddress: '',
+        tmaIsPartakePc: '',
+        tmaIsPartakeApp: '',
+        tmaPicture: '',
+        tmaDescribe: '',
+        tmaPriority: '',
+        tmaStatus: '',
         name: '',
         photoUrl:
           'https://tse3.mm.bing.net/th?id=OIP.bJTVUv9Z3A68Eq-uYZAUWQHaEK&pid=Api&w=660&h=371&rs=1&p=0',
         description: ''
+      },
+      rules: {
+        tmaTitle: [{required: true, message: '请输入活动标题', trigger: 'blur'}]
       }
+    }
+  },
+  watch: {
+    dateRange() {
+      this.form.tmaStmartTime = this.dateRange[0]
+      this.form.tmaEndTime = this.dateRange[1]
     }
   },
   computed: {

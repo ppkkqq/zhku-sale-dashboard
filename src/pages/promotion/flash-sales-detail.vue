@@ -1,7 +1,12 @@
 <template>
   <div :class="pageName">
     <go-back></go-back>
-    <base-layout :title="title" :hasEdit="!isView" btn-text="添加属性" @click="addRow">
+    <base-layout
+      title="设置商品"
+      :hasEdit="!isView"
+      btn-text="添加商品"
+      @click="()=> {this.dialogVisible=true}"
+    >
       <el-table :data="propsData">
         <el-table-column
           v-for="col in propsColumns"
@@ -29,6 +34,44 @@
         </el-table-column>
       </el-table>
     </base-layout>
+    <el-card shadow="never" class="base-layout" :hasEdit="!isView" @click="addRow" btn-text>
+      <el-form ref="form" :model="form" label-width="100px" :disabled="isView">
+        <el-form-item label="规则名称">
+          <el-input v-model="form.name" placeholder="限30字符"></el-input>
+        </el-form-item>
+        <el-form-item label="参与次数">
+          <el-input v-model="form.name" placeholder="未填写表示不限定"></el-input>
+        </el-form-item>
+        <el-form-item label="限定数量">
+          <el-input v-model="form.name" placeholder="未填写表示不限定"></el-input>
+        </el-form-item>
+        <el-form-item label="规则描述">
+          <el-input type="textarea" :rows="2" placeholder="限200字符" v-model="form.description"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit" size="small">确定</el-button>
+          <el-button @click="onCancel" size="small">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+    <el-dialog title="添加商品" :visible.sync="dialogVisible" width="70%">
+      <el-data-table
+        ref="dataTable"
+        :url="url"
+        :columns="dialogColumns"
+        :hasNew="false"
+        :hasEdit="false"
+        :hasDelete="false"
+        :hasOperation="true"
+        :isTree="false"
+        :hasPagination="true"
+        data-path="payload.list"
+        totalPath="payload.total"
+        :searchForm="searchForm"
+        :operationAttrs="operationAttrs"
+        :extraButtons="extraButtons"
+      ></el-data-table>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -46,7 +89,7 @@ export default {
   data() {
     return {
       pageName: 'flash-sales-detail',
-      isView: false,
+      url: '',
       dialogVisible: false,
       propsColumns: [
         {
@@ -74,10 +117,81 @@ export default {
           label: '商品状态'
         }
       ],
-      propsData: [{id: 'dfafa'}]
+      dialogColumns: [
+        {
+          prop: 'id',
+          label: '商品编号'
+        },
+        {
+          prop: 'name',
+          label: '商品名称'
+        },
+        {
+          prop: 'prop',
+          label: '商品规格'
+        },
+        {
+          prop: 'price',
+          label: '单价'
+        },
+        {
+          prop: 'acc',
+          label: '库存'
+        },
+        {
+          prop: 'status',
+          label: '商品状态'
+        }
+      ],
+      searchForm: [
+        {
+          $el: {
+            placeholder: '请输入'
+          },
+          label: '商品编号',
+          $id: 'id',
+          $type: 'input'
+        },
+        {
+          $el: {
+            placeholder: '请输入'
+          },
+          label: '商品类目',
+          $id: 'id',
+          $type: 'input'
+        },
+        {
+          $el: {
+            placeholder: '请输入'
+          },
+          label: '商品名称',
+          $id: 'id',
+          $type: 'input'
+        }
+      ],
+      operationAttrs: {
+        width: 100,
+        fixed: 'right'
+      },
+      extraButtons: [
+        {
+          text: '选择',
+          type: 'primary',
+          atClick: this.addRow
+        }
+      ],
+      propsData: [{id: 'dfafa'}],
+      form: {
+        name: '',
+        description: ''
+      }
     }
   },
-  computed: {},
+  computed: {
+    isView() {
+      return this.$route.query.isView > 0
+    }
+  },
   methods: {
     // 基础属性
     addRow() {
@@ -103,7 +217,23 @@ export default {
           message: '删除成功!'
         })
       })
+    },
+    onSubmit() {},
+    onCancel() {
+      this.$router.back()
     }
   }
 }
 </script>
+<style lang="stylus">
+.flash-sales-detail {
+  .base-layout {
+    margin-bottom: 50px
+
+    .base--edit-btn {
+      float: right
+      padding: 3px 0
+    }
+  }
+}
+</style>
