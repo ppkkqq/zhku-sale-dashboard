@@ -22,6 +22,7 @@ const config = {
       '/mall-deepexi-stock-center': 'http://levy.ren:3000/mock/335',
       '/mall-deepexi-settle-center': 'http://levy.ren:3000/mock/317',
       '/mall-deepexi-account-center': 'http://levy.ren:3000/mock/371',
+      '/mall-deepexi-marking-center': 'http://levy.ren:3000/mock/477',
       '/security': gateway
     },
     dev: {
@@ -35,6 +36,7 @@ const config = {
       '/mall-deepexi-stock-center': gateway,
       '/mall-deepexi-settle-center': gateway,
       '/mall-deepexi-account-center': gateway,
+      '/mall-deepexi-marking-center': gateway,
       '/security': gateway
     },
     test: {
@@ -48,6 +50,7 @@ const config = {
       '/mall-deepexi-stock-center': gateway,
       '/mall-deepexi-settle-center': gateway,
       '/mall-deepexi-account-center': gateway,
+      '/mall-deepexi-marking-center': gateway,
       '/security': gateway
     }
   }
