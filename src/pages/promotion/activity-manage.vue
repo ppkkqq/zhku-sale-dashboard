@@ -23,6 +23,7 @@
         <el-form-item label="活动时间">
           <el-date-picker
             @change="setTime"
+            :clearable="false"
             value-format="yyyy-MM-dd"
             v-model="dateRange"
             type="daterange"
