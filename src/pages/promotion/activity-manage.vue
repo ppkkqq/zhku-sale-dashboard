@@ -95,26 +95,6 @@ export default {
       dialogRow: {}
     }
   },
-  computed: {
-    // rules() {
-    //   let rules = {
-    //     approve: [
-    //       {
-    //         required: true,
-    //         message: '请输入审核结果',
-    //         trigger: 'change'
-    //       }
-    //     ]
-    //     // rejectRemark: [
-    //     //   {
-    //     //     required: this.reviewForm.approve !== 'true',
-    //     //     message: '请输入备注信息'
-    //     //   }
-    //     // ]
-    //   }
-    //   return rules
-    // }
-  },
   methods: {
     onNew() {
       this.$router.push('/promotion/activity-publish')
@@ -165,80 +145,6 @@ export default {
           this.loading = false
         })
     }
-    // confirmDialog(row, type) {
-    //   this.dialogRow = row
-    //   this.dialogType = type
-    //   switch (type) {
-    //     case AUDIT:
-    //       this.dialogVisible = true
-    //       break
-    //     case RECEIVING:
-    //       this.confirmDialogVisible = true
-    //       break
-    //     case REFUND:
-    //       this.confirmDialogVisible = true
-    //       break
-    //   }
-    // },
-    // go2Review(row) {},
-    // handleAuditConfirm() {
-    //   this.$refs.comboForm.validate(valid => {
-    //     if (valid) {
-    //       this.submit()
-    //     } else {
-    //       return false
-    //     }
-    //   })
-    // },
-    // handleConfirm(row) {
-    //   let promise, url
-    //   switch (this.dialogType) {
-    //     case RECEIVING:
-    //       url = `${confirmReceive}?id=${this.dialogRow.id}`
-    //       break
-    //     case REFUND:
-    //       url = `${confirmRefund}?id=${this.dialogRow.id}`
-    //       break
-    //     case CANCEL:
-    //       url = `${channelCancel}?id=${row.id}`
-    //       break
-    //   }
-    //   this.loading = true
-    //   this.$axios
-    //     .$post(url)
-    //     .then(res => {
-    //       this.confirmDialogVisible = false
-    //       this.loading = false
-    //       this.$message({
-    //         type: 'success',
-    //         message: '操作成功'
-    //       })
-    //       this.$refs.dataTable.getList()
-    //     })
-    //     .catch(err => {
-    //       this.loading = false
-    //       this.confirmDialogVisible = false
-    //     })
-    // },
-    // submit() {
-    //   let data = {
-    //     id: this.dialogRow.id,
-    //     ...this.reviewForm
-    //   }
-    //   this.$axios
-    //     .$post(aftAudit, data)
-    //     .then(resp => {
-    //       this.beforeClose()
-    //       this.$refs.dataTable.getList()
-    //     })
-    //     .catch(err => {
-    //       this.beforeClose()
-    //     })
-    // },
-    // beforeClose(done) {
-    //   this.$refs.comboForm.resetFields()
-    //   done ? done() : (this.dialogVisible = false)
-    // }
   }
 }
 </script>
