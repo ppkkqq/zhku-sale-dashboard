@@ -1,10 +1,22 @@
-import {toOptionsLabel, formatDate, price} from '@/const/filter'
+import {Object2Options, formatDate, price} from '@/const/filter'
 
 const format = {
   dateTime: (row, column, val) => formatDate(val, 'YYYY-MM-DD HH : mm'),
   money: (row, column, val) => price(val)
 }
-
+export const activityType = {
+  0: '预售',
+  1: '限时抢购'
+}
+export const timeType = {
+  0: '待开始',
+  1: '进行中',
+  2: '已结束'
+}
+export const activityStatus = {
+  0: '禁用',
+  1: '启用'
+}
 // export const statusOpts = {
 //   WAIT_AUDIT: '待审核',
 //   AUDITED: '已审核',
@@ -24,92 +36,83 @@ export const searchForm = [
       placeholder: '请输入'
     },
     label: '活动标题',
-    $id: 'refundOrderId',
+    $id: 'title',
     $type: 'input'
   },
   {
     $el: {
       placeholder: '请输入'
     },
-    label: '活动标题',
-    $id: 'source',
+    label: '活动类型',
+    $id: 'type',
     $type: 'select',
-    $options: [
-      {
-        label: '类型一',
-        value: 0
-      },
-      {
-        label: '类型二',
-        value: 1
-      }
-    ]
+    $options: Object2Options(activityType)
   },
   {
     $el: {
       placeholder: '请输入'
     },
     label: '活动状态',
-    $id: 'refundTypeCode',
+    $id: 'timeStatus',
     $type: 'select',
     $options: [
       {
-        label: '进行中',
+        label: '待开始',
         value: 0
       },
       {
-        label: '未开始',
+        label: '进行中',
         value: 1
       },
       {
         label: '已结束',
         value: 2
-      },
-      {
-        label: '全部',
-        value: 3
       }
     ]
   }
 ]
 export const columns = [
   {
-    prop: 'id',
+    prop: 'tmaPriority',
     label: '优先级',
     showOverflowTooltip: true
   },
   {
-    prop: 'tradeOrderId',
+    prop: 'tmaTitle',
     label: '活动标题',
-    // minWidth: 180,
+    minWidth: 180,
     showOverflowTooltip: true
   },
   {
-    prop: 'source',
+    prop: 'tmaType',
     label: '活动类型',
     // minWidth: 180,
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    formatter: row => activityType[row.tmaType]
   },
   {
-    prop: 'memberName',
+    prop: 'tmaStartTime',
     label: '开始时间',
+    minWidth: 180,
     formatter: format.dateTime
     // showOverflowTooltip: true
   },
   {
-    prop: 'refundTypeName',
+    prop: 'tmaEndTime',
+    minWidth: 180,
     formatter: format.dateTime,
     label: '结束时间'
   },
   {
-    prop: 'refundMoney',
-    label: '活动状态'
-    // formatter: row => statusOpts[row.status]
+    prop: 'tmaTimeStatus',
+    label: '活动状态',
+    formatter: row => timeType[row.tmaTimeStatus]
   },
   {
-    prop: 'createdAt',
+    prop: 'tmaStatus',
     label: '禁启用',
     // minWidth: 160,
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    formatter: row => activityStatus[row.tmaStatus]
   }
 ]

@@ -22,6 +22,7 @@
         <!--//下单时间-->
         <el-form-item label="下单时间">
           <el-date-picker
+            :clearable="false"
             @change="setTime"
             value-format="yyyy-MM-dd"
             v-model="dateRange"
