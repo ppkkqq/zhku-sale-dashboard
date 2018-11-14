@@ -24,3 +24,6 @@ export const customerDetail = '/customer-detail'
 
 // 售后
 export const aftDetail = '/aft/aft-detail'
+
+//限时抢购
+export const flashSalesDetail = '/promotion/flash-sales-detail'

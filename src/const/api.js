@@ -186,3 +186,5 @@ export const shopList = shopCenter + '/shops'
 // 营销
 // 促销活动
 export const activityList = MARKETING_CENTER + '/activity/list'
+
+//
