@@ -28,8 +28,8 @@
             v-model="dateRange"
             type="datetimerange"
             range-separator="-"
-            start-placeholder="活动开始日期"
-            end-placeholder="活动结束日期"
+            start-placeholder="活动开始时间"
+            end-placeholder="活动结束时间"
           ></el-date-picker>
         </el-form-item>
       </template>
