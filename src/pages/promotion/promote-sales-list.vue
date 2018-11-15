@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import {activityStatus} from '@/const/marketing'
 export default {
   name: 'promote-sales-list',
   data() {
@@ -49,7 +50,8 @@ export default {
         },
         {
           prop: 'tmarStatus',
-          label: '状态'
+          label: '状态',
+          formatter: row => activityStatus[row.tmarStatus]
         }
       ],
       operationAttrs: {
@@ -57,52 +59,50 @@ export default {
         fixed: 'right'
       },
       extraButtons: [
-        //   {
-        //     text: '编辑',
-        //     type: 'primary',
-        //     atClick: row => {
-        //       this.$router.push({
-        //         path: flashSalesDetail,
-        //         query: {
-        //           id: row.tmarId
-        //         }
-        //       })
-        //     }
-        //   },
-        //   {
-        //     type: 'primary',
-        //     text: '启用',
-        //     show: row => {
-        //       return activityStatus[row.tmarStatus]==="禁用"
-        //     },
-        //     atClick: row => {
-        //       this.switchStatus(row)
-        //     }
-        //   },
-        //   {
-        //     type: 'default',
-        //     text: '禁用',
-        //     show: row => {
-        //       return activityStatus[row.tmarStatus]==="启用"
-        //     },
-        //     atClick: row => {
-        //       this.switchStatus(row)
-        //     }
-        //   },
-        //   {
-        //     text: '查看',
-        //     type: 'primary',
-        //     atClick: row => {
-        //       this.$router.push({
-        //         path: flashSalesDetail,
-        //         query: {
-        //           isView:1,
-        //           id: row.tmarId
-        //         }
-        //       })
-        //     }
-        //   }
-        //
+        {
+          text: '编辑',
+          type: 'primary',
+          atClick: row => {
+            this.$router.push({
+              path: flashSalesDetail,
+              query: {
+                id: row.tmarId
+              }
+            })
+          }
+        },
+        {
+          type: 'primary',
+          text: '启用',
+          show: row => {
+            return activityStatus[row.tmarStatus] === '禁用'
+          },
+          atClick: row => {
+            this.switchStatus(row)
+          }
+        },
+        {
+          type: 'danger',
+          text: '禁用',
+          show: row => {
+            return activityStatus[row.tmarStatus] === '启用'
+          },
+          atClick: row => {
+            this.switchStatus(row)
+          }
+        },
+        {
+          text: '查看',
+          type: 'info',
+          atClick: row => {
+            this.$router.push({
+              path: '/promotion/promote-sales-detail',
+              query: {
+                tmarId: row.tmarId
+              }
+            })
+          }
+        }
       ]
     }
   }
