@@ -186,5 +186,8 @@ export const shopList = shopCenter + '/shops'
 // 营销
 // 促销活动
 export const activityList = MARKETING_CENTER + '/activity/list'
+export const activityStatus = MARKETING_CENTER + '/activity/status'
 
-//
+//限时抢购
+export const flashSalesList = MARKETING_CENTER + '/buyingRule/list'
+export const flashSalesStatus = MARKETING_CENTER + '/buyingRule/status'

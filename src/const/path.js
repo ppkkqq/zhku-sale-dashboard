@@ -25,5 +25,10 @@ export const customerDetail = '/customer-detail'
 // 售后
 export const aftDetail = '/aft/aft-detail'
 
+// 营销
+// 促销活动
+export const activityDetail = '/promotion/activity-detail'
+export const activityPublish = '/promotion/activity-publish'
+
 //限时抢购
 export const flashSalesDetail = '/promotion/flash-sales-detail'
