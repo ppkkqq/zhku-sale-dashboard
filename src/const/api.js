@@ -186,3 +186,7 @@ export const shopList = shopCenter + '/shops'
 // 营销
 // 促销活动
 export const activityList = MARKETING_CENTER + '/activity/list'
+
+export const goodQuery =
+  '/mall-deepexi-marking-center/api/v1/presellRule/goodsQuery'
+export const addRule = '/mall-deepexi-marking-center/api/v1/presellRule/addRule'

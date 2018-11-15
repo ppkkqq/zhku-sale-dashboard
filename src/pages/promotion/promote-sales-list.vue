@@ -1,46 +1,20 @@
 <template>
  <div>
    <el-button><nuxt-link to="/promotion/flash-sales-new">新建规则</nuxt-link></el-button>
-   <el-table
-     :data="tableData"
-     show-header="false"
-     border>
-     <el-table-column
-       prop="name"
-       label="规则名称"
-       width="120">
-     </el-table-column>
-     <el-table-column
-       prop="detail"
-       label="描述"
-       width="220">
-     </el-table-column>
-     <el-table-column
-       prop="startTime"
-       label="创建时间"
-       width="120">
-     </el-table-column>
-     <el-table-column
-       prop="editTime"
-       label="修改时间"
-       width="140">
-     </el-table-column>
-     <el-table-column
-       prop="status"
-       label="状态"
-       width="140">
-     </el-table-column>
-     <el-table-column
-       prop="action"
-       label="操作"
-       width="180">
-       <template slot-scope="scope">
-         <el-button type="text" size="small">编辑</el-button>
-         <el-button type="text" size="small">禁用</el-button>
-         <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-       </template>
-     </el-table-column>
-   </el-table>
+   <el-data-table
+     ref="dataTable"
+     :url="url"
+     :columns="propsColumns"
+     :hasNew="false"
+     :hasEdit="false"
+     :hasDelete="false"
+     :hasPagination="true"
+     data-path="payload.list"
+     totalPath="payload.total"
+     :operationAttrs="operationAttrs"
+     :extraButtons="extraButtons"
+   >
+   </el-data-table>
     <div style="width: 200px;margin: 50px auto;">
       预售规则:
       1、预售商品为自营商品，如果商品待上架状态，则商品上架后，规则立即生效;如果商品已上架，规则立即生效。
@@ -54,22 +28,81 @@ export default {
   name: 'promote-sales-list',
   data() {
     return {
-      tableData: [
+      url:
+        'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presellRule/list',
+      propsColumns: [
         {
-          name: '两款围巾预售',
-          detail: '很好',
-          startTime: '',
-          editTime: '',
-          status: '开启',
-          action: ''
+          prop: 'tmarTitle',
+          label: '规则名称'
         },
         {
-          name: '两款毛巾预售',
-          detail: '',
-          startTime: '',
-          editTime: '',
-          status: '禁用'
+          prop: 'tmarDesc',
+          label: '描述'
+        },
+        {
+          prop: 'tmarCreatedAt',
+          label: '创建时间'
+        },
+        {
+          prop: 'tmarUpdatedAt',
+          label: '修改时间'
+        },
+        {
+          prop: 'tmarStatus',
+          label: '状态'
         }
+      ],
+      operationAttrs: {
+        width: 240,
+        fixed: 'right'
+      },
+      extraButtons: [
+        //   {
+        //     text: '编辑',
+        //     type: 'primary',
+        //     atClick: row => {
+        //       this.$router.push({
+        //         path: flashSalesDetail,
+        //         query: {
+        //           id: row.tmarId
+        //         }
+        //       })
+        //     }
+        //   },
+        //   {
+        //     type: 'primary',
+        //     text: '启用',
+        //     show: row => {
+        //       return activityStatus[row.tmarStatus]==="禁用"
+        //     },
+        //     atClick: row => {
+        //       this.switchStatus(row)
+        //     }
+        //   },
+        //   {
+        //     type: 'default',
+        //     text: '禁用',
+        //     show: row => {
+        //       return activityStatus[row.tmarStatus]==="启用"
+        //     },
+        //     atClick: row => {
+        //       this.switchStatus(row)
+        //     }
+        //   },
+        //   {
+        //     text: '查看',
+        //     type: 'primary',
+        //     atClick: row => {
+        //       this.$router.push({
+        //         path: flashSalesDetail,
+        //         query: {
+        //           isView:1,
+        //           id: row.tmarId
+        //         }
+        //       })
+        //     }
+        //   }
+        //
       ]
     }
   }

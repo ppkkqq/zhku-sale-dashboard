@@ -1,7 +1,12 @@
 <template>
   <div :class="pageName">
     <go-back></go-back>
-    <base-layout :title="title" :hasEdit="!isView" btn-text="添加属性" @click="addRow">
+    <base-layout
+      title="设置商品"
+      :hasEdit="!isView"
+      btn-text="添加商品"
+      @click="()=> {this.dialogVisible=true}"
+    >
       <el-table :data="propsData">
         <el-table-column
           v-for="col in propsColumns"
@@ -10,24 +15,24 @@
           minWidth="130px"
           v-bind="col"
         ></el-table-column>
-        <el-table-column minWidth="130px" prop="stock" label="活动库存">
+        <el-table-column minWidth="130px" prop="tmagGoodsStockCount" label="活动库存">
           <template slot-scope="scope">
-            <input-price v-model.number="scope.row.stock" :disabled="isView"/>
+            <input-price v-model.number="scope.row.tmagGoodsStockCount" :disabled="isView"/>
           </template>
         </el-table-column>
-        <el-table-column minWidth="130px" prop="price1" label="预售金额">
+        <el-table-column minWidth="130px" prop="tmagGoodsActivityPrice" label="预售金额">
           <template slot-scope="scope">
-            <input-price v-model.number="scope.row.price1" :disabled="isView"/>
+            <input-price v-model.number="scope.row.tmagGoodsActivityPrice" :disabled="isView"/>
           </template>
         </el-table-column>
-        <el-table-column minWidth="130px" prop="price1" label="*定金">
+        <el-table-column minWidth="130px" prop="tmagDepositMoney" label="*定金">
           <template slot-scope="scope">
-            <input-price v-model.number="scope.row.deposit" :disabled="isView"/>
+            <input-price v-model.number="scope.row.tmagDepositMoney" :disabled="isView"/>
           </template>
         </el-table-column>
-        <el-table-column minWidth="130px" prop="price1" label="*定金抵扣金额">
+        <el-table-column minWidth="130px" prop="tmagOffsetMoney" label="*定金抵扣金额">
           <template slot-scope="scope">
-            <input-price v-model.number="scope.row.deduction" :disabled="isView"/>
+            <input-price v-model.number="scope.row.tmagOffsetMoney" :disabled="isView"/>
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="100" v-if="!isView">
@@ -39,29 +44,39 @@
         </el-table-column>
       </el-table>
     </base-layout>
-    <div class="form-box" style="width: 500px">
+    <div class="form-box" style="width: 524px">
       <el-form ref="form" label-width="140px" size="mini">
         <el-form-item label="*规则名称：">
-          <el-input v-model="ruleName"></el-input>
+          <el-input v-model="tmarTitle"></el-input>
         </el-form-item>
         <el-form-item label="*支付定金时间：">
           <el-date-picker
-            v-model="value4"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="width: 360px;">
+            v-model="tmarDepositStmartTime"
+            type="datetime"
+            placeholder="选择日期时间"
+            style="width: 180px">
+          </el-date-picker>
+          <span>至</span>
+          <el-date-picker
+            v-model="tmarDepositEndTime"
+            type="datetime"
+            placeholder="选择日期时间"
+            style="width: 180px">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="*支付尾款时间：">
           <el-date-picker
-            v-model="value4"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="width: 360px;">
+            v-model="tmarFinalpayStmartTime"
+            type="datetime"
+            placeholder="选择日期时间"
+            style="width: 180px">
+          </el-date-picker>
+          <span>至</span>
+          <el-date-picker
+            v-model="tmarFinalpayEndTime"
+            type="datetime"
+            placeholder="选择日期时间"
+            style="width: 180px">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="描述">
@@ -69,7 +84,7 @@
             type="textarea"
             :rows="2"
             placeholder="请输入内容"
-            v-model="detail">
+            v-model="tmarDesc">
           </el-input>
         </el-form-item>
         <el-form-item size="large">
@@ -78,15 +93,36 @@
         </el-form-item>
       </el-form>
     </div>
+    <el-dialog title="添加商品" :visible.sync="dialogVisible" width="70%">
+      <el-data-table
+        ref="dataTable"
+        :url="url"
+        :columns="dialogColumns"
+        :hasNew="false"
+        :hasEdit="false"
+        :hasDelete="false"
+        :hasOperation="true"
+        :isTree="false"
+        :hasPagination="true"
+        data-path="payload.list"
+        totalPath="payload.total"
+        :searchForm="searchForm"
+        :operationAttrs="operationAttrs"
+        :extraButtons="extraButtons"
+      ></el-data-table>
+      <el-button type="primary" @click="()=> {this.dialogVisible=false}">确定</el-button>
+    </el-dialog>
   </div>
 </template>
 <script>
 import GoBack from '@/components/GoBack'
 import InputPrice from '@/components/goods-template/props-manage/input-price.vue'
 import BaseLayout from '@/components/goods-template/base-layout'
-
+import {goodQuery} from '@/const/api.js'
+import {addRule} from '@/const/api.js'
+import {goodsStatus} from '../../const/config'
 export default {
-  name: 'flash-sales-detail',
+  name: 'promote-sales-detail',
   components: {
     GoBack,
     InputPrice,
@@ -94,24 +130,26 @@ export default {
   },
   data() {
     return {
-      pageName: 'flash-sales-detail',
-      isView: false,
+      pageName: 'promote-sales-detail',
+      // url: goodQuery,
+      url:
+        'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presellRule/goodsQuery',
       dialogVisible: false,
       propsColumns: [
         {
-          prop: 'id',
+          prop: 'tmagGoodsCode',
           label: '商品编号'
         },
         {
-          prop: 'name',
+          prop: 'tmagGoodsName',
           label: '商品名称'
         },
         {
-          prop: 'prop',
+          prop: 'tmagSkuValue',
           label: '商品规格'
         },
         {
-          prop: 'price',
+          prop: 'tmagGoodsPrice',
           label: '单价'
         },
         {
@@ -123,21 +161,101 @@ export default {
           label: '商品状态'
         }
       ],
-      propsData: [{id: '001'}]
+      dialogColumns: [
+        {
+          prop: 'goodsCode',
+          label: '商品编号',
+          default: ''
+        },
+        {
+          prop: 'goodsName',
+          label: '商品名称',
+          default: ''
+        },
+        {
+          prop: 'goodsSkuName',
+          label: '商品规格',
+          default: ''
+        },
+        {
+          prop: 'goodsPrice',
+          label: '单价',
+          default: ''
+        },
+        {
+          prop: 'goodsStock',
+          label: '库存',
+          default: ''
+        },
+        {
+          prop: 'goodsStatus',
+          label: '商品状态',
+          default: ''
+        }
+      ],
+      searchForm: [
+        {
+          $el: {
+            placeholder: '请输入'
+          },
+          label: '商品编号',
+          $id: 'goodsCode',
+          $type: 'input'
+        },
+        {
+          $el: {
+            placeholder: '请输入'
+          },
+          label: '商品名称',
+          $id: 'goodsName',
+          $type: 'input'
+        }
+      ],
+      operationAttrs: {
+        width: 100,
+        fixed: 'right'
+      },
+      extraButtons: [
+        {
+          text: '选择',
+          type: 'primary',
+          // atClick: this.addRow
+          atClick: row => {
+            this.addRow(row)
+          }
+        }
+      ],
+      propsData: [],
+      form: {
+        name: '',
+        description: ''
+      },
+      tmarTitle: '',
+      tmarDepositStmartTime: '',
+      tmarDepositEndTime: '',
+      tmarFinalpayStmartTime: '',
+      tmarFinalpayEndTime: '',
+      tmarDesc: ''
     }
   },
-  computed: {},
+  computed: {
+    isView() {
+      return this.$route.query.isView > 0
+    }
+  },
   methods: {
-    // 基础属性
-    addRow() {
+    addRow(data) {
       this.dialogVisible = true
       this.propsData.push({
-        // key: [],
-        // value: [],
-        id: '',
-        propNames: '',
-        propValues: ''
-        // propCodes: ''
+        tmagGoodsCode: data.goodsCode,
+        tmagGoodsName: data.goodsName,
+        tmagSkuValue: data.goodsSkuName,
+        tmagGoodsPrice: data.goodsPrice,
+        acc: data.goodsStock,
+        status: data.goodsStatus,
+        tmagSkuId: data.goodsSkuId,
+        tmagSkuCode: data.goodsSkuCode,
+        tmagGoodsId: data.goodsId
       })
     },
     delRow(index, row) {
@@ -152,6 +270,34 @@ export default {
           message: '删除成功!'
         })
       })
+    },
+    onSubmit() {
+      const data = {
+        goods: this.propsData,
+        tmarTitle: this.tmarTitle,
+        tmarDepositStmartTime: this.tmarDepositStmartTime,
+        tmarDepositEndTime: this.tmarDepositEndTime,
+        tmarFinalpayStmartTime: this.tmarFinalpayStmartTime,
+        tmarFinalpayEndTime: this.tmarFinalpayEndTime,
+        tmarDesc: this.tmarDesc
+      }
+      this.$axios
+        .$post(
+          'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presellRule/addRule',
+          data
+        )
+        .then(res => {
+          if (res.payload) {
+            this.$message.success('新建成功！')
+            this.$router.push('/promotion/promote-sales-list')
+          } else {
+            this.$message.error('操作失败，请重新操作！')
+          }
+        })
+        .catch(e => {})
+    },
+    onCancel() {
+      this.$router.back()
     }
   }
 }
