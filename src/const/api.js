@@ -189,5 +189,7 @@ export const activityList = MARKETING_CENTER + '/activity/list'
 export const activityStatus = MARKETING_CENTER + '/activity/status'
 
 //限时抢购
-export const flashSalesList = MARKETING_CENTER + '/buyingRule/list'
-export const flashSalesStatus = MARKETING_CENTER + '/buyingRule/status'
+export const flashSalesList = MARKETING_CENTER + '/buying/rule/list'
+export const flashSalesStatus = MARKETING_CENTER + '/buying/rule/status'
+export const flashSalesActivityStatus =
+  MARKETING_CENTER + '/buying/rule/activity/status'

@@ -1,10 +1,82 @@
 <template>
-  <h1>国源通币充值记录页面</h1>
+  <div :class="pageName">
+    <el-data-table
+      ref="dataTable"
+      :url="url"
+      :columns="columns"
+      :hasNew="false"
+      :hasEdit="false"
+      :hasDelete="false"
+      :hasOperation="false"
+      :isTree="false"
+      :hasPagination="true"
+      :searchForm="searchForm"
+      :dataPath="dataPath"
+      :totalPath="totalPath">
+    </el-data-table>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'top-up-record'
+  name: 'top-up-record',
+  data() {
+    return {
+      pageName: 'top-up-record',
+      url: '',
+      //实际中去掉了用户手机号的列，充值前值和充值后值合并为充值总额。
+      columns: [
+        {
+          prop: 'memberId',
+          label: '序号'
+        },
+        {
+          prop: 'memberName',
+          label: '会员昵称'
+        },
+        {
+          prop: 'memberPhone',
+          label: '会员手机号'
+        },
+        {
+          prop: 'userName',
+          label: '用户名称'
+        },
+        {
+          prop: 'batchAmt',
+          label: '充值总额'
+        },
+        {
+          prop: 'balance',
+          label: '充值余额'
+        },
+        {
+          prop: 'eventTime',
+          label: '充值时间'
+        }
+      ],
+
+      //实际中去掉了会员名称和用户手机号输入框
+      searchForm: [
+        {
+          $el: {
+            placeholder: '请输入会员手机号'
+          },
+          label: '会员手机号',
+          $id: 'mobile',
+          $type: 'input'
+        },
+        {
+          $el: {
+            placeholder: '请输入用户名称'
+          },
+          label: '用户名称',
+          $id: 'nickName',
+          $type: 'input'
+        }
+      ]
+    }
+  }
 }
 </script>
 

@@ -8,6 +8,7 @@
       ref="dataTable"
       :url="url"
       :columns="columns"
+      :hasDialog="true"
       :hasNew="false"
       :hasEdit="false"
       :hasDelete="false"
@@ -24,11 +25,13 @@
 
 <script>
 import {flashSalesDetail} from '@/const/path'
-import {flashSalesList, flashSalesStatus} from '@/const/api'
+import {
+  flashSalesList,
+  flashSalesStatus,
+  flashSalesActivityStatus
+} from '@/const/api'
 import {activityStatus} from '@/const/marketing'
 
-const NORMAL = 'NORMAL'
-const FORBIDDEN = 'FORBIDDEN'
 export default {
   name: 'flash-sales-list',
   components: {},
@@ -88,7 +91,7 @@ export default {
           type: 'primary',
           text: '启用',
           show: row => {
-            return activityStatus[row.tmarStatus] === '禁用'
+            return row.tmarStatus === '0'
           },
           atClick: row => {
             this.switchStatus(row)
@@ -98,7 +101,7 @@ export default {
           type: 'default',
           text: '禁用',
           show: row => {
-            return activityStatus[row.tmarStatus] === '启用'
+            return row.tmarStatus === '1'
           },
           atClick: row => {
             this.switchStatus(row)
@@ -126,14 +129,74 @@ export default {
     newRules() {
       this.$router.push(flashSalesDetail)
     },
+
     switchStatus(row) {
-      let changeStatus = {
-        tmarId: row.tmarId,
-        tmarStatus: row.tmarStatus
+      let status = row.tmarStatus
+
+      if (status === '1') {
+        status = '0'
+
+        this.$confirm('确定禁用吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          let changeStatus = {
+            tmarId: row.tmarId,
+            tmarStatus: status
+          }
+
+          this.$axios
+            .get(flashSalesActivityStatus, {tmarId: row.tmarId})
+            .then(resp => {
+              if (resp.data.payload === true) {
+                this.$axios.put(flashSalesStatus, changeStatus).then(resp => {
+                  this.$refs.dataTable.getList() //刷新页面
+                  if (resp.data.payload === true) {
+                    this.$message({
+                      type: 'success',
+                      message: '操作成功'
+                    })
+                  } else {
+                    this.$message({
+                      type: 'success',
+                      message: '操作失败'
+                    })
+                  }
+                })
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: '此类型规则参与的活动正在进行中,无法禁用！'
+                })
+              }
+            })
+        })
+      } else {
+        status = '1'
+        this.$confirm('确定启用吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          let changeStatus = {
+            tmarId: row.tmarId,
+            tmarStatus: status
+          }
+
+          this.$axios.put(flashSalesStatus, changeStatus).then(resp => {
+            this.$refs.dataTable.getList() //刷新页面
+            console.log(resp.data.payload)
+            if (resp.data.payload === true) {
+              this.$message({
+                type: 'success',
+                message: '操作成功'
+              })
+            } else {
+              this.$message({
+                type: 'error',
+                message: '操作失败！'
+              })
+            }
+          })
+        })
       }
-      this.$axios.put(flashSalesStatus, changeStatus).then(resp => {
-        console.log(resp)
-      })
     }
   }
 }
