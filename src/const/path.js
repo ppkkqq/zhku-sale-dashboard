@@ -29,3 +29,6 @@ export const aftDetail = '/aft/aft-detail'
 // 促销活动
 export const activityDetail = '/promotion/activity-detail'
 export const activityPublish = '/promotion/activity-publish'
+
+//限时抢购
+export const flashSalesDetail = '/promotion/flash-sales-detail'

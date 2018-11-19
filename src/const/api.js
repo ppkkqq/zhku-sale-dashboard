@@ -156,6 +156,7 @@ export const getNeedCheckPcById =
 
 // 源通币
 export const currency = ACCOUNT_CENTER + '/admin/currency'
+export const records = ACCOUNT_CENTER + '/admin/currency/records'
 
 // 会员
 export const address =
@@ -187,3 +188,9 @@ export const shopList = shopCenter + '/shops'
 // 促销活动
 export const activityList = MARKETING_CENTER + '/activity/list'
 export const activityStatus = MARKETING_CENTER + '/activity/status'
+
+//限时抢购
+export const flashSalesList = MARKETING_CENTER + '/buying/rule/list'
+export const flashSalesStatus = MARKETING_CENTER + '/buying/rule/status'
+export const flashSalesActivityStatus =
+  MARKETING_CENTER + '/buying/rule/activity/status'

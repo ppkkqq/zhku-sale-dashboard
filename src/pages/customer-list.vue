@@ -172,7 +172,8 @@ export default {
       ],
       loading: false,
       operationAttrs: {
-        width: '200px'
+        width: '200px',
+        fixed: 'right'
       },
       headerButtons: [
         {
