@@ -128,7 +128,6 @@ export default {
     return {
       pageName: 'flash-sales-detail',
       url: buyingRuleDetail,
-      selectDate: [],
       buyingRuleDetailGood: [],
       dialogVisible: false,
       form: {
@@ -237,7 +236,7 @@ export default {
         {
           text: '选择',
           type: 'primary',
-          atClick: row => this.addRow(row)
+          atClick: this.addRow
         }
       ],
       propsData: [],
@@ -254,9 +253,17 @@ export default {
   },
   methods: {
     // 基础属性
-    addRow(row) {
+    addRow() {
       this.dialogVisible = true
-      this.propsData.push(row)
+      console.log()
+      this.propsData.push({
+        // key: [],
+        // value: [],
+        // tmagGoodsId: '',
+        // propNames: '',
+        // propValues: ''
+        // propCodes: ''
+      })
     },
     delRow(index, row) {
       this.$confirm('确定删除该属性吗?', '提示', {
@@ -276,7 +283,7 @@ export default {
       this.$router.back()
     },
     update(data, resp) {
-      this.selectDate = data
+      console.log(data)
     }
   }
 }

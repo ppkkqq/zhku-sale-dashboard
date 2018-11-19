@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.0.1",
-    "axios": "^0.18.0",
     "crypto-js": "^3.1.9-1",
     "dayjs": "^1.7.4",
     "dotenv": "^6.0.0",
@@ -54,7 +53,6 @@
     "eslint-plugin-vue": "^4.0.0",
     "husky": "^0.14.3",
     "jsdom": "^11.10.0",
-    "mockjs": "^1.0.1-beta3",
     "prettier": "1.12.1",
     "pretty-quick": "^1.4.1"
   }
