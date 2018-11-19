@@ -14,7 +14,7 @@
             :hasDelete="false"
             :hasOperation="false"
             :isTree="false"
-            dataPath=''
+            dataPath='payload.content'
             :hasPagination="false"
             @update="onUpdate"
           >
@@ -31,11 +31,10 @@
         </el-card>
       </el-col>
     </el-row>
-    
+
     <el-dialog title="新增推荐位" :visible.sync="dialogVisible">
       <el-data-table
         ref="goodsDataTable"
-        dataPath="payload.list"
         :url="goodsUrl"
         :columns="goodsColumns"
         :hasNew="false"
@@ -50,19 +49,20 @@
         :tableAttrs="tableAttrs"
         :customQuery="customQuery"
         @reset="handleReset"
+        dataPath='payload.list'
       >
       <template slot="search">
         <el-form-item label="后台类目" prop="catalogId">
           <back-end-category @change="handleSelect('catalogId', $event)" ref="catalogId" ></back-end-category>
         </el-form-item>
-        <el-form-item label="门店" prop="shopId" >
-          <store-select @change="handleSelect('shopId', $event)" ref="shopId"></store-select>
-        </el-form-item>
+        <!--<el-form-item label="门店" prop="shopId" >-->
+          <!--<store-select @change="handleSelect('shopId', $event)" ref="shopId"></store-select>-->
+        <!--</el-form-item>-->
       </template>
     </el-data-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-      </div>
+      <!--<div slot="footer" class="dialog-footer">-->
+        <!--<el-button size="small" @click="dialogVisible = false">取 消</el-button>-->
+      <!--</div>-->
     </el-dialog>
   </div>
 </template>
@@ -75,10 +75,10 @@ import BackEndCategory from '@/container/back-end-category/'
 // searchForm中slot（门店和后台类目）查询取值和重置都在mixIn中
 import searchFormMixin from '@/mixins/search-form-slot'
 
-const goodsStatus = {
-  ON: '上架',
-  NOT_ON: '下架'
-}
+// const goodsStatus = {
+//   ON: '上架',
+//   NOT_ON: '下架'
+// }
 export default {
   name: 'index-recommend',
   components: {
@@ -88,26 +88,26 @@ export default {
   mixins: [searchFormMixin],
   data() {
     let extraParams = {}
-    const selectColums = {
-      type: 'selection'
-    }
+    // const selectColums = {
+    //   type: 'selection'
+    // }
     return {
       pageName: 'index-recommend',
       currentRec: [],
-      columnData: [
-        {
-          label: '热销车型',
-          programa: '0'
-        },
-        {
-          label: '优选精品',
-          programa: '1'
-        },
-        {
-          label: '保养套餐',
-          programa: '2'
-        }
-      ],
+      // columnData: [
+      //   {
+      //     label: '热销车型',
+      //     programa: '0'
+      //   },
+      //   {
+      //     label: '优选精品',
+      //     programa: '1'
+      //   },
+      //   {
+      //     label: '保养套餐',
+      //     programa: '2'
+      //   }
+      // ],
       recommendUrl: `${recommendList}?programa=0`,
       recommendColumns: [
         {
@@ -121,15 +121,15 @@ export default {
           label: '门店',
           minWidth: '170px',
           'show-overflow-tooltip': true
-        },
-        {
-          prop: 'goodsInfo.status',
-          label: '状态',
-          minWidth: '',
-          formatter: row => {
-            return goodsStatus[row.goodsInfo.status]
-          }
         }
+        // {
+        //   prop: 'goodsInfo.status',
+        //   label: '状态',
+        //   minWidth: '',
+        //   formatter: row => {
+        //     return goodsStatus[row.goodsInfo.status]
+        //   }
+        // }
       ],
       recommendExtraButtons: [
         {
@@ -142,7 +142,7 @@ export default {
         {
           text: '上移',
           atClick: scope => {
-            this.handleSort(scope.row, 'up', scope.$index)
+            this.handleSort('up', scope.$index)
           },
           show: scope => {
             return scope.$index !== 0
@@ -151,7 +151,7 @@ export default {
         {
           text: '下移',
           atClick: scope => {
-            this.handleSort(scope.row, 'down', scope.$index)
+            this.handleSort('down', scope.$index)
           },
           show: scope => {
             return scope.$index !== this.currentRec.length - 1
@@ -159,26 +159,17 @@ export default {
         }
       ],
       dialogVisible: false,
-      goodsUrl: `${goodsLists}`,
+      goodsUrl: `${goodsLists}?featured=true`,
       goodsColumns: [
         {
           prop: 'name',
           label: '商品名称',
           'show-overflow-tooltip': true
         },
-        {
-          prop: 'channel',
-          label: '门店',
-          formatter: ({channel}) => {
-            let name = '我买网'
-            if (channel === 1) {
-              name = '京东'
-            } else if (channel === 2) {
-              name = '自营'
-            }
-            return name
-          }
-        },
+        // {
+        //   prop: 'shopName',
+        //   label: '门店'
+        // },
         {
           prop: 'catalogName',
           label: '后台类目'
@@ -192,9 +183,9 @@ export default {
           },
           show: row => {
             const selectArr = this.currentRec.filter(item => {
-              return item.goodsInfo.gooodsId === row.id
+              return item.goodsInfo.goodsId === row.itemId
             })
-            return selectArr.length != 0
+            return selectArr.length === 0
           }
         }
       ],
@@ -224,22 +215,22 @@ export default {
     },
     onShowDialog(row) {
       this.dialogVisible = true
-      // 切换新增可选商品
-      let type = ''
-      switch (this.currentCol) {
-        case '0':
-        default:
-          type = 'NEW_CARS'
-          break
-        case '1':
-          type = 'BOUTIQUE'
-          break
-        case '2':
-          type = 'UNKEEP'
-          break
-      }
+      // // 切换新增可选商品
+      // let type = ''
+      // switch (this.currentCol) {
+      //   case '0':
+      //   default:
+      //     type = 'NEW_CARS'
+      //     break
+      //   case '1':
+      //     type = 'BOUTIQUE'
+      //     break
+      //   case '2':
+      //     type = 'UNKEEP'
+      //     break
+      // }
 
-      this.goodsUrl = `${goodsLists}`
+      this.goodsUrl = `${goodsLists}?featured=true`
     },
     onDelete(row, index) {
       if (!row) {
@@ -267,12 +258,19 @@ export default {
           this.$refs.dataTable.getList()
         })
     },
-    handleSort(row, type, index) {
+    handleSort(type, index) {
+      // console.log(type,index)
+      // console.log(this.$refs.dataTable.data[index].id)
+      let nextId =
+        type === 'up'
+          ? this.$refs.dataTable.data[index - 1].id
+          : this.$refs.dataTable.data[index + 1].id
+      // console.log(nextId)
       this.$axios
         .$put(
-          `${recommendList}/${
-            row.id
-          }?operation=${type}` /*, {
+          `${recommendList}/${this.$refs.dataTable.data[index].id +
+            ',' +
+            nextId}` /*, {
           operation: type
         }*/
         )
@@ -280,35 +278,33 @@ export default {
           let obj = this.currentRec.splice(index, 1)[0]
           this.currentRec.splice(type === 'up' ? index - 1 : index + 1, 0, obj)
         })
-    },
-    handleNodeClick(column) {
-      // 相同栏目，不再请求
-      if (this.currentCol === column) {
-        return
-      }
-      this.currentCol = column
-      this.recommendUrl = `${recommendList}?programa=${column}`
     }
+    // handleNodeClick(column) {
+    //   // 相同栏目，不再请求
+    //   if (this.currentCol === column) {
+    //     return
+    //   }
+    //   this.currentCol = column
+    //   this.recommendUrl = `${recommendList}?programa=${column}`
+    // }
   },
   mounted() {
-    // 设置默认当前栏目为热销车型
-    this.currentCol = this.columnData[0].programa
+    // // 设置默认当前栏目为热销车型
+    // this.currentCol = 0
   }
 }
 </script>
 <style lang="stylus">
-.index-recommend {
-  .column-list {
-    border-right: none;
+  .index-recommend {
+    .column-list {
+      border-right: none;
+    }
+    .el-tree {
+      // margin-top: 10px;
+      margin-right: 20px;
+    }
+    .el-data-table {
+      width: 100%;
+    }
   }
-
-  .el-tree {
-    // margin-top: 10px;
-    margin-right: 20px;
-  }
-
-  .el-data-table {
-    width: 100%;
-  }
-}
 </style>
