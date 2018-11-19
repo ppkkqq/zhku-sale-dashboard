@@ -12,7 +12,7 @@
       :hasPagination="true"
       :searchForm="searchForm"
       dataPath="payload.content"
-      :totalPath="totalPath">
+      totalPath="payload.totalElements">
     </el-data-table>
   </div>
 </template>
