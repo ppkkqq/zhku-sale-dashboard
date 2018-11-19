@@ -187,8 +187,11 @@ export const shopList = shopCenter + '/shops'
 // 促销活动
 export const activityList = MARKETING_CENTER + '/activity/list'
 
-// export const goodQuery =
-//   '/mall-deepexi-marking-center/api/v1/presellRule/goodsQuery'
-// export const addRule = '/mall-deepexi-marking-center/api/v1/presellRule/addRule'
-
 export const activityStatus = MARKETING_CENTER + '/activity/status'
+
+//预售规则
+export const ruleList = MARKETING_CENTER + '/presell/rule/list'
+export const addRule = MARKETING_CENTER + '/presell/rule/add'
+export const goodQuery = MARKETING_CENTER + '/presell/rule/goods/query'
+export const updateRule = MARKETING_CENTER + '/presell/rule/update'
+export const ruleDetail = MARKETING_CENTER + '/presell/rule/detail'

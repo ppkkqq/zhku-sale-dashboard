@@ -1,6 +1,6 @@
 <template>
  <div>
-   <el-button><nuxt-link to="/promotion/flash-sales-new">新建规则</nuxt-link></el-button>
+   <el-button><nuxt-link to="/promotion/promote-sales-new">新建规则</nuxt-link></el-button>
    <el-data-table
      ref="dataTable"
      :url="url"
@@ -13,6 +13,7 @@
      totalPath="payload.total"
      :operationAttrs="operationAttrs"
      :extraButtons="extraButtons"
+     :customQuery="customQuery"
    >
    </el-data-table>
     <div style="width: 200px;margin: 50px auto;">
@@ -25,12 +26,17 @@
 
 <script>
 import {activityStatus} from '@/const/marketing'
+import {ruleList} from '@/const/api.js'
 export default {
   name: 'promote-sales-list',
   data() {
     return {
+      // url: ruleList,
       url:
-        'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presellRule/list',
+        'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presell/rule/list',
+      customQuery: {
+        activityType: '0'
+      },
       propsColumns: [
         {
           prop: 'tmarTitle',
@@ -64,9 +70,10 @@ export default {
           type: 'primary',
           atClick: row => {
             this.$router.push({
-              path: flashSalesDetail,
+              path: '/promotion/promote-sales-new',
               query: {
-                id: row.tmarId
+                tmarId: row.tmarId,
+                action: 'edit'
               }
             })
           }
@@ -96,7 +103,7 @@ export default {
           type: 'info',
           atClick: row => {
             this.$router.push({
-              path: '/promotion/promote-sales-detail',
+              path: '/promotion/promote-sales-new',
               query: {
                 tmarId: row.tmarId
               }
@@ -104,6 +111,31 @@ export default {
           }
         }
       ]
+    }
+  },
+  methods: {
+    switchStatus(row) {
+      // 切换状态
+      let changedObj = {
+        tmarId: row.tmarId,
+        tmarStatus: row.tmarStatus === 0 ? 1 : 0
+      }
+
+      this.$axios
+        .$put(
+          'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presell/rule/status',
+          changedObj
+        )
+        .then(resp => {
+          this.$refs.dataTable.getList()
+          if (resp.payload) {
+            this.$message({
+              type: 'success',
+              message: '操作成功'
+            })
+          }
+        })
+        .catch(err => {})
     }
   }
 }

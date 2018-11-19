@@ -9,12 +9,12 @@
     >
       <el-table :data="propsData">
         <el-table-column
-          v-for="col in propsColumns"
-          :key="col.prop"
-          :prop="col.prop"
-          minWidth="130px"
-          v-bind="col"
-        ></el-table-column>
+        v-for="col in propsColumns"
+        :key="col.prop"
+        :prop="col.prop"
+        minWidth="130px"
+        v-bind="col"
+      ></el-table-column>
         <el-table-column minWidth="130px" prop="tmagGoodsStockCount" label="活动库存">
           <template slot-scope="scope">
             <input-price v-model.number="scope.row.tmagGoodsStockCount" :disabled="isView"/>
@@ -47,21 +47,23 @@
     <div class="form-box" style="width: 524px">
       <el-form ref="form" label-width="140px" size="mini">
         <el-form-item label="*规则名称：">
-          <el-input v-model="tmarTitle"></el-input>
+          <el-input v-model="tmarTitle" :disabled="isView"></el-input>
         </el-form-item>
         <el-form-item label="*支付定金时间：">
           <el-date-picker
             v-model="tmarDepositStmartTime"
             type="datetime"
             placeholder="选择日期时间"
-            style="width: 180px">
+            style="width: 180px"
+            :disabled="isView">
           </el-date-picker>
           <span>至</span>
           <el-date-picker
             v-model="tmarDepositEndTime"
             type="datetime"
             placeholder="选择日期时间"
-            style="width: 180px">
+            style="width: 180px"
+            :disabled="isView">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="*支付尾款时间：">
@@ -69,14 +71,16 @@
             v-model="tmarFinalpayStmartTime"
             type="datetime"
             placeholder="选择日期时间"
-            style="width: 180px">
+            style="width: 180px"
+            :disabled="isView">
           </el-date-picker>
           <span>至</span>
           <el-date-picker
             v-model="tmarFinalpayEndTime"
             type="datetime"
             placeholder="选择日期时间"
-            style="width: 180px">
+            style="width: 180px"
+            :disabled="isView">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="描述">
@@ -84,10 +88,11 @@
             type="textarea"
             :rows="2"
             placeholder="请输入内容"
-            v-model="tmarDesc">
+            v-model="tmarDesc"
+            :disabled="isView">
           </el-input>
         </el-form-item>
-        <el-form-item size="large">
+        <el-form-item size="large" v-if="!(this.$route.query.tmarId && !this.$route.query.action)">
           <el-button type="primary" @click="onSubmit">确定</el-button>
           <el-button>取消</el-button>
         </el-form-item>
@@ -120,6 +125,8 @@ import InputPrice from '@/components/goods-template/props-manage/input-price.vue
 import BaseLayout from '@/components/goods-template/base-layout'
 import {goodQuery} from '@/const/api.js'
 import {addRule} from '@/const/api.js'
+import {updateRule} from '@/const/api.js'
+import {ruleDetail} from '@/const/api.js'
 import {goodsStatus} from '../../const/config'
 export default {
   name: 'promote-sales-detail',
@@ -132,8 +139,10 @@ export default {
     return {
       pageName: 'promote-sales-detail',
       // url: goodQuery,
+      isView: false,
+      // url: goodQuery,
       url:
-        'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presellRule/goodsQuery',
+        'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presell/rule/goods/query',
       dialogVisible: false,
       propsColumns: [
         {
@@ -239,9 +248,9 @@ export default {
     }
   },
   computed: {
-    isView() {
-      return this.$route.query.isView > 0
-    }
+    // isView() {
+    //   return this.$route.query.isView > 0
+    // }
   },
   methods: {
     addRow(data) {
@@ -281,23 +290,77 @@ export default {
         tmarFinalpayEndTime: this.tmarFinalpayEndTime,
         tmarDesc: this.tmarDesc
       }
-      this.$axios
-        .$post(
-          'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presellRule/addRule',
-          data
-        )
-        .then(res => {
-          if (res.payload) {
-            this.$message.success('新建成功！')
-            this.$router.push('/promotion/promote-sales-list')
-          } else {
-            this.$message.error('操作失败，请重新操作！')
-          }
-        })
-        .catch(e => {})
+      if (this.$route.query.action === 'edit') {
+        this.$axios
+          .$put(
+            'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presell/rule/update',
+            data
+          )
+          .then(res => {
+            if (res.payload) {
+              this.$message.success('编辑成功！')
+              this.$router.push('/promotion/promote-sales-list')
+            } else {
+              this.$message.error('操作失败，请重新操作！')
+            }
+          })
+          .catch(e => {})
+      } else {
+        this.$axios
+          .$post(
+            'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presell/rule/add',
+            data
+          )
+          .then(res => {
+            if (res.payload) {
+              this.$message.success('新建成功！')
+              this.$router.push('/promotion/promote-sales-list')
+            } else {
+              this.$message.error('操作失败，请重新操作！')
+            }
+          })
+          .catch(e => {})
+      }
     },
     onCancel() {
       this.$router.back()
+    }
+  },
+  created() {
+    if (this.$route.query.tmarId) {
+      this.$axios
+        .$get(
+          'http://levy.ren:3000/mock/477/mall-deepexi-marking-center/api/v1/presell/rule/detail',
+          {tmarId: this.$route.query.tmarId}
+        )
+        .then(result => {
+          console.log(result)
+          for (var i = 0; i < result.goods.length; i++) {
+            this.propsData.push({
+              tmagGoodsCode: result.goods[i].tmagGoodsCode,
+              tmagGoodsName: result.goods[i].tmagGoodsName,
+              tmagSkuValue: result.goods[i].tmagSkuValue,
+              tmagGoodsPrice: result.goods[i].tmagGoodsPrice,
+              acc: result.goods[i].goodsStock,
+              status: result.goods[i].goodsStatus,
+              tmagGoodsStockCount: result.goods[i].tmagGoodsStockCount,
+              tmagGoodsActivityPrice: result.goods[i].tmagGoodsActivityPrice,
+              tmagDepositMoney: result.goods[i].tmagDepositMoney,
+              tmagOffsetMoney: result.goods[i].tmagOffsetMoney
+            })
+          }
+          this.tmarTitle = result.tmarTitle
+          this.tmarDepositStmartTime = result.tmarDepositStmartTime
+          this.tmarDepositEndTime = result.tmarDepositEndTime
+          this.tmarFinalpayStmartTime = result.tmarFinalpayStmartTime
+          this.tmarFinalpayEndTime = result.tmarFinalpayEndTime
+          this.tmarDesc = result.tmarDesc
+        })
+      if (this.$route.query.action) {
+        this.isView = false
+      } else {
+        this.isView = true
+      }
     }
   }
 }
