@@ -2,9 +2,9 @@
   <div :class="pageName">
     <go-back></go-back>
     <base-layout
-      title="设置商品"
+      :title="isView ? '活动商品' : '设置商品' "
       :hasEdit="!isView"
-      btn-text="添加商品"
+      :btn-text="isView ? '' : '添加商品' "
       @click="()=> {this.dialogVisible=true}"
     >
       <el-table :data="propsData">
@@ -84,7 +84,7 @@ import GoBack from '@/components/GoBack'
 import InputPrice from '@/components/goods-template/props-manage/input-price.vue'
 import BaseLayout from '@/components/goods-template/base-layout'
 import {
-  buyingRuleList,
+  flashSalesList,
   buyingRuleAddRule,
   buyingRuleDetail
 } from '@/const/api.js'
@@ -236,7 +236,7 @@ export default {
         {
           text: '选择',
           type: 'primary',
-          atClick: this.addRow
+          atClick: row => this.addRow(row)
         }
       ],
       propsData: [],
@@ -248,22 +248,18 @@ export default {
   },
   computed: {
     isView() {
+      // if(this.$router.push('/promotion/flash-sales-newrule'))
       return this.$route.query.isView > 0
+      // else if(this.$router.push('/promotion/flash-sales-detail'))
+      // return this.$route.query.isView = 0
     }
   },
   methods: {
     // 基础属性
-    addRow() {
+    addRow(row) {
       this.dialogVisible = true
       console.log()
-      this.propsData.push({
-        // key: [],
-        // value: [],
-        // tmagGoodsId: '',
-        // propNames: '',
-        // propValues: ''
-        // propCodes: ''
-      })
+      this.propsData.push(row)
     },
     delRow(index, row) {
       this.$confirm('确定删除该属性吗?', '提示', {
