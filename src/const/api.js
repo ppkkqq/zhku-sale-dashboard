@@ -194,3 +194,9 @@ export const flashSalesList = MARKETING_CENTER + '/buying/rule/list'
 export const flashSalesStatus = MARKETING_CENTER + '/buying/rule/status'
 export const flashSalesActivityStatus =
   MARKETING_CENTER + '/buying/rule/activity/status'
+//预售规则
+export const ruleList = MARKETING_CENTER + '/presell/rule/list'
+export const addRule = MARKETING_CENTER + '/presell/rule/add'
+export const goodQuery = MARKETING_CENTER + '/presell/rule/goods/query'
+export const updateRule = MARKETING_CENTER + '/presell/rule/update'
+export const ruleDetail = MARKETING_CENTER + '/presell/rule/detail'
