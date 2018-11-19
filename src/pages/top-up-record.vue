@@ -19,6 +19,7 @@
 
 <script>
 import {records} from '@/const/api'
+import {formatDate} from '@/const/filter'
 
 export default {
   name: 'top-up-record',
@@ -29,8 +30,9 @@ export default {
       //实际中去掉了用户手机号的列，充值前值和充值后值合并为充值总额。
       columns: [
         {
-          prop: 'id',
-          label: '序号'
+          label: '序号',
+          type: 'index',
+          minwidth: 100
         },
         {
           prop: 'memberName',
@@ -38,7 +40,8 @@ export default {
         },
         {
           prop: 'memberPhone',
-          label: '会员手机号'
+          label: '会员手机号',
+          width: '140px'
         },
         {
           prop: 'userName',
@@ -54,7 +57,11 @@ export default {
         },
         {
           prop: 'eventTime',
-          label: '充值时间'
+          label: '充值时间',
+          width: '150px',
+          formatter: row => {
+            return formatDate(row.eventTime, 'YYYY-MM-DD HH:mm:ss')
+          }
         }
       ],
 

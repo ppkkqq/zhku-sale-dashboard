@@ -2,7 +2,7 @@
 <template>
   <div :class="pageName">
     <el-row>
-      <el-button @click="newRules()">新增规则</el-button>
+      <el-button @click="newRules()" type="primary"  size="small">新增规则</el-button>
     </el-row>
     <el-data-table
       ref="dataTable"
@@ -49,7 +49,8 @@ export default {
         },
         {
           prop: 'tmarLimitCount',
-          label: '抢购限定数量'
+          label: '抢购限定数量',
+          minWidth: '120px'
         },
         {
           prop: 'tmarDesc',
@@ -57,11 +58,13 @@ export default {
         },
         {
           prop: 'tmarCreatedAt',
-          label: '创建时间'
+          label: '创建时间',
+          width: '150px'
         },
         {
           prop: 'tmarUpdatedAt',
-          label: '修改时间'
+          label: '修改时间',
+          width: '150px'
         },
         {
           prop: 'tmarStatus',
@@ -71,7 +74,7 @@ export default {
       ],
       pageName: 'flash-sales-list',
       operationAttrs: {
-        width: 240,
+        width: 220,
         fixed: 'right'
       },
       extraButtons: [
