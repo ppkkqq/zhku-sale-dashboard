@@ -21,23 +21,27 @@
         </el-collapse>
       </el-card>
       <el-card class="box-card" header="活动基础信息">
-        <el-form ref="form" :model="form" :rules="rules" label-width="100px" :disabled="isView">
+        <el-form ref="form" :model="form" :rules="rules" label-width="110px" :disabled="isView">
           <el-form-item label="活动标题" prop="tmaTitle">
             <el-input v-model.trim="form.tmaTitle"></el-input>
           </el-form-item>
-          <el-form-item label="活动有效时间">
+          <el-form-item label="活动有效时间" prop="tmaStmartTime">
             <el-date-picker
+              @change="setTime"
+              :clearable="false"
+              value-format="yyyy-MM-dd HH:mm"
               v-model="dateRange"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              value-format="yyyy-MM-dd"
-              :clearable='false'
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="活动开始时间"
+              end-placeholder="活动结束时间"
             ></el-date-picker>
           </el-form-item>
           <el-form-item label="活动链接地址">
-            <el-input v-model="form.tmaLinkAddress"></el-input>
+            <el-input class="link" v-model="form.tmaLinkAddress"></el-input>
+            <el-button class="href-btn" @click="onTest" type="primary" size="small">
+              <a :href="form.tmaLinkAddress" target="_blank">测试</a>
+            </el-button>
           </el-form-item>
           <el-form-item label="推广平台">
             <el-checkbox-group v-model="form.name">
@@ -54,7 +58,7 @@
             ></upload-to-ali>
             <viewer v-if="form.tmaPicture" :src="form.tmaPicture"/>
           </el-form-item>
-          <el-form-item label="活动描述">
+          <el-form-item label="活动描述" prop="description">
             <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="form.tmaDescribe"></el-input>
           </el-form-item>
           <el-form-item label="活动优先级">
@@ -62,8 +66,8 @@
           </el-form-item>
           <el-form-item label="活动状态">
             <el-radio-group v-model="form.tmaStatus">
-              <el-radio label="1">启用</el-radio>
-              <el-radio label="0">禁用</el-radio>
+              <el-radio :label="1">启用</el-radio>
+              <el-radio :label="0">禁用</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item>
@@ -182,21 +186,24 @@ export default {
         tmaPicture: '',
         tmaDescribe: '',
         tmaPriority: '',
-        tmaStatus: '',
+        tmaStatus: 1,
         name: '',
         photoUrl:
           'https://tse3.mm.bing.net/th?id=OIP.bJTVUv9Z3A68Eq-uYZAUWQHaEK&pid=Api&w=660&h=371&rs=1&p=0',
         description: ''
       },
       rules: {
-        tmaTitle: [{required: true, message: '请输入活动标题', trigger: 'blur'}]
+        tmaTitle: [
+          {required: true, message: '请输入活动标题', trigger: 'blur'},
+          {max: 30, message: '长度在 30 个字符以内', trigger: 'blur'}
+        ],
+        tmaStmartTime: [
+          {required: true, message: '请输入活动有效时间', trigger: 'blur'}
+        ],
+        description: [
+          {required: true, message: '请输入活动描述', trigger: 'blur'}
+        ]
       }
-    }
-  },
-  watch: {
-    dateRange() {
-      this.form.tmaStmartTime = this.dateRange[0]
-      this.form.tmaEndTime = this.dateRange[1]
     }
   },
   computed: {
@@ -229,13 +236,14 @@ export default {
       this.dateRange = []
     },
     setTime() {
-      this.customQuery.startDate = this.dateRange[0]
-      this.customQuery.endDate = this.dateRange[1]
+      this.form.tmaStmartTime = this.dateRange[0]
+      this.form.tmaEndTime = this.dateRange[1]
     },
     handleChange() {},
     onUpLoadFile(value) {
       this.$set(this.form, 'photoUrl', value)
     },
+    onTest() {},
     onSubmit() {},
     onCancel() {}
     // confirmDialog(row, type) {
@@ -363,6 +371,16 @@ export default {
 
   .el-range-separator {
     width: 20px
+  }
+
+  .link {
+    width: 77%
+  }
+
+  .href-btn {
+    a {
+      color: #fff
+    }
   }
 }
 </style>
