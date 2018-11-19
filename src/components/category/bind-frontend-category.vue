@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     chooseCategory() {
-      this.dialogVisible = false
+      this.dialogVisible = true
     },
     showButton(node, data) {
       if (!node.parent.parent) {
