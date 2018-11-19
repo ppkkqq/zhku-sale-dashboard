@@ -11,7 +11,7 @@
       :isTree="false"
       :hasPagination="true"
       :searchForm="searchForm"
-      :dataPath="payload"
+      dataPath="payload.content"
       :totalPath="totalPath">
     </el-data-table>
   </div>
