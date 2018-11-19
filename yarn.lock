@@ -2648,7 +2648,7 @@ ejs@^2.5.7:
 
 el-area-select@^0.0.3:
   version "0.0.3"
-  resolved "http://nexus.deepexi.top/repository/npm-private/el-area-select/-/el-area-select-0.0.3.tgz#37b08eb5b52672e9acd682d27114697662cbb9a1"
+  resolved "http://nexus.deepexi.top/repository/npm-group/el-area-select/-/el-area-select-0.0.3.tgz#37b08eb5b52672e9acd682d27114697662cbb9a1"
   integrity sha512-0PRJfK9C1lswpr6UFjeZj77Wk8Mjf26HILwggB4GLKQxsrYOB6wDIie9XOky8JKvb8V1Js54l3tSpJgxIWdiYQ==
   dependencies:
     lodash.find "^4.6.0"

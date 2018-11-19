@@ -190,6 +190,10 @@ export const activityList = MARKETING_CENTER + '/activity/list'
 export const activityStatus = MARKETING_CENTER + '/activity/status'
 
 //限时抢购
+//新增限时抢购规则信息
+
+export const buyingRuleAddRule = MARKETING_CENTER + '/buying/rule/add'
+export const buyingRuleDetail = MARKETING_CENTER + '/buying/rule/detail'
 export const flashSalesList = MARKETING_CENTER + '/buying/rule/list'
 export const flashSalesStatus = MARKETING_CENTER + '/buying/rule/status'
 export const flashSalesActivityStatus =
