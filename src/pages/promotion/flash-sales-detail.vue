@@ -98,9 +98,7 @@ export default {
   },
   created() {
     this.$axios.get(buyingRuleDetail).then(res => {
-      console.log(res)
       this.propsData = res.data.goods
-      console.log(this.propsData)
     })
   },
   data() {
@@ -258,7 +256,6 @@ export default {
     // 基础属性
     addRow(row) {
       this.dialogVisible = true
-      console.log()
       this.propsData.push(row)
     },
     delRow(index, row) {
@@ -277,9 +274,6 @@ export default {
     onSubmit() {},
     onCancel() {
       this.$router.back()
-    },
-    update(data, resp) {
-      console.log(data)
     }
   }
 }
