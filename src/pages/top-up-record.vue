@@ -11,23 +11,25 @@
       :isTree="false"
       :hasPagination="true"
       :searchForm="searchForm"
-      :dataPath="dataPath"
+      :dataPath="payload"
       :totalPath="totalPath">
     </el-data-table>
   </div>
 </template>
 
 <script>
+import {records} from '@/const/api'
+
 export default {
   name: 'top-up-record',
   data() {
     return {
       pageName: 'top-up-record',
-      url: '',
+      url: records,
       //实际中去掉了用户手机号的列，充值前值和充值后值合并为充值总额。
       columns: [
         {
-          prop: 'memberId',
+          prop: 'id',
           label: '序号'
         },
         {
@@ -63,7 +65,7 @@ export default {
             placeholder: '请输入会员手机号'
           },
           label: '会员手机号',
-          $id: 'mobile',
+          $id: 'memberPhone',
           $type: 'input'
         },
         {
@@ -71,7 +73,7 @@ export default {
             placeholder: '请输入用户名称'
           },
           label: '用户名称',
-          $id: 'nickName',
+          $id: 'userName',
           $type: 'input'
         }
       ]

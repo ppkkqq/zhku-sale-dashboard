@@ -156,6 +156,7 @@ export const getNeedCheckPcById =
 
 // 源通币
 export const currency = ACCOUNT_CENTER + '/admin/currency'
+export const records = ACCOUNT_CENTER + '/admin/currency/records'
 
 // 会员
 export const address =
