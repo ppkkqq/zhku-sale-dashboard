@@ -39,6 +39,10 @@
                            min-width='100'
                            label="合计金额">
           </el-table-column>
+          <el-table-column prop="freight"
+                           min-width='100'
+                           label="运费">
+          </el-table-column>
           <el-table-column prop="discountMoney"
                            min-width='100'
                            label="优惠金额">
