@@ -53,7 +53,7 @@ export default {
         {
           prop: 'eventTime',
           label: '充值时间',
-          width: '160px',
+          minWidth: '160px',
           formatter: row => {
             return formatDate(row.eventTime, 'YYYY-MM-DD HH:mm:ss')
           }

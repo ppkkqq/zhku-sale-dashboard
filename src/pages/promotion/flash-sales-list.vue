@@ -134,7 +134,10 @@ export default {
     },
 
     switchStatus(row) {
-      let status = row.tmarStatus
+      let changeStatus = {
+        tmarId: row.tmarId,
+        tmarStatus: status
+      }
 
       if (status === '1') {
         status = '0'
@@ -142,51 +145,34 @@ export default {
         this.$confirm('确定禁用吗？', '提示', {
           type: 'warning'
         }).then(() => {
-          let changeStatus = {
-            tmarId: row.tmarId,
-            tmarStatus: status
-          }
-
-          this.$axios
-            .get(flashSalesActivityStatus, {tmarId: row.tmarId})
-            .then(resp => {
-              if (resp.data.payload === true) {
-                this.$axios.put(flashSalesStatus, changeStatus).then(resp => {
-                  this.$refs.dataTable.getList() //刷新页面
-                  if (resp.data.payload === true) {
-                    this.$message({
-                      type: 'success',
-                      message: '操作成功'
-                    })
-                  } else {
-                    this.$message({
-                      type: 'success',
-                      message: '操作失败'
-                    })
-                  }
-                })
-              } else {
-                this.$message({
-                  type: 'error',
-                  message: '此类型规则参与的活动正在进行中,无法禁用！'
-                })
-              }
-            })
+          this.$axios.put(flashSalesStatus, changeStatus).then(resp => {
+            this.$refs.dataTable.getList() //刷新页面
+            if (resp.data.payload === 0) {
+              this.$message({
+                type: 'success',
+                message: '操作成功'
+              })
+            } else if (resp.data.payload === 1) {
+              this.$message({
+                type: 'error',
+                message: '此类型规则参与的活动正在进行中,无法禁用！'
+              })
+            } else {
+              this.$message({
+                type: 'error',
+                message: '操作失败'
+              })
+            }
+          })
         })
       } else {
         status = '1'
         this.$confirm('确定启用吗？', '提示', {
           type: 'warning'
         }).then(() => {
-          let changeStatus = {
-            tmarId: row.tmarId,
-            tmarStatus: status
-          }
-
           this.$axios.put(flashSalesStatus, changeStatus).then(resp => {
             this.$refs.dataTable.getList() //刷新页面
-            console.log(resp.data.payload)
-            if (resp.data.payload === true) {
+            if (resp.data.payload === 0) {
               this.$message({
                 type: 'success',
                 message: '操作成功'
