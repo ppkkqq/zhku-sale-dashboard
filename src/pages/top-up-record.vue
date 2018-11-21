@@ -30,11 +30,6 @@ export default {
       //实际中去掉了用户手机号的列，充值前值和充值后值合并为充值总额。
       columns: [
         {
-          label: '序号',
-          type: 'index',
-          minwidth: 100
-        },
-        {
           prop: 'memberName',
           label: '会员昵称'
         },
@@ -45,7 +40,10 @@ export default {
         },
         {
           prop: 'userName',
-          label: '用户名称'
+          label: '用户名称',
+          formatter: row => {
+            return row.memberPhone
+          }
         },
         {
           prop: 'batchAmt',
@@ -58,7 +56,7 @@ export default {
         {
           prop: 'eventTime',
           label: '充值时间',
-          width: '150px',
+          minWidth: '160px',
           formatter: row => {
             return formatDate(row.eventTime, 'YYYY-MM-DD HH:mm:ss')
           }
@@ -72,7 +70,7 @@ export default {
             placeholder: '请输入会员手机号'
           },
           label: '会员手机号',
-          $id: 'memberPhone',
+          $id: 'mobile',
           $type: 'input'
         },
         {
@@ -80,7 +78,7 @@ export default {
             placeholder: '请输入用户名称'
           },
           label: '用户名称',
-          $id: 'userName',
+          $id: 'fullname',
           $type: 'input'
         }
       ]
