@@ -134,6 +134,8 @@ export default {
     },
 
     switchStatus(row) {
+      let status = row.tmarStatus
+
       let changeStatus = {
         tmarId: row.tmarId,
         tmarStatus: status
