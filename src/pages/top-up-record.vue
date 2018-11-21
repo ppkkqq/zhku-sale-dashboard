@@ -40,7 +40,10 @@ export default {
         },
         {
           prop: 'userName',
-          label: '用户名称'
+          label: '用户名称',
+          formatter: row => {
+            return row.memberPhone
+          }
         },
         {
           prop: 'batchAmt',
