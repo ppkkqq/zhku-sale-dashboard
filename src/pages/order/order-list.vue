@@ -108,17 +108,20 @@
             {{ trackDetail.deliveryAddress}}
           </el-form-item>
         </el-form>
-        <div v-for="(step,index) in trackDetail.infos"
-             :key="index" class="steps is-flex"
-        >
-          <div class="steps-head"></div>
-          <div class="steps-body">
-            <div class="steps-date">{{step.date}}</div>
-            <div class="steps-day">{{step.day}}</div>
-            <div class="steps-time">{{step.time}}</div>
-            <div class="steps-description">{{step.remark}}</div>
+        <template v-if="trackDetail.infos.length>0">
+          <div  v-for="(step,index) in trackDetail.infos"
+                :key="index" class="steps is-flex"
+          >
+            <div class="steps-head"></div>
+            <div class="steps-body">
+              <div class="steps-date">{{step.date}}</div>
+              <div class="steps-day">{{step.day}}</div>
+              <div class="steps-time">{{step.time}}</div>
+              <div class="steps-description">{{step.remark}}</div>
+            </div>
           </div>
-        </div>
+        </template>
+        <div v-else style="font-weight: bold;margin-top: 20px;margin-left: 30px;"> ：( 该单号暂无物流进展，请稍后再试，或检查公司和单号是否有误。</div>
       </el-dialog>
     </el-dialog>
   </div>
@@ -290,9 +293,9 @@ export default {
     },
     showLogisticsButton(row) {
       return (
-        row.orderStatusName === '待发货' ||
+        row.orderStatusName === '待收货' ||
         row.orderStatusName === '已完成' ||
-        row.orderStatusName === '已评论'
+        row.orderStatusName === '已评价'
       )
     },
     go2Logistics(row) {
@@ -327,10 +330,11 @@ export default {
       this.$router.push(`/order/order-detail?id=${row.orderId}`)
     },
     handleDetail(index, row) {
+      console.log(this.trackList)
       this.trackDetail.trackNum = this.trackList[index].trackNum
-      this.trackDetail.LogisticsCompanyName = this.trackList[
+      this.trackDetail.logisticsCompanyName = this.trackList[
         index
-      ].LogisticsCompanyName
+      ].logisticsCompanyName
       this.trackDetail.phone = this.trackList[index].phone
       this.trackDetail.infos = this.trackList[index].infos
       this.innerVisible = true
