@@ -54,6 +54,7 @@
               v-if="!form.tmaPicture"
               @load="onUpLoadFile($event)"
               accept="image/png, image/jpeg, image/jpg"
+              protocol="https"
               :fileUrl="form.tmaPicture"
             ></upload-to-ali>
             <viewer v-if="form.tmaPicture" :src="form.tmaPicture"/>

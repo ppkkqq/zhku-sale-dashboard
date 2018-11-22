@@ -29,6 +29,7 @@
         <el-form-item label="图片"
                       prop="displayUrl">
           <upload-to-ali @load="onUpLoadFile($event, 'editForm')"
+                         protocol="https"
                          :disabled="!editForm.id"
                          accept="image/png, image/jpeg, image/jpg"
                          :fileUrl="editForm.displayUrl">
@@ -100,6 +101,7 @@
         <el-form-item label="图片"
                       prop="displayUrl">
           <upload-to-ali @load="onUpLoadFile($event, 'newForm')"
+                         protocol="https"
                          accept="image/png, image/jpeg, image/jpg"
                          :fileUrl="newForm.displayUrl">
           </upload-to-ali>
