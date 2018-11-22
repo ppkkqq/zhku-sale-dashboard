@@ -34,7 +34,10 @@
 
           <el-form-item label="门店图片" prop="shopUrl">
             <el-row :span="24" type="flex">
-              <simple-upload @load="submitForm.shopUrl = $event" :hidden="isView">
+              <simple-upload 
+                @load="submitForm.shopUrl = $event" 
+                :hidden="isView"
+                protocol="https">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
@@ -69,7 +72,10 @@
           <el-form-item>
             <span slot="label"><span class="red">*</span> 营业执照</span>
             <el-row :span="24" type="flex">
-              <simple-upload @load="onUpLoadFile($event, 'businessLicenseUrl')" :hidden="isView">
+              <simple-upload 
+                @load="onUpLoadFile($event, 'businessLicenseUrl')" 
+                :hidden="isView"
+                protocol="https">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
@@ -84,7 +90,10 @@
           <el-form-item>
             <span slot="label"><span class="red">*</span> 社会统一信用代码证</span>
             <el-row :span="24" type="flex">
-              <simple-upload @load="onUpLoadFile($event, 'socialCreditCoUrl')" :hidden="isView">
+              <simple-upload 
+              @load="onUpLoadFile($event, 'socialCreditCoUrl')" 
+              :hidden="isView"
+              protocol="https">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
@@ -99,7 +108,10 @@
           <el-form-item label="企业法人身份证">
             <span slot="label"><span class="red">*</span> 企业法人身份证</span>
             <el-row :span="24" type="flex">
-              <simple-upload @load="onUpLoadFile($event, 'legalPersonIDCardUrl')" :hidden="isView">
+              <simple-upload 
+              @load="onUpLoadFile($event, 'legalPersonIDCardUrl')" 
+              :hidden="isView"
+              protocol="https">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
@@ -114,7 +126,10 @@
           <el-form-item label="合同">
             <span slot="label"><span class="red">*</span> 合同</span>
             <el-row :span="24" type="flex">
-              <simple-upload @load="onUpLoadFile($event, 'contractUrl')" :hidden="isView">
+              <simple-upload 
+                @load="onUpLoadFile($event, 'contractUrl')" 
+                :hidden="isView"
+                protocol="https">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
