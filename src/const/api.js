@@ -156,6 +156,7 @@ export const getNeedCheckPcById =
 
 // 源通币
 export const currency = ACCOUNT_CENTER + '/admin/currency'
+export const records = ACCOUNT_CENTER + '/admin/currency/records'
 
 // 会员
 export const address =
@@ -187,3 +188,19 @@ export const shopList = shopCenter + '/shops'
 // 促销活动
 export const activityList = MARKETING_CENTER + '/activity/list'
 export const activityStatus = MARKETING_CENTER + '/activity/status'
+
+//限时抢购
+//新增限时抢购规则信息
+
+export const buyingRuleAddRule = MARKETING_CENTER + '/buying/rule/add'
+export const buyingRuleDetail = MARKETING_CENTER + '/buying/rule/detail'
+export const flashSalesList = MARKETING_CENTER + '/buying/rule/list'
+export const flashSalesStatus = MARKETING_CENTER + '/buying/rule/status'
+export const flashSalesActivityStatus =
+  MARKETING_CENTER + '/buying/rule/activity/status'
+//预售规则
+export const ruleList = MARKETING_CENTER + '/presell/rule/list'
+export const addRule = MARKETING_CENTER + '/presell/rule/add'
+export const goodQuery = MARKETING_CENTER + '/presell/rule/goods/query'
+export const updateRule = MARKETING_CENTER + '/presell/rule/update'
+export const ruleDetail = MARKETING_CENTER + '/presell/rule/detail'

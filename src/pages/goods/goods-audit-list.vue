@@ -104,7 +104,7 @@ export default {
           label: '申请时间',
           minWidth: '150',
           formatter: row => {
-            return formatDate(row.createdAt, 'YYYY-MM-DD HH:mm:ss')
+            return formatDate(row.pcApplyAt, 'YYYY-MM-DD HH:mm:ss')
           }
         },
         {

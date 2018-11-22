@@ -2,9 +2,9 @@
   <div :class="pageName">
     <go-back></go-back>
     <base-layout
-      title="设置商品"
+      :title="isView ? '活动商品' : '设置商品' "
       :hasEdit="!isView"
-      btn-text="添加商品"
+      :btn-text="isView ? '' : '添加商品' "
       @click="()=> {this.dialogVisible=true}"
     >
       <el-table :data="propsData">
@@ -34,17 +34,21 @@
         </el-table-column>
       </el-table>
     </base-layout>
-    <el-card shadow="never" class="base-layout" :hasEdit="!isView" @click="addRow" btn-text>
-      <el-form ref="form" :model="form" label-width="100px" :disabled="isView">
-        <el-form-item label="规则名称">
-          <el-input v-model="form.name" placeholder="限30字符"></el-input>
+    <el-card shadow="never" status-icon class="base-layout" :hasEdit="!isView" @click="addRow" btn-text>
+      <el-form ref="form" :model="form" :rules="rules2"  class='demo-r' label-width="100px" :disabled="isView">
+
+
+        <el-form-item label="规则名称" prop='name'>
+          <el-input v-model="form.name" placeholder="限30字符" ></el-input>
         </el-form-item>
-        <el-form-item label="参与次数">
-          <el-input v-model="form.name" placeholder="未填写表示不限定"></el-input>
+        <el-form-item label="参与次数" prop='time'>
+          <el-input v-model="form.time" placeholder="未填写表示不限定" ></el-input>
         </el-form-item>
-        <el-form-item label="限定数量">
-          <el-input v-model="form.name" placeholder="未填写表示不限定"></el-input>
+        <el-form-item label="限定数量" prop='number'>
+          <el-input v-model="form.number" placeholder="未填写表示不限定" ></el-input>
         </el-form-item>
+
+
         <el-form-item label="规则描述">
           <el-input type="textarea" :rows="2" placeholder="限200字符" v-model="form.description"></el-input>
         </el-form-item>
@@ -57,7 +61,8 @@
     <el-dialog title="添加商品" :visible.sync="dialogVisible" width="70%">
       <el-data-table
         ref="dataTable"
-        :url="url"
+        @update='update'
+        :url='url'
         :columns="dialogColumns"
         :hasNew="false"
         :hasEdit="false"
@@ -65,7 +70,7 @@
         :hasOperation="true"
         :isTree="false"
         :hasPagination="true"
-        data-path="payload.list"
+        data-path="goods"
         totalPath="payload.total"
         :searchForm="searchForm"
         :operationAttrs="operationAttrs"
@@ -78,7 +83,12 @@
 import GoBack from '@/components/GoBack'
 import InputPrice from '@/components/goods-template/props-manage/input-price.vue'
 import BaseLayout from '@/components/goods-template/base-layout'
-
+import {
+  flashSalesList,
+  buyingRuleAddRule,
+  buyingRuleDetail
+} from '@/const/api.js'
+import {NUMBERPattern, CHINESEPattern, onlyChina} from '@/const/pattern.js'
 export default {
   name: 'flash-sales-detail',
   components: {
@@ -86,60 +96,107 @@ export default {
     InputPrice,
     BaseLayout
   },
+  created() {
+    this.$axios.get(buyingRuleDetail).then(res => {
+      this.propsData = res.data.goods
+    })
+  },
   data() {
+    var ruleName = (rule, value, callback) => {
+      if (onlyChina.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入文字'))
+      }
+    }
+    var ruleTime = (rule, value, callback) => {
+      if (NUMBERPattern.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入数字'))
+      }
+    }
+    var ruleNumber = (rule, value, callback) => {
+      if (NUMBERPattern.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入数字'))
+      }
+    }
     return {
       pageName: 'flash-sales-detail',
-      url: '',
+      url: buyingRuleDetail,
+      buyingRuleDetailGood: [],
       dialogVisible: false,
+      form: {
+        name: '',
+        time: '',
+        number: ''
+      },
+      rules2: {
+        name: [{validator: ruleName, trigger: 'blur'}],
+        time: [
+          {
+            validator: ruleTime,
+            trigger: 'blur'
+          }
+        ],
+        number: [
+          {
+            validator: ruleNumber,
+            trigger: 'blur'
+          }
+        ]
+      },
       propsColumns: [
         {
-          prop: 'id',
+          prop: 'tmagGoodsId',
           label: '商品编号'
         },
         {
-          prop: 'name',
+          prop: 'tmagGoodsName',
           label: '商品名称'
         },
         {
-          prop: 'prop',
+          prop: 'tmagSkuValue',
           label: '商品规格'
         },
         {
-          prop: 'price',
+          prop: 'tmagGoodsPrice',
           label: '单价'
         },
         {
-          prop: 'acc',
+          prop: 'goodsStock',
           label: '库存'
         },
         {
-          prop: 'status',
+          prop: 'goodsStatus',
           label: '商品状态'
         }
       ],
       dialogColumns: [
         {
-          prop: 'id',
+          prop: 'tmagGoodsId',
           label: '商品编号'
         },
         {
-          prop: 'name',
+          prop: 'tmagGoodsName',
           label: '商品名称'
         },
         {
-          prop: 'prop',
+          prop: 'tmagSkuValue',
           label: '商品规格'
         },
         {
-          prop: 'price',
+          prop: 'tmagGoodsPrice',
           label: '单价'
         },
         {
-          prop: 'acc',
+          prop: 'goodsStock',
           label: '库存'
         },
         {
-          prop: 'status',
+          prop: 'goodsStatus',
           label: '商品状态'
         }
       ],
@@ -177,10 +234,10 @@ export default {
         {
           text: '选择',
           type: 'primary',
-          atClick: this.addRow
+          atClick: row => this.addRow(row)
         }
       ],
-      propsData: [{id: 'dfafa'}],
+      propsData: [],
       form: {
         name: '',
         description: ''
@@ -189,21 +246,17 @@ export default {
   },
   computed: {
     isView() {
+      // if(this.$router.push('/promotion/flash-sales-newrule'))
       return this.$route.query.isView > 0
+      // else if(this.$router.push('/promotion/flash-sales-detail'))
+      // return this.$route.query.isView = 0
     }
   },
   methods: {
     // 基础属性
-    addRow() {
+    addRow(row) {
       this.dialogVisible = true
-      this.propsData.push({
-        // key: [],
-        // value: [],
-        id: '',
-        propNames: '',
-        propValues: ''
-        // propCodes: ''
-      })
+      this.propsData.push(row)
     },
     delRow(index, row) {
       this.$confirm('确定删除该属性吗?', '提示', {

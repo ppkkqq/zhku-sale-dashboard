@@ -45,3 +45,6 @@ export const integer = /^(-)?\d+$/
 
 // 正整数
 export const positiveInteger = /^\d+$/
+//只能输中文
+// export const onlyChina = /[^\u4E00-\u9FA5]/g
+export const onlyChina = /^[\u4E00-\u9FA5]+$/
