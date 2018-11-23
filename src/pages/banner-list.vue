@@ -23,6 +23,7 @@
           <span class="star">*</span>图片</div>
         <span>
           <upload-to-ali @load="onUpLoadFile($event, 'extraParams.url')"
+                         protocol="https"
                          :fileUrl="extraParams.url">
           </upload-to-ali>
         </span>

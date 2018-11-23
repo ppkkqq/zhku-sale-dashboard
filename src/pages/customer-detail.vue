@@ -192,7 +192,7 @@ export default {
       昵称: data.nickName,
       手机号: data.mobile,
       性别: data.gender,
-      生日: data.birthday,
+      生日: formatDate(data.birthday),
       邮箱: data.email,
       注册时间: formatDate(data.createdAt),
       最后登录时间: formatDate(data.lastLoginTime)
