@@ -11,6 +11,7 @@
                    :hasPagination="true"
                    :extraButtons="extraButtons"
                    :searchForm="searchForm"
+
                    :operationAttrs="operationAttrs"
                    :extraParams="extraParams"
                    :form="form"
@@ -26,7 +27,7 @@
                          protocol="https"
                          :fileUrl="extraParams.url">
           </upload-to-ali>
-        </span>
+        </span>l
 
       </div>
     </el-data-table>
@@ -58,8 +59,13 @@ export default {
       pageName: 'banner-list',
       url: '/mall-deepexi-mall-config-api/api/v1/advertisements',
       columns: [
+        {prop: 'sort', label: '排序'},
         {prop: 'url', label: '图片', formatter: this.logoFormatter},
-        {prop: 'group', label: '分组', width: '100px'},
+        {
+          prop: 'group',
+          label: '分组',
+          formatter: row => (row.group === 'MOBILE' ? '移动端' : 'PC端')
+        },
         {prop: 'jumpUrl', label: '跳转链接'},
         {
           prop: 'status',
@@ -102,6 +108,12 @@ export default {
           $type: 'input'
         },
         {
+          $el: {placeholder: '请输入数字'},
+          label: '排序',
+          $id: 'sort',
+          $type: 'input'
+        },
+        {
           $el: {placeholder: ''},
           label: '分组',
           $id: 'group',
@@ -113,7 +125,7 @@ export default {
             },
             {
               label: '移动端',
-              value: 'MOBLIE'
+              value: 'MOBILE'
             }
           ]
         }
@@ -147,7 +159,7 @@ export default {
             },
             {
               label: '移动端',
-              value: 'MOBLIE'
+              value: 'MOBILE'
             }
           ]
         }

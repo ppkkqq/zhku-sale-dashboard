@@ -29,7 +29,8 @@
           </el-table-column>
           <el-table-column prop="sellPrice"
                            min-width='120'
-                           label="商品单价（元）">
+                           label="商品单价（元）"
+                           :formatter="row =>price(row.sellPrice)">
           </el-table-column>
           <el-table-column prop="quantity"
                            min-width='80'
@@ -37,15 +38,18 @@
           </el-table-column>
           <el-table-column prop="itemMoney"
                            min-width='100'
-                           label="合计金额">
+                           label="合计金额"
+                           :formatter="row =>price(row.itemMoney)">
           </el-table-column>
           <el-table-column prop="freight"
                            min-width='100'
-                           label="运费">
+                           label="运费"
+                           :formatter="row =>price(row.freight)">
           </el-table-column>
           <el-table-column prop="discountMoney"
                            min-width='100'
-                           label="优惠金额">
+                           label="优惠金额"
+                           :formatter="row =>price(row.discountMoney)">
           </el-table-column>
           <el-table-column prop="integrationMoney"
                            min-width='160'
@@ -203,6 +207,9 @@ export default {
       }
       return Object2Options(data, 'value')
     }
+  },
+  created() {
+    this.price = price
   },
   mounted() {
     this.getDetail()
