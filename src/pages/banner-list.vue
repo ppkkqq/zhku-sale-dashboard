@@ -55,8 +55,9 @@ export default {
       callback()
     }
     const checkNum = (rule, value, callback) => {
-      if (isNaN(value)) {
-        callback('请输入数字')
+      let pattern = /^[0-9]*[1-9][0-9]*$/
+      if (value && pattern.test(value) === false) {
+        callback('请输入整数')
       } else {
         callback()
       }
@@ -114,7 +115,7 @@ export default {
           $type: 'input'
         },
         {
-          rules: [{required: false, trigger: 'change', validator: checkNum}],
+          rules: [{required: false, trigger: 'blur', validator: checkNum}],
           $el: {placeholder: '请输入数字'},
           label: '排序',
           $id: 'sort',
