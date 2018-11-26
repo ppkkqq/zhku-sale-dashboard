@@ -27,7 +27,7 @@
                          protocol="https"
                          :fileUrl="extraParams.url">
           </upload-to-ali>
-        </span>l
+        </span>
 
       </div>
     </el-data-table>
