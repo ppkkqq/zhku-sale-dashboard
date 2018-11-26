@@ -57,12 +57,9 @@ export default {
     const checkNum = (rule, value, callback) => {
       if (value === ' ' || value == null || isNaN(value)) {
         callback('请输入数字')
+      } else {
+        callback()
       }
-
-      // if (typeof (parseInt(value)) !=='string') {
-      //   callback('请输入数字');
-      //   console.log(typeof (parseInt(value)))
-      // }
     }
     return {
       pageName: 'banner-list',
