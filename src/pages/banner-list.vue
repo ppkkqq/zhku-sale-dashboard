@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import {httpPattern} from '@/const/pattern'
+import {httpPattern, positiveInteger} from '@/const/pattern'
 import {bannerList, bannerEdit} from '@/const/api'
 import UploadToAli from 'upload-to-ali'
 
@@ -55,9 +55,8 @@ export default {
       callback()
     }
     const checkNum = (rule, value, callback) => {
-      let pattern = /^[0-9]*[1-9][0-9]*$/
-      if (value && pattern.test(value) === false) {
-        callback('请输入整数')
+      if (value && !positiveInteger.test(value)) {
+        callback('请输入正整数')
       } else {
         callback()
       }
@@ -66,7 +65,31 @@ export default {
       pageName: 'banner-list',
       url: '/mall-deepexi-mall-config-api/api/v1/advertisements',
       columns: [
-        {prop: 'sort', label: '排序'},
+        {
+          prop: 'sort',
+          label: '排序',
+          renderHeader: (h, {column, $index}) => {
+            return h('span', {}, [
+              column.label,
+              h(
+                'el-tooltip',
+                {
+                  attrs: {
+                    effect: 'dark',
+                    content: '首页展示顺序',
+                    placement: 'top'
+                  }
+                },
+                [
+                  h('i', {
+                    class: 'el-icon-question'
+                  })
+                ]
+              )
+            ])
+          }
+        },
+
         {prop: 'url', label: '图片', formatter: this.logoFormatter},
         {
           prop: 'group',
