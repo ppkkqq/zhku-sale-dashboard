@@ -11,7 +11,6 @@
                    :hasPagination="true"
                    :extraButtons="extraButtons"
                    :searchForm="searchForm"
-
                    :operationAttrs="operationAttrs"
                    :extraParams="extraParams"
                    :form="form"
@@ -54,6 +53,16 @@ export default {
       //        return
       //      }
       callback()
+    }
+    const checkNum = (rule, value, callback) => {
+      if (value === ' ' || value == null || isNaN(value)) {
+        callback('请输入数字')
+      }
+
+      // if (typeof (parseInt(value)) !=='string') {
+      //   callback('请输入数字');
+      //   console.log(typeof (parseInt(value)))
+      // }
     }
     return {
       pageName: 'banner-list',
@@ -108,6 +117,7 @@ export default {
           $type: 'input'
         },
         {
+          rules: [{required: false, trigger: 'change', validator: checkNum}],
           $el: {placeholder: '请输入数字'},
           label: '排序',
           $id: 'sort',
