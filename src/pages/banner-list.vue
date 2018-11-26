@@ -55,7 +55,7 @@ export default {
       callback()
     }
     const checkNum = (rule, value, callback) => {
-      if (value === ' ' || value == null || isNaN(value)) {
+      if (isNaN(value)) {
         callback('请输入数字')
       } else {
         callback()
