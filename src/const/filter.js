@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import {isNull} from '@/utils'
 
 export function formatDate(time, format = 'YYYY-MM-DD HH:mm') {
   if (!time) {
@@ -22,16 +23,11 @@ export function options2Object(options = []) {
  * @type String
  */
 export function price(val) {
-  if (!val) return 0.0
+  if (isNull(val) || isNaN(val)) return
   let USPrice = Number.parseFloat(val).toLocaleString('en-US')
 
   // 完全是整数, 需要添加小数点
-  let lastDot = USPrice.toString().indexOf('.')
-  if (lastDot === -1) USPrice += '.00'
-
-  // 返回数据是一位小数，用0补齐为两位小数
-  if (USPrice.toString().substring(lastDot + 1).length === 1) USPrice += '0'
-
+  if (USPrice.toString().indexOf('.') === -1) USPrice += '.00'
   return USPrice
 }
 
