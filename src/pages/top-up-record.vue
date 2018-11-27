@@ -40,10 +40,7 @@ export default {
         },
         {
           prop: 'userName',
-          label: '用户名称',
-          formatter: row => {
-            return row.memberPhone
-          }
+          label: '用户名称'
         },
         {
           prop: 'batchAmt',
@@ -51,7 +48,7 @@ export default {
         },
         {
           prop: 'balance',
-          label: '充值余额'
+          label: '当前值'
         },
         {
           prop: 'eventTime',

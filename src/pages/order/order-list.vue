@@ -160,7 +160,8 @@ export default {
         },
         {
           prop: 'itemMoney',
-          label: '订单金额'
+          label: '订单金额',
+          formatter: row => price(row.itemMoney)
         },
         {
           prop: 'source',

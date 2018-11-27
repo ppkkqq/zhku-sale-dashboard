@@ -11,6 +11,7 @@
                    :hasPagination="true"
                    :extraButtons="extraButtons"
                    :searchForm="searchForm"
+                   :operationAttrs="operationAttrs"
                    :extraParams="extraParams"
                    :form="form"
                    :beforeConfirm="beforeConfirm"
@@ -26,13 +27,14 @@
                          :fileUrl="extraParams.url">
           </upload-to-ali>
         </span>
+
       </div>
     </el-data-table>
   </div>
 </template>
 
 <script>
-import {httpPattern} from '@/const/pattern'
+import {httpPattern, positiveInteger} from '@/const/pattern'
 import {bannerList, bannerEdit} from '@/const/api'
 import UploadToAli from 'upload-to-ali'
 
@@ -52,11 +54,48 @@ export default {
       //      }
       callback()
     }
+    const checkNum = (rule, value, callback) => {
+      if (value && !positiveInteger.test(value)) {
+        callback('请输入正整数')
+      } else {
+        callback()
+      }
+    }
     return {
       pageName: 'banner-list',
       url: '/mall-deepexi-mall-config-api/api/v1/advertisements',
       columns: [
+        {
+          prop: 'sort',
+          label: '排序',
+          renderHeader: (h, {column, $index}) => {
+            return h('span', {}, [
+              column.label,
+              h(
+                'el-tooltip',
+                {
+                  attrs: {
+                    effect: 'dark',
+                    content: '首页展示顺序',
+                    placement: 'top'
+                  }
+                },
+                [
+                  h('i', {
+                    class: 'el-icon-question'
+                  })
+                ]
+              )
+            ])
+          }
+        },
+
         {prop: 'url', label: '图片', formatter: this.logoFormatter},
+        {
+          prop: 'group',
+          label: '分组',
+          formatter: row => (row.group === 'MOBILE' ? '移动端' : 'PC端')
+        },
         {prop: 'jumpUrl', label: '跳转链接'},
         {
           prop: 'status',
@@ -64,6 +103,10 @@ export default {
           formatter: row => (row.status === NORMAL ? '启用' : '禁用')
         }
       ],
+      operationAttrs: {
+        width: '220px',
+        fixed: 'right'
+      },
       extraButtons: [
         {
           type: 'primary',
@@ -93,6 +136,29 @@ export default {
           label: '跳转链接',
           $id: 'jumpUrl',
           $type: 'input'
+        },
+        {
+          rules: [{required: false, trigger: 'blur', validator: checkNum}],
+          $el: {placeholder: '请输入数字'},
+          label: '排序',
+          $id: 'sort',
+          $type: 'input'
+        },
+        {
+          $el: {placeholder: ''},
+          label: '分组',
+          $id: 'group',
+          $type: 'select',
+          $options: [
+            {
+              label: 'pc端',
+              value: 'PC'
+            },
+            {
+              label: '移动端',
+              value: 'MOBILE'
+            }
+          ]
         }
       ],
       searchForm: [
@@ -109,6 +175,22 @@ export default {
             {
               label: '禁用',
               value: FORBIDDEN
+            }
+          ]
+        },
+        {
+          $el: {placeholder: ''},
+          $type: 'select',
+          $id: 'group',
+          label: '分组',
+          $options: [
+            {
+              label: 'PC端',
+              value: 'PC'
+            },
+            {
+              label: '移动端',
+              value: 'MOBILE'
             }
           ]
         }
