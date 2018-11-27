@@ -17,6 +17,18 @@
                    :beforeConfirm="beforeConfirm"
                    @edit="extraEdit"
                    @new="clickNew">
+        <el-form slot="form" :model="ruleForm" :rules="rules" ref="ruleForm">
+          <el-form-item prop="sort">
+          <div>
+            <span>排序</span>
+            <el-tooltip class="item" effect="dark" content="首页展示顺序" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </div>
+          <el-input v-model="extraParams.sort" placeholder="请输入数字"></el-input>
+         </el-form-item>
+        </el-form>
+
       <div slot="form"
            prop="logo">
         <div class="form-label">
@@ -27,8 +39,9 @@
                          :fileUrl="extraParams.url">
           </upload-to-ali>
         </span>
-
+        <p class="tip-text ">(建议尺寸：pc端1200*360、移动端750*438，仅支持jpg,png格式，图片大小1M以内）</p>
       </div>
+
     </el-data-table>
   </div>
 </template>
@@ -55,13 +68,19 @@ export default {
       callback()
     }
     const checkNum = (rule, value, callback) => {
-      if (value && !positiveInteger.test(value)) {
+      if (
+        this.extraParams.sort &&
+        !positiveInteger.test(this.extraParams.sort)
+      ) {
         callback('请输入正整数')
       } else {
         callback()
       }
     }
     return {
+      ruleForm: {
+        sort: ''
+      },
       pageName: 'banner-list',
       url: '/mall-deepexi-mall-config-api/api/v1/advertisements',
       columns: [
@@ -138,13 +157,6 @@ export default {
           $type: 'input'
         },
         {
-          rules: [{required: false, trigger: 'blur', validator: checkNum}],
-          $el: {placeholder: '请输入数字'},
-          label: '排序',
-          $id: 'sort',
-          $type: 'input'
-        },
-        {
           $el: {placeholder: ''},
           label: '分组',
           $id: 'group',
@@ -196,7 +208,11 @@ export default {
         }
       ],
       extraParams: {
-        url: ''
+        url: '',
+        sort: ''
+      },
+      rules: {
+        sort: [{trigger: 'blur', validator: checkNum}]
       }
     }
   },
@@ -227,6 +243,7 @@ export default {
     },
     extraEdit(row) {
       this.extraParams.url = row.url
+      this.extraParams.sort = row.sort
     },
     clickNew() {
       this.extraParams.url = ''
@@ -269,6 +286,11 @@ export default {
 
   .upload-to-ali {
     width: 60px;
+  }
+
+  .tip-text{
+    font-size: 12px;
+    color:#f56c6c;
   }
 }
 </style>
