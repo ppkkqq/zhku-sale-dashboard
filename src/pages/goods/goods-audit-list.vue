@@ -37,7 +37,7 @@
           <back-end-category-select @change="handleSelect('catalogId', $event)" ref="catalogId"></back-end-category-select>
         </el-form-item>
         <el-form-item label="商品渠道" prop="channel">
-          <el-select v-model="channel" placeholder="请选择">
+          <el-select v-model="customQuery.channel" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -128,7 +128,7 @@ export default {
         {
           prop: 'name',
           label: '商品名称',
-          minWidth: '200',
+          minWidth: '120',
           'show-overflow-tooltip': true
         },
         {
@@ -140,7 +140,9 @@ export default {
         },
         {
           prop: 'catalogId',
-          label: '后台类目'
+          label: '后台类目',
+          minWidth: '120',
+          'show-overflow-tooltip': true
         },
         // {
         //   prop: 'shelf',
@@ -152,7 +154,7 @@ export default {
         {
           prop: 'pcApplyAt',
           label: '申请时间',
-          minWidth: '150',
+          minWidth: '180',
           formatter: row => {
             return formatDate(row.pcApplyAt, 'YYYY-MM-DD HH:mm:ss')
           }
@@ -163,7 +165,6 @@ export default {
           formatter: row => status2String[row.status]
         }
       ],
-      channel: '',
       dialogVisible: false,
       form: [],
       extraButtons: [
@@ -307,13 +308,7 @@ export default {
       this.dateRange = []
     }
   },
-  async asyncData({app}) {},
-  mounted() {},
-  watch: {
-    channel() {
-      this.customQuery.channel = this.channel
-    }
-  }
+  async asyncData({app}) {}
 }
 </script>
 <style lang="stylus" scoped>
