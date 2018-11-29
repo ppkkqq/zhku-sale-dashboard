@@ -98,6 +98,7 @@
     </el-dialog>
 
     <el-upload
+      v-show="false"
       ref="upload"
       :on-change="importExcel"
       :action='`${importUrl}`'
@@ -179,7 +180,7 @@ export default {
     return {
       pageName: 'customer-list',
       url: mcMemberInfos, //总部端分页查询
-      totalPath: 'payload.totalPages',
+      totalPath: 'payload.totalElements',
       dataPath: 'payload.content',
       columns: [
         {
