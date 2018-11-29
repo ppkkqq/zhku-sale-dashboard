@@ -99,13 +99,13 @@
     <el-upload
       ref="upload"
       :on-change="importExcel"
-      :action='`${url}`'
+      :action='`${importUrl}`'
       :multiple='false'
       :auto-upload="false"
       :http-request="httpRequest"
       show-file-list
       :on-success='onSuccess'
-      :file-list="fileList">
+      :file-list="[]">
       <el-button slot="trigger" size="small" type="primary" v-loading='importLoading'></el-button>
     </el-upload>
   </div>
@@ -129,47 +129,49 @@ const dialogTitle = {
 }
 const single = 'single'
 const batch = 'batch'
+
+const validateMoney = (rule, value, callback) => {
+  if (!value) {
+    callback('请输入充值数量')
+    return
+  }
+  if (this.currentDialog === this.single && !integer.test(value)) {
+    callback('请输入整数')
+    return
+  }
+
+  if (this.currentDialog === this.batch && !positiveInteger.test(value)) {
+    callback('请输入正整数')
+    return
+  }
+  callback()
+}
+
+const validateMobile = (rule, value, callback) => {
+  if (!value) {
+    callback('请输入充值手机号')
+    return
+  }
+
+  // 检查错误格式的手机号
+  const mobiles = value.split(',')
+  const errMobile = mobiles.reduce((result, mobile, index) => {
+    if (mobile.trim() && !telPattern.test(mobile)) {
+      result.push(mobile)
+    }
+    return result
+  }, [])
+
+  if (errMobile && errMobile.length > 0) {
+    callback(`手机号码格式不正确${errMobile.join(',')}`)
+  } else {
+    callback()
+  }
+}
+
 export default {
   name: 'customer-list',
   data() {
-    const validateMoney = (rule, value, callback) => {
-      if (!value) {
-        callback('请输入充值数量')
-        return
-      }
-      if (this.currentDialog === this.single && !integer.test(value)) {
-        callback('请输入整数')
-        return
-      }
-
-      if (this.currentDialog === this.batch && !positiveInteger.test(value)) {
-        callback('请输入正整数')
-        return
-      }
-      callback()
-    }
-
-    const validateMobile = (rule, value, callback) => {
-      if (!value) {
-        callback('请输入充值手机号')
-        return
-      }
-
-      // 检查错误格式的手机号
-      const mobiles = value.split(',')
-      const errMobile = mobiles.reduce((result, mobile, index) => {
-        if (mobile.trim() && !telPattern.test(mobile)) {
-          result.push(mobile)
-        }
-        return result
-      }, [])
-
-      if (errMobile && errMobile.length > 0) {
-        callback(`手机号码格式不正确${errMobile.join(',')}`)
-      } else {
-        callback()
-      }
-    }
     return {
       pageName: 'customer-list',
       url: mcMemberInfos, //总部端分页查询
@@ -308,7 +310,7 @@ export default {
     topUpDialogTitle() {
       return dialogTitle[this.currentDialog]
     },
-    url() {
+    importUrl() {
       return (
         '/pmsX-api/api/v1/admin/manhours/manhourbacktrack?token=' + this.token
       )
