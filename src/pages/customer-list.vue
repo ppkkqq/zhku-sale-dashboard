@@ -16,9 +16,35 @@
       :operationAttrs="operationAttrs"
       :searchForm="searchForm"
       :dataPath="dataPath"
-      :totalPath="totalPath">
+      :totalPath="totalPath"
+      :customQuery="customQuery"
+      @reset="handleReset"
+    >
+      <template slot="search">
+        <el-form-item label="创建时间">
+          <el-date-picker
+            @change="setCreateTime"
+            value-format="yyyy-MM-dd"
+            v-model="createDate"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="请选择开始时间"
+            end-placeholder="请选择结束时间"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="最后登录时间">
+          <el-date-picker
+            @change="setLoginTime"
+            value-format="yyyy-MM-dd"
+            v-model="lastLoginTime"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="请选择开始时间"
+            end-placeholder="请选择结束时间"
+          ></el-date-picker>
+        </el-form-item>
+      </template>
     </el-data-table>
-
     <el-dialog :title="topUpDialogTitle" :visible.sync="topUpDialogVisible">
       <el-form ref="topUpform" label-width="100px" label-position="right" :model="topUpform" :rules="topUpRules">
         <template v-if="currentDialog === single">
@@ -74,7 +100,7 @@
 
 <script>
 import {formatDate} from '@/const/filter'
-import {mcMemberInfos, getShopUserInfo, currency} from '@/const/api'
+import {mcMemberInfos, getShopUserInfo, currency, template} from '@/const/api'
 import {customerDetail} from '@/const/path'
 import {integer, positiveInteger, telPattern} from '@/const/pattern'
 
@@ -127,9 +153,10 @@ export default {
     }
     return {
       pageName: 'customer-list',
-      url: getShopUserInfo, //总部端分页查询
-      totalPath: 'payload.total',
-      dataPath: 'payload.list',
+      url: mcMemberInfos, //总部端分页查询
+      //url: 'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberAccounts',
+      totalPath: 'payload.totalPages',
+      dataPath: 'payload.content',
       columns: [
         {
           prop: 'nickName',
@@ -170,6 +197,14 @@ export default {
           formatter: row => formatDate(row.lastLoginTime)
         }
       ],
+      createDate: [],
+      lastLoginTime: [],
+      customQuery: {
+        startCreateTime: '',
+        endCreateTime: '',
+        startLastLoginTime: '',
+        endLastLoginTime: ''
+      },
       loading: false,
       operationAttrs: {
         width: '200px',
@@ -182,6 +217,23 @@ export default {
           atClick: selected => {
             this.currentDialog = batch
             this.topUpDialogVisible = true
+          }
+        },
+        {
+          text: '导出会员',
+          type: 'primary',
+          atClick: () => {}
+        },
+        {
+          text: '导入会员',
+          type: 'primary',
+          atClick: () => {}
+        },
+        {
+          text: '下载导入模板',
+          type: 'primary',
+          atClick: () => {
+            window.open(`${template}`, '_blank')
           }
         }
       ],
@@ -299,6 +351,22 @@ export default {
       this.topUpDialogVisible = true
       this.topUpform = row
       this.getBalance()
+    },
+    setCreateTime() {
+      this.customQuery.startCreateTime = this.createDate[0]
+      this.customQuery.endCreateTime = this.createDate[1]
+    },
+    setLoginTime() {
+      this.customQuery.startLastLoginTime = this.lastLoginTime[0]
+      this.customQuery.endLastLoginTime = this.lastLoginTime[1]
+    },
+    handleReset() {
+      this.customQuery.startCreateTime = ''
+      this.customQuery.endCreateTime = ''
+      this.customQuery.startLastLoginTime = ''
+      this.customQuery.endLastLoginTime = ''
+      this.createDate = []
+      this.lastLoginTime = []
     }
   }
 }
