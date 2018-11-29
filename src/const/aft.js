@@ -58,7 +58,7 @@ export const searchForm = [
       placeholder: '请输入'
     },
     label: '会员手机号',
-    $id: 'memberName', //
+    $id: 'mobile',
     $type: 'input'
   },
   {
@@ -84,12 +84,12 @@ export const searchForm = [
       placeholder: '请输入'
     },
     label: '售后类型',
-    $id: 'refundTypeCode',
+    $id: 'refundType',
     $type: 'select',
     $options: [
       {
         label: '退货',
-        value: 3
+        value: 2
       },
       {
         label: '退款',
@@ -101,8 +101,8 @@ export const searchForm = [
     $el: {
       placeholder: '请输入'
     },
-    label: '售后申请状态', //
-    $id: 'status', //
+    label: '售后申请状态',
+    $id: 'status',
     $type: 'select',
     $options: Object2Options(statusOpts)
   }
