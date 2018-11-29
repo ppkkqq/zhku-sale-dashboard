@@ -159,13 +159,30 @@ export default {
           'show-overflow-tooltip': true
         },
         {
+          prop: 'orderCode',
+          minWidth: '120',
+          label: '会员昵称',
+          'show-overflow-tooltip': true
+        },
+        {
+          prop: 'user',
+          minWidth: '140',
+          label: '会员手机号'
+        },
+        {
           prop: 'itemMoney',
           label: '订单金额',
           formatter: row => price(row.itemMoney)
         },
         {
           prop: 'source',
-          label: '商品来源',
+          label: '支付渠道',
+          minWidth: '120',
+          formatter: row => num2source[row.source]
+        },
+        {
+          prop: 'source',
+          label: '商品渠道',
           minWidth: '120',
           formatter: row => num2source[row.source]
         },
@@ -173,11 +190,6 @@ export default {
           prop: 'orderStatusName',
           label: '订单状态'
           // formatter: row => status2chinese[row.orderStatusId]
-        },
-        {
-          prop: 'user',
-          minWidth: '140',
-          label: '下单账号'
         },
         {
           prop: 'orderDate',
@@ -219,8 +231,8 @@ export default {
               label: '自营订单'
             }
           ],
-          $el: {placeholder: '请输入商品来源'},
-          label: '商品来源',
+          $el: {placeholder: '请选择商品渠道'},
+          label: '商品渠道',
           $id: 'source',
           $type: 'select'
         },
@@ -243,6 +255,24 @@ export default {
           label: '订单状态',
           $id: 'orderStatus',
           $type: 'select'
+        },
+        {
+          $el: {placeholder: '请输入会员手机号'},
+          label: '会员手机号',
+          $id: 'orderCode',
+          $type: 'input'
+        },
+        {
+          $el: {placeholder: '请输入会员昵称'},
+          label: '会员昵称',
+          $id: 'orderCode',
+          $type: 'input'
+        },
+        {
+          $el: {placeholder: '请输入支付渠道'},
+          label: '支付渠道',
+          $id: 'orderCode',
+          $type: 'input'
         }
       ],
       payTime: '',
@@ -259,7 +289,7 @@ export default {
 
       operationAttrs: {
         fixed: 'right',
-        width: 200
+        width: 100
       },
       trackDetail: {
         deliveryAddress: '',
