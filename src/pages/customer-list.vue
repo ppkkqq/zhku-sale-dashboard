@@ -283,8 +283,7 @@ export default {
       searchForm: [
         {
           $el: {
-            placeholder: '请输入客户姓名',
-            ref: 'abcd'
+            placeholder: '请输入客户姓名'
           },
           label: '昵称',
           $id: 'nickName',
