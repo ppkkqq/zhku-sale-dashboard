@@ -46,6 +46,9 @@ export const skusOff = id => {
 export const mcMemberInfos = MEMBER_CENTER + '/mcMemberAccounts'
 //下载导入模板
 export const memberImportTem = MEMBER_CENTER + '/mcMemberAccounts/template'
+//导出会员
+export const menberAccountsExport =
+  MEMBER_CENTER + '/mcMemberAccounts/menberAccountsExport'
 // 属性管理
 // crud
 export const attributes = PRODUCT_CENTER + '/attributes'

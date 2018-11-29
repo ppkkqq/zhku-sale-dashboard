@@ -19,6 +19,7 @@
       :totalPath="totalPath"
       :customQuery="customQuery"
       @reset="handleReset"
+      @update="saveImportData"
     >
       <template slot="search">
         <el-form-item label="创建时间">
@@ -104,11 +105,14 @@ import {
   mcMemberInfos,
   getShopUserInfo,
   currency,
-  memberImportTem
+  memberImportTem,
+  menberAccountsExport
 } from '@/const/api'
 import {customerDetail} from '@/const/path'
 import {integer, positiveInteger, telPattern} from '@/const/pattern'
-
+import qs from 'qs'
+import cookie from 'js-cookie'
+import {mapState} from 'vuex'
 const dialogTitle = {
   batch: '批量充值',
   single: '国源通币充值'
@@ -159,7 +163,6 @@ export default {
     return {
       pageName: 'customer-list',
       url: mcMemberInfos, //总部端分页查询
-      //url: 'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberAccounts',
       totalPath: 'payload.totalPages',
       dataPath: 'payload.content',
       columns: [
@@ -227,7 +230,12 @@ export default {
         {
           text: '导出会员',
           type: 'primary',
-          atClick: () => {}
+          atClick: () => {
+            window.open(
+              `${menberAccountsExport}?${qs.stringify(this.exportQuery)}`,
+              '_blank'
+            )
+          }
         },
         {
           text: '导入会员',
@@ -256,7 +264,8 @@ export default {
       searchForm: [
         {
           $el: {
-            placeholder: '请输入客户姓名'
+            placeholder: '请输入客户姓名',
+            ref: 'abcd'
           },
           label: '昵称',
           $id: 'nickName',
@@ -271,7 +280,6 @@ export default {
           $type: 'input'
         }
       ],
-
       single,
       batch,
       topUpLoading: false,
@@ -281,13 +289,19 @@ export default {
         mobiles: {trigger: 'blur', validator: validateMobile}
       },
       currentDialog: single,
-      topUpDialogVisible: false
+      topUpDialogVisible: false,
+      exportQuery: {}
     }
   },
   computed: {
     topUpDialogTitle() {
       return dialogTitle[this.currentDialog]
-    }
+    },
+    ...mapState({
+      tenantCode: function(state) {
+        return state.tenantCode
+      }
+    })
   },
   watch: {
     topUpDialogVisible: function(isShow) {
@@ -372,6 +386,15 @@ export default {
       this.customQuery.endLastLoginTime = ''
       this.createDate = []
       this.lastLoginTime = []
+    },
+    saveImportData() {
+      let memberData = this.$refs.dataTable.$refs.searchForm.getFormValue()
+      let token = cookie.get('token')
+      let code = {
+        token: token,
+        tenantCode: this.tenantCode
+      }
+      Object.assign(this.exportQuery, memberData, this.customQuery, code)
     }
   }
 }
