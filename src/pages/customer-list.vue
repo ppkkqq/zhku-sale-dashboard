@@ -100,7 +100,12 @@
 
 <script>
 import {formatDate} from '@/const/filter'
-import {mcMemberInfos, getShopUserInfo, currency, template} from '@/const/api'
+import {
+  mcMemberInfos,
+  getShopUserInfo,
+  currency,
+  memberImportTem
+} from '@/const/api'
 import {customerDetail} from '@/const/path'
 import {integer, positiveInteger, telPattern} from '@/const/pattern'
 
@@ -233,7 +238,7 @@ export default {
           text: '下载导入模板',
           type: 'primary',
           atClick: () => {
-            window.open(`${template}`, '_blank')
+            window.open(`${memberImportTem}`, '_blank')
           }
         }
       ],
