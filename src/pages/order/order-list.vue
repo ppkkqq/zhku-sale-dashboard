@@ -159,7 +159,7 @@ export default {
           'show-overflow-tooltip': true
         },
         {
-          prop: 'orderCode',
+          prop: 'memberName',
           minWidth: '120',
           label: '会员昵称',
           'show-overflow-tooltip': true
@@ -175,10 +175,10 @@ export default {
           formatter: row => price(row.itemMoney)
         },
         {
-          prop: 'source',
+          prop: 'payChannel',
           label: '支付渠道',
-          minWidth: '120',
-          formatter: row => num2source[row.source]
+          minWidth: '120'
+          // formatter: row => num2source[row.source]
         },
         {
           prop: 'source',
@@ -259,20 +259,34 @@ export default {
         {
           $el: {placeholder: '请输入会员手机号'},
           label: '会员手机号',
-          $id: 'orderCode',
+          $id: 'memberPhone',
           $type: 'input'
         },
         {
           $el: {placeholder: '请输入会员昵称'},
           label: '会员昵称',
-          $id: 'orderCode',
+          $id: 'memberName',
           $type: 'input'
         },
         {
-          $el: {placeholder: '请输入支付渠道'},
+          $options: [
+            {
+              value: '源通币支付',
+              label: '源通币支付'
+            },
+            {
+              value: '支付宝支付',
+              label: '支付宝支付'
+            },
+            {
+              value: '微信支付',
+              label: '微信支付'
+            }
+          ],
+          $el: {placeholder: '请选择支付渠道'},
           label: '支付渠道',
-          $id: 'orderCode',
-          $type: 'input'
+          $id: 'payChannel',
+          $type: 'select'
         }
       ],
       payTime: '',
@@ -289,7 +303,7 @@ export default {
 
       operationAttrs: {
         fixed: 'right',
-        width: 100
+        width: 200
       },
       trackDetail: {
         deliveryAddress: '',
