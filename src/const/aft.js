@@ -84,7 +84,7 @@ export const searchForm = [
       placeholder: '请输入'
     },
     label: '售后类型',
-    $id: 'refundType',
+    $id: 'refundTypeCode',
     $type: 'select',
     $options: [
       {
