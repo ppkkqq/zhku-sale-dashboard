@@ -417,9 +417,8 @@ export default {
     },
     saveImportData() {
       let memberData = this.$refs.dataTable.$refs.searchForm.getFormValue()
-      let token = cookie.get('token')
       let code = {
-        token: token,
+        token: this.token,
         tenantCode: this.tenantCode
       }
       Object.assign(this.exportQuery, memberData, this.customQuery, code)
