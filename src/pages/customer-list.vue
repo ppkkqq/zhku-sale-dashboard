@@ -19,6 +19,7 @@
       :totalPath="totalPath"
       :customQuery="customQuery"
       @reset="handleReset"
+      @update="saveImportData"
     >
       <template slot="search">
         <el-form-item label="创建时间">
@@ -97,6 +98,7 @@
     </el-dialog>
 
     <el-upload
+      v-show="false"
       ref="upload"
       :on-change="importExcel"
       :action='`${importUrl}`'
@@ -118,11 +120,14 @@ import {
   mcMemberInfos,
   getShopUserInfo,
   currency,
-  memberImportTem
+  memberImportTem,
+  menberAccountsExport
 } from '@/const/api'
 import {customerDetail} from '@/const/path'
 import {integer, positiveInteger, telPattern} from '@/const/pattern'
-
+import qs from 'qs'
+import cookie from 'js-cookie'
+import {mapState} from 'vuex'
 const dialogTitle = {
   batch: '批量充值',
   single: '国源通币充值'
@@ -175,8 +180,7 @@ export default {
     return {
       pageName: 'customer-list',
       url: mcMemberInfos, //总部端分页查询
-      //url: 'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberAccounts',
-      totalPath: 'payload.totalPages',
+      totalPath: 'payload.totalElements',
       dataPath: 'payload.content',
       columns: [
         {
@@ -243,7 +247,12 @@ export default {
         {
           text: '导出会员',
           type: 'primary',
-          atClick: () => {}
+          atClick: () => {
+            window.open(
+              `${menberAccountsExport}?${qs.stringify(this.exportQuery)}`,
+              '_blank'
+            )
+          }
         },
         {
           text: '导入会员',
@@ -300,6 +309,7 @@ export default {
       },
       currentDialog: single,
       topUpDialogVisible: false,
+      exportQuery: {},
       importLoading: false
     }
   },
@@ -310,6 +320,14 @@ export default {
     topUpDialogTitle() {
       return dialogTitle[this.currentDialog]
     },
+    ...mapState({
+      tenantCode: function(state) {
+        return state.tenantCode
+      },
+      token: function(state) {
+        return state.token
+      }
+    }),
     importUrl() {
       return (
         '/pmsX-api/api/v1/admin/manhours/manhourbacktrack?token=' + this.token
@@ -399,6 +417,14 @@ export default {
       this.customQuery.endLastLoginTime = ''
       this.createDate = []
       this.lastLoginTime = []
+    },
+    saveImportData() {
+      let memberData = this.$refs.dataTable.$refs.searchForm.getFormValue()
+      let authInfo = {
+        token: this.token,
+        tenantCode: this.tenantCode
+      }
+      Object.assign(this.exportQuery, memberData, this.customQuery, authInfo)
     },
     // 导入excel，csv格式
     importExcel(file) {
