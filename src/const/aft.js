@@ -1,7 +1,7 @@
 import {Object2Options, formatDate, price} from '@/const/filter'
 
 const format = {
-  dateTime: (row, column, val) => formatDate(val, 'YYYY-MM-DD HH : mm'),
+  dateTime: (row, column, val) => formatDate(val, 'YYYY-MM-DD HH : mm : ss'),
   money: (row, column, val) => price(val)
 }
 
@@ -65,7 +65,7 @@ export const searchForm = [
     $el: {
       placeholder: '请输入'
     },
-    label: '商品来源',
+    label: '商品渠道',
     $id: 'source',
     $type: 'select',
     $options: [
@@ -88,7 +88,7 @@ export const searchForm = [
     $type: 'select',
     $options: [
       {
-        label: '退货',
+        label: '退货退款',
         value: 2
       },
       {
@@ -122,7 +122,7 @@ export const columns = [
   },
   {
     prop: 'source',
-    label: '商品来源',
+    label: '商品渠道',
     minWidth: 100,
     showOverflowTooltip: true
   },
@@ -130,6 +130,12 @@ export const columns = [
     prop: 'memberName',
     label: '会员昵称',
     minWidth: 100,
+    showOverflowTooltip: true
+  },
+  {
+    prop: 'mobile',
+    label: '会员手机号',
+    minWidth: 120,
     showOverflowTooltip: true
   },
   {
@@ -143,9 +149,9 @@ export const columns = [
   },
   {
     prop: 'createdAt',
-    label: '退款申请时间',
+    label: '售后申请时间',
     formatter: format.dateTime,
-    minWidth: 160,
+    minWidth: 180,
     showOverflowTooltip: true
   },
   {
