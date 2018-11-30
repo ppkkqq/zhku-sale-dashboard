@@ -324,7 +324,7 @@ export default {
       tenantCode: function(state) {
         return state.tenantCode
       },
-      token1: function(state) {
+      token: function(state) {
         return state.token
       }
     }),
@@ -421,7 +421,7 @@ export default {
     saveImportData() {
       let memberData = this.$refs.dataTable.$refs.searchForm.getFormValue()
       let authInfo = {
-        token: this.token1,
+        token: this.token,
         tenantCode: this.tenantCode
       }
       Object.assign(this.exportQuery, memberData, this.customQuery, authInfo)
