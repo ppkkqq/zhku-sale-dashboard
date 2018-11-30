@@ -480,6 +480,7 @@ export default {
     },
     fileExcel(file) {
       this.tableData = []
+      this.resultArray = []
       return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = e => {
