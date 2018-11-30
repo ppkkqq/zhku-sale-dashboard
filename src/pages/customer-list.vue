@@ -639,8 +639,16 @@ export default {
         })
         .catch(error => {
           if (error.response) {
+            let str = error.response.data.payload
+            let temp = JSON.parse(str)
+            console.log(temp)
+            temp.result.forEach((item, index) => {
+              item.id = index + 1
+            })
             this.$refs.upload.clearFiles()
+            this.tableData = temp.result
             this.resultArray = []
+            this.dialogVisible = true
             this.importLoading = false
           }
         })
