@@ -417,11 +417,11 @@ export default {
     },
     saveImportData() {
       let memberData = this.$refs.dataTable.$refs.searchForm.getFormValue()
-      let code = {
+      let authInfo = {
         token: this.token,
         tenantCode: this.tenantCode
       }
-      Object.assign(this.exportQuery, memberData, this.customQuery, code)
+      Object.assign(this.exportQuery, memberData, this.customQuery, authInfo)
     },
     // 导入excel，csv格式
     importExcel(file) {
