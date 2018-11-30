@@ -518,7 +518,10 @@ export default {
                   result[mapKey[key]] = Ovalue[key].toString()
                   return result
                 }, {})
-                resuleChange.birthday = formatDate(value.birthday, 'YYYY-MM-DD')
+                resuleChange.birthday = formatDate(
+                  new Date(1900, 0, resuleChange.birthday - 1),
+                  'YYYY-MM-DD'
+                )
                 // resuleChange.birthday = formatDate('a', 'YYYY-MM-DD')
                 this.resultArray.push(resuleChange)
               })
