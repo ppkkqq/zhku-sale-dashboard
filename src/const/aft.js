@@ -65,7 +65,7 @@ export const searchForm = [
     $el: {
       placeholder: '请输入'
     },
-    label: '商品来源',
+    label: '商品渠道',
     $id: 'source',
     $type: 'select',
     $options: [
@@ -122,7 +122,7 @@ export const columns = [
   },
   {
     prop: 'source',
-    label: '商品来源',
+    label: '商品渠道',
     minWidth: 100,
     showOverflowTooltip: true
   },
