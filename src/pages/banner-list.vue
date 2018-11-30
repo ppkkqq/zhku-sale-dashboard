@@ -112,7 +112,7 @@ export default {
         {prop: 'url', label: '图片', formatter: this.logoFormatter},
         {
           prop: 'group',
-          label: '分组',
+          label: '平台类型',
           formatter: row => (row.group === 'MOBILE' ? '移动端' : 'PC端')
         },
         {prop: 'jumpUrl', label: '跳转链接'},
@@ -158,7 +158,7 @@ export default {
         },
         {
           $el: {placeholder: ''},
-          label: '分组',
+          label: '平台类型',
           $id: 'group',
           $type: 'select',
           $options: [
@@ -194,7 +194,7 @@ export default {
           $el: {placeholder: ''},
           $type: 'select',
           $id: 'group',
-          label: '分组',
+          label: '平台类型',
           $options: [
             {
               label: 'PC端',
