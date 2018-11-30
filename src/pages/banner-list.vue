@@ -11,27 +11,43 @@
                    :hasPagination="true"
                    :extraButtons="extraButtons"
                    :searchForm="searchForm"
+                   :operationAttrs="operationAttrs"
                    :extraParams="extraParams"
                    :form="form"
                    :beforeConfirm="beforeConfirm"
                    @edit="extraEdit"
                    @new="clickNew">
+        <el-form slot="form" :model="ruleForm" :rules="rules" ref="ruleForm">
+          <el-form-item prop="sort">
+          <div>
+            <span>排序</span>
+            <el-tooltip class="item" effect="dark" content="首页展示顺序" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </div>
+          <el-input v-model="extraParams.sort" placeholder="请输入数字"></el-input>
+         </el-form-item>
+        </el-form>
+
       <div slot="form"
            prop="logo">
         <div class="form-label">
           <span class="star">*</span>图片</div>
         <span>
           <upload-to-ali @load="onUpLoadFile($event, 'extraParams.url')"
+                         protocol="https"
                          :fileUrl="extraParams.url">
           </upload-to-ali>
         </span>
+        <p class="tip-text ">(建议尺寸：pc端1200*360、移动端750*438，仅支持jpg,png格式，图片大小1M以内）</p>
       </div>
+
     </el-data-table>
   </div>
 </template>
 
 <script>
-import {httpPattern} from '@/const/pattern'
+import {httpPattern, positiveInteger} from '@/const/pattern'
 import {bannerList, bannerEdit} from '@/const/api'
 import UploadToAli from 'upload-to-ali'
 
@@ -51,11 +67,54 @@ export default {
       //      }
       callback()
     }
+    const checkNum = (rule, value, callback) => {
+      if (
+        this.extraParams.sort &&
+        !positiveInteger.test(this.extraParams.sort)
+      ) {
+        callback('请输入正整数')
+      } else {
+        callback()
+      }
+    }
     return {
+      ruleForm: {
+        sort: ''
+      },
       pageName: 'banner-list',
       url: '/mall-deepexi-mall-config-api/api/v1/advertisements',
       columns: [
+        {
+          prop: 'sort',
+          label: '排序',
+          renderHeader: (h, {column, $index}) => {
+            return h('span', {}, [
+              column.label,
+              h(
+                'el-tooltip',
+                {
+                  attrs: {
+                    effect: 'dark',
+                    content: '首页展示顺序',
+                    placement: 'top'
+                  }
+                },
+                [
+                  h('i', {
+                    class: 'el-icon-question'
+                  })
+                ]
+              )
+            ])
+          }
+        },
+
         {prop: 'url', label: '图片', formatter: this.logoFormatter},
+        {
+          prop: 'group',
+          label: '平台类型',
+          formatter: row => (row.group === 'MOBILE' ? '移动端' : 'PC端')
+        },
         {prop: 'jumpUrl', label: '跳转链接'},
         {
           prop: 'status',
@@ -63,6 +122,10 @@ export default {
           formatter: row => (row.status === NORMAL ? '启用' : '禁用')
         }
       ],
+      operationAttrs: {
+        width: '220px',
+        fixed: 'right'
+      },
       extraButtons: [
         {
           type: 'primary',
@@ -92,6 +155,22 @@ export default {
           label: '跳转链接',
           $id: 'jumpUrl',
           $type: 'input'
+        },
+        {
+          $el: {placeholder: ''},
+          label: '平台类型',
+          $id: 'group',
+          $type: 'select',
+          $options: [
+            {
+              label: 'pc端',
+              value: 'PC'
+            },
+            {
+              label: '移动端',
+              value: 'MOBILE'
+            }
+          ]
         }
       ],
       searchForm: [
@@ -110,10 +189,30 @@ export default {
               value: FORBIDDEN
             }
           ]
+        },
+        {
+          $el: {placeholder: ''},
+          $type: 'select',
+          $id: 'group',
+          label: '平台类型',
+          $options: [
+            {
+              label: 'PC端',
+              value: 'PC'
+            },
+            {
+              label: '移动端',
+              value: 'MOBILE'
+            }
+          ]
         }
       ],
       extraParams: {
-        url: ''
+        url: '',
+        sort: ''
+      },
+      rules: {
+        sort: [{trigger: 'blur', validator: checkNum}]
       }
     }
   },
@@ -144,6 +243,7 @@ export default {
     },
     extraEdit(row) {
       this.extraParams.url = row.url
+      this.extraParams.sort = row.sort
     },
     clickNew() {
       this.extraParams.url = ''
@@ -186,6 +286,11 @@ export default {
 
   .upload-to-ali {
     width: 60px;
+  }
+
+  .tip-text{
+    font-size: 12px;
+    color:#f56c6c;
   }
 }
 </style>

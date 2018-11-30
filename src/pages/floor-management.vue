@@ -37,6 +37,7 @@
               :disabled="!editForm.id"
               @load="onUpLoadFile($event, 'editForm','classifyIcon')"
               accept="image/png, image/jpeg, image/jpg"
+              protocol="https"
               :fileUrl="editForm.classifyIcon">
             </upload-to-ali>
           </el-form-item>
@@ -46,6 +47,7 @@
               :disabled="!editForm.id"
               @load="onUpLoadFile($event, 'editForm','advertisementPhoto')"
               accept="image/png, image/jpeg, image/jpg"
+              protocol="https"
               :fileUrl="editForm.advertisementPhoto">
             </upload-to-ali>
             <el-input placeholder="请输入广告位地址" v-model.trim="editForm.advertisementPhoto"></el-input>
@@ -156,6 +158,7 @@
                           prop="classifyIcon">
               <upload-to-ali @load="onUpLoadFile($event, 'newForm','classifyIcon')"
                              accept="image/png, image/jpeg, image/jpg"
+                             protocol="https"
                              :fileUrl="newForm.classifyIcon">
               </upload-to-ali>
             </el-form-item>
@@ -163,6 +166,7 @@
                           prop="advertisementPhoto">
               <upload-to-ali @load="onUpLoadFile($event, 'newForm','advertisementPhoto')"
                              accept="image/png, image/jpeg, image/jpg"
+                             protocol="https"
                              :fileUrl="newForm.advertisementPhoto">
               </upload-to-ali>
               <el-input placeholder="请输入广告位地址" v-model.trim="newForm.advertisementPhoto"></el-input>

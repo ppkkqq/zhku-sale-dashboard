@@ -7,3 +7,7 @@ export function delay(ms) {
     setTimeout(resolve, ms)
   })
 }
+
+export function isNull(o) {
+  return o === null || o === void 0
+}

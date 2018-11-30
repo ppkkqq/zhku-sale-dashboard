@@ -19,9 +19,10 @@
       @reset="handleReset"
     >
       <template slot="search">
-        <!--//下单时间-->
-        <el-form-item label="下单时间">
+        <!--售后申请时间-->
+        <el-form-item label="售后申请时间">
           <el-date-picker
+            :clearable="false"
             @change="setTime"
             value-format="yyyy-MM-dd"
             v-model="dateRange"
@@ -94,6 +95,16 @@ export default {
           type: 'primary',
           atClick: this.go2Detail
         }
+        // {
+        //   text: '审核',
+        //   atClick: row => {this.dialogVisible = true}
+        // },
+        // {
+        //   text: '查看物流',
+        //   type: 'primary',
+        //   show: row => {},
+        //   atClick: this.logistics
+        // }
       ],
       dateRange: '',
       customQuery: {

@@ -10,6 +10,7 @@
       :hasEdit="false"
       :hasDelete="false"
       :hasOperation="true"
+      :headerButtons="headerButtons"
       :isTree="false"
       :hasPagination="true"
       :extraButtons="extraButtons"
@@ -18,6 +19,7 @@
       :operationAttrs="operationAttrs"
       :customQuery="customQuery"
       @reset="handleReset"
+      @selection-change="handleSelectChange"
     >
       <template slot="search">
         <el-form-item label="申请时间">
@@ -34,8 +36,36 @@
         <el-form-item label="后台类目" prop="catalogId">
           <back-end-category-select @change="handleSelect('catalogId', $event)" ref="catalogId"></back-end-category-select>
         </el-form-item>
+        <el-form-item label="商品渠道" prop="channel">
+          <el-select v-model="customQuery.channel" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
       </template>
+
     </el-data-table>
+    <el-dialog :title="'批量审核'" :visible.sync="dialogVisible" >
+      <el-form label-width="100px">
+        <el-form-item label="审核结果：">
+          <el-radio-group v-model="judgement">
+            <el-radio label="通过"></el-radio>
+            <el-radio label="不通过"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="描述：" v-if="judgement=='不通过'">
+          <el-input type="textarea" v-model="description" :autosize="{ minRows: 2}"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="commit">提 交</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -67,9 +97,29 @@ export default {
   data() {
     let extraParams = {}
     return {
+      options: [
+        {
+          value: 0,
+          label: '我买网'
+        },
+        {
+          value: 1,
+          label: '京东'
+        },
+        {
+          value: 2,
+          label: '自营'
+        }
+      ],
       pageName: 'goods-list',
       url: getNeedCheckPcItem, //goodsLists, //
+      judgement: '通过',
+      description: '',
       columns: [
+        {
+          type: 'selection',
+          'show-overflow-tooltip': true
+        },
         {
           prop: 'code',
           label: '商品编号',
@@ -78,7 +128,7 @@ export default {
         {
           prop: 'name',
           label: '商品名称',
-          minWidth: '200',
+          minWidth: '120',
           'show-overflow-tooltip': true
         },
         {
@@ -90,7 +140,9 @@ export default {
         },
         {
           prop: 'catalogId',
-          label: '后台类目'
+          label: '后台类目',
+          minWidth: '120',
+          'show-overflow-tooltip': true
         },
         // {
         //   prop: 'shelf',
@@ -102,9 +154,9 @@ export default {
         {
           prop: 'pcApplyAt',
           label: '申请时间',
-          minWidth: '150',
+          minWidth: '180',
           formatter: row => {
-            return formatDate(row.createdAt, 'YYYY-MM-DD HH:mm:ss')
+            return formatDate(row.pcApplyAt, 'YYYY-MM-DD HH:mm:ss')
           }
         },
         {
@@ -141,6 +193,13 @@ export default {
           }
         }
       ],
+      headerButtons: [
+        {
+          text: '批量审核',
+          type: 'primary',
+          atClick: this.batchJudging
+        }
+      ],
       searchForm: [
         {
           $el: {placeholder: '请输入商品编号'},
@@ -163,12 +222,73 @@ export default {
       customQuery: {
         catalogId: '',
         pcApplyStart: '',
-        pcApplyEnd: ''
+        pcApplyEnd: '',
+        channel: ''
       },
-      extraParams
+      extraParams,
+      selected: []
     }
   },
   methods: {
+    // handleSelectChannel(item){
+    //   console.log(item)
+    //   this.customQuery.channel = item.value
+    // },
+    commit() {
+      console.log(this.description, this.judgement)
+      this.dialogVisible = false
+      let data = null
+      let ids = []
+      this.selected.forEach(item => {
+        ids.push(item.id)
+      })
+      if (this.judgement == '通过') {
+        data = {
+          status: 'passed',
+          rejectReason: null,
+          ids: ids
+        }
+      } else {
+        data = {
+          status: 'rejected',
+          rejectReason: this.description,
+          ids: ids
+        }
+      }
+
+      this.$axios
+        .$put(
+          '/mall-deepexi-product-center/api/v1/admin/items/item/bacthAudit',
+          data
+        )
+        .then(res => {
+          this.$refs.dataTable.getList()
+          this.$message({
+            type: 'success',
+            message: '审核成功！'
+          })
+        })
+        .catch(err => {
+          this.$message.error('审核失败，请稍后再试。')
+        })
+    },
+    cancel() {
+      this.dialogVisible = false
+    },
+    batchJudging() {
+      // console.log(this.selected)
+      if (!this.selected.length) {
+        this.$message.error('请选择要审核的商品！')
+        return
+      }
+      this.dialogVisible = true
+      this.description = ''
+      this.judgement = '通过'
+    },
+    handleSelectChange(val) {
+      console.log(val)
+      this.selected = val
+    },
     handleSelect(type, ids) {
       // if(!ids){
       //   return
@@ -188,11 +308,10 @@ export default {
       this.dateRange = []
     }
   },
-  async asyncData({app}) {},
-  mounted() {}
+  async asyncData({app}) {}
 }
 </script>
 <style lang="stylus" scoped>
-.goods-list {
-}
+  .goods-list {
+  }
 </style>

@@ -108,17 +108,20 @@
             {{ trackDetail.deliveryAddress}}
           </el-form-item>
         </el-form>
-        <div v-for="(step,index) in trackDetail.infos"
-             :key="index" class="steps is-flex"
-        >
-          <div class="steps-head"></div>
-          <div class="steps-body">
-            <div class="steps-date">{{step.date}}</div>
-            <div class="steps-day">{{step.day}}</div>
-            <div class="steps-time">{{step.time}}</div>
-            <div class="steps-description">{{step.remark}}</div>
+        <template v-if="trackDetail.infos.length>0">
+          <div  v-for="(step,index) in trackDetail.infos"
+                :key="index" class="steps is-flex"
+          >
+            <div class="steps-head"></div>
+            <div class="steps-body">
+              <div class="steps-date">{{step.date}}</div>
+              <div class="steps-day">{{step.day}}</div>
+              <div class="steps-time">{{step.time}}</div>
+              <div class="steps-description">{{step.remark}}</div>
+            </div>
           </div>
-        </div>
+        </template>
+        <div v-else style="font-weight: bold;margin-top: 20px;margin-left: 30px;"> ：( 该单号暂无物流进展，请稍后再试，或检查公司和单号是否有误。</div>
       </el-dialog>
     </el-dialog>
   </div>
@@ -156,12 +159,30 @@ export default {
           'show-overflow-tooltip': true
         },
         {
+          prop: 'memberName',
+          minWidth: '120',
+          label: '会员昵称',
+          'show-overflow-tooltip': true
+        },
+        {
+          prop: 'user',
+          minWidth: '140',
+          label: '会员手机号'
+        },
+        {
           prop: 'itemMoney',
-          label: '订单金额'
+          label: '订单金额',
+          formatter: row => price(row.itemMoney)
+        },
+        {
+          prop: 'payChannel',
+          label: '支付渠道',
+          minWidth: '120'
+          // formatter: row => num2source[row.source]
         },
         {
           prop: 'source',
-          label: '商品来源',
+          label: '商品渠道',
           minWidth: '120',
           formatter: row => num2source[row.source]
         },
@@ -169,11 +190,6 @@ export default {
           prop: 'orderStatusName',
           label: '订单状态'
           // formatter: row => status2chinese[row.orderStatusId]
-        },
-        {
-          prop: 'user',
-          minWidth: '140',
-          label: '下单账号'
         },
         {
           prop: 'orderDate',
@@ -215,8 +231,8 @@ export default {
               label: '自营订单'
             }
           ],
-          $el: {placeholder: '请输入商品来源'},
-          label: '商品来源',
+          $el: {placeholder: '请选择商品渠道'},
+          label: '商品渠道',
           $id: 'source',
           $type: 'select'
         },
@@ -238,6 +254,38 @@ export default {
           $el: {placeholder: '请选择订单状态'},
           label: '订单状态',
           $id: 'orderStatus',
+          $type: 'select'
+        },
+        {
+          $el: {placeholder: '请输入会员手机号'},
+          label: '会员手机号',
+          $id: 'memberPhone',
+          $type: 'input'
+        },
+        {
+          $el: {placeholder: '请输入会员昵称'},
+          label: '会员昵称',
+          $id: 'memberName',
+          $type: 'input'
+        },
+        {
+          $options: [
+            {
+              value: '源通币支付',
+              label: '源通币支付'
+            },
+            {
+              value: '支付宝支付',
+              label: '支付宝支付'
+            },
+            {
+              value: '微信支付',
+              label: '微信支付'
+            }
+          ],
+          $el: {placeholder: '请选择支付渠道'},
+          label: '支付渠道',
+          $id: 'payChannel',
           $type: 'select'
         }
       ],
@@ -290,9 +338,9 @@ export default {
     },
     showLogisticsButton(row) {
       return (
-        row.orderStatusName === '待发货' ||
+        row.orderStatusName === '待收货' ||
         row.orderStatusName === '已完成' ||
-        row.orderStatusName === '已评论'
+        row.orderStatusName === '已评价'
       )
     },
     go2Logistics(row) {
@@ -327,10 +375,11 @@ export default {
       this.$router.push(`/order/order-detail?id=${row.orderId}`)
     },
     handleDetail(index, row) {
+      console.log(this.trackList)
       this.trackDetail.trackNum = this.trackList[index].trackNum
-      this.trackDetail.LogisticsCompanyName = this.trackList[
+      this.trackDetail.logisticsCompanyName = this.trackList[
         index
-      ].LogisticsCompanyName
+      ].logisticsCompanyName
       this.trackDetail.phone = this.trackList[index].phone
       this.trackDetail.infos = this.trackList[index].infos
       this.innerVisible = true
