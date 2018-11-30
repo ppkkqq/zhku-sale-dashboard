@@ -1,7 +1,7 @@
 import {Object2Options, formatDate, price} from '@/const/filter'
 
 const format = {
-  dateTime: (row, column, val) => formatDate(val, 'YYYY-MM-DD HH : mm'),
+  dateTime: (row, column, val) => formatDate(val, 'YYYY-MM-DD HH : mm : ss'),
   money: (row, column, val) => price(val)
 }
 
@@ -133,6 +133,12 @@ export const columns = [
     showOverflowTooltip: true
   },
   {
+    prop: 'mobile',
+    label: '会员手机号',
+    minWidth: 120,
+    showOverflowTooltip: true
+  },
+  {
     prop: 'refundTypeName',
     label: '售后类型'
   },
@@ -143,9 +149,9 @@ export const columns = [
   },
   {
     prop: 'createdAt',
-    label: '退款申请时间',
+    label: '售后申请时间',
     formatter: format.dateTime,
-    minWidth: 160,
+    minWidth: 180,
     showOverflowTooltip: true
   },
   {
