@@ -107,7 +107,7 @@
       :http-request="httpRequest"
       show-file-list
       :on-success='onSuccess'
-      :file-list="[]">
+      :file-list="fileList">
       <el-button slot="trigger" size="small" type="primary" v-loading='importLoading'></el-button>
     </el-upload>
     <el-dialog title="错误提示" :visible.sync="dialogVisible"
