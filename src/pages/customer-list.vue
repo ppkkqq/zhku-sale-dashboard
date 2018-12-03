@@ -472,20 +472,23 @@ export default {
     },
     // 导入excel，csv格式
     importExcel(file) {
+      // console.log(file)
       const types = file.name.split('.')[1]
       this.fileExcel(file).then(tabJson => {
+        // console.log(tabJson)
         if (tabJson && tabJson.length > 0) {
           this.xlsxJson = tabJson
         }
-        if (this.xlsxJson.length > 0) {
-          this.submitUpload()
-          this.importLoading = true
+        if (this.totalLength > 1000) {
+          this.openError()
+          return
         }
         if (this.tableData.length) {
           // 有错误！！！！
           this.dialogVisible = true
         } else {
           this.importLoading = true
+          this.submitUpload()
         }
       })
     },
@@ -499,6 +502,13 @@ export default {
           this.totalLength
         }条！`,
         type: 'success'
+      })
+    },
+    openError() {
+      this.$notify({
+        title: '提示',
+        message: `单次导入只支持1000条（含）以内记录！`,
+        type: 'error'
       })
     },
     onSuccess(response, file, fileList) {
@@ -555,68 +565,73 @@ export default {
             }
           })
           this.totalLength = this.resultArray.length
-          this.errorLength = 0
-          this.resultArray.forEach((value, index) => {
-            let temp = false
-            if (
-              (value.nickName && value.nickName.length < 2) ||
-              value.nickName.length > 20
-            ) {
-              this.tableData.push({
-                id: this.tableData.length + 1,
-                index: index,
-                content: '昵称格式不对，昵称长度为2-20个字符'
-              })
-              temp = true
-            }
-            if (value.reaLName && value.realName.length > 20) {
-              this.tableData.push({
-                id: this.tableData.length + 1,
-                index: index,
-                content: '姓名格式不对，姓名长度最多20个字符'
-              })
-              temp = true
-            }
-            if (!/^1[3456789]\d{9}$/.test(value.mobile) || !value.mobile) {
-              this.tableData.push({
-                id: this.tableData.length + 1,
-                index: index,
-                content: '手机格式不对'
-              })
-              temp = true
-            }
-            if (
-              value.gender &&
-              value.gender !== '男' &&
-              value.gender !== '女'
-            ) {
-              this.tableData.push({
-                id: this.tableData.length + 1,
-                index: index,
-                content: '性别格式不对，性别只能为男，女'
-              })
-              temp = true
-            }
-            if (value.birthday && value.birthday == 'NaN-NaN-NaN') {
-              this.tableData.push({
-                id: this.tableData.length + 1,
-                index: index,
-                content: '生日格式不对，生日格式为yyyy-mm-dd'
-              })
-              temp = true
-            }
-            if (value.email && !emailPattern.test(value.email)) {
-              this.tableData.push({
-                id: this.tableData.length + 1,
-                index: index,
-                content: '邮箱格式不对'
-              })
-              temp = true
-            }
-            if (temp) {
-              this.errorLength += 1
-            }
-          })
+
+          console.log(this.totalLength)
+          if (this.totalLength < 1000) {
+            this.errorLength = 0
+            this.resultArray.forEach((value, index) => {
+              let temp = false
+              if (
+                value.nickName &&
+                (value.nickName.length < 2 || value.nickName.length > 20)
+              ) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '昵称格式不对，昵称长度为2-20个字符'
+                })
+                temp = true
+              }
+              if (value.reaLName && value.realName.length > 20) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '姓名格式不对，姓名长度最多20个字符'
+                })
+                temp = true
+              }
+              if (!/^1[3456789]\d{9}$/.test(value.mobile) || !value.mobile) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '手机格式不对'
+                })
+                temp = true
+              }
+              if (
+                value.gender &&
+                value.gender !== '男' &&
+                value.gender !== '女'
+              ) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '性别格式不对，性别只能为男，女'
+                })
+                temp = true
+              }
+              if (value.birthday && value.birthday == 'NaN-NaN-NaN') {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '生日格式不对，生日格式为yyyy-mm-dd'
+                })
+                temp = true
+              }
+              if (value.email && !emailPattern.test(value.email)) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '邮箱格式不对'
+                })
+                temp = true
+              }
+              if (temp) {
+                this.errorLength += 1
+              }
+            })
+          }
+
           resolve(this.resultArray)
         }
         reader.readAsBinaryString(file.raw)
@@ -624,8 +639,9 @@ export default {
     },
     httpRequest() {
       //自定义上传的实现
-      if (this.errorLength > 0) {
-        return
+      // console.log(this.errorLength,this.totalLength)
+      if (this.errorLength > 0 || this.totalLength > 1000) {
+        // return
       }
       this.$axios
         .post(this.importUrl, this.resultArray)
@@ -639,17 +655,26 @@ export default {
         })
         .catch(error => {
           if (error.response) {
-            let str = error.response.data.payload
-            let temp = JSON.parse(str)
-            console.log(temp)
-            temp.result.forEach((item, index) => {
-              item.id = index + 1
-            })
-            this.$refs.upload.clearFiles()
-            this.tableData = temp.result
-            this.resultArray = []
-            this.dialogVisible = true
-            this.importLoading = false
+            if (error.response.status == 400) {
+              // this.$notify({
+              //   title: '提示',
+              //   message: `单次导入只支持1000条（含）以内记录！`,
+              //   type: 'error'
+              // })
+            }
+            if (error.response.status == 406) {
+              let str = error.response.data.payload
+              let temp = JSON.parse(str)
+              // console.log(temp)
+              temp.result.forEach((item, index) => {
+                item.id = index + 1
+              })
+              this.$refs.upload.clearFiles()
+              this.tableData = temp.result
+              this.resultArray = []
+              this.dialogVisible = true
+              this.importLoading = false
+            }
           }
         })
     }
