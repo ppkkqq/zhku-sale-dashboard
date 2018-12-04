@@ -289,7 +289,7 @@ export default {
               '_blank'
             )
           }
-        }
+        },
         {
           text: '导入会员',
           type: 'primary',
