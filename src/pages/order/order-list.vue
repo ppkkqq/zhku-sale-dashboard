@@ -195,7 +195,7 @@ export default {
           prop: 'orderDate',
           label: '下单时间',
           minWidth: '150',
-          formatter: row => formatDate(row.orderDate, 'YYYY-MM-DD HH:mm')
+          formatter: row => formatDate(row.orderDate, 'YYYY-MM-DD HH:mm:ss')
         }
       ],
       extraButtons: [
