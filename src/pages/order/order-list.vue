@@ -166,9 +166,26 @@ export default {
           'show-overflow-tooltip': true
         },
         {
+          prop: 'memberName',
+          minWidth: '120',
+          label: '会员昵称',
+          'show-overflow-tooltip': true
+        },
+        {
+          prop: 'user',
+          minWidth: '140',
+          label: '会员手机号'
+        },
+        {
           prop: 'itemMoney',
           label: '订单金额',
           formatter: row => price(row.itemMoney)
+        },
+        {
+          prop: 'payChannel',
+          label: '支付渠道',
+          minWidth: '120'
+          // formatter: row => num2source[row.source]
         },
         {
           prop: 'source',
@@ -182,15 +199,10 @@ export default {
           // formatter: row => status2chinese[row.orderStatusId]
         },
         {
-          prop: 'user',
-          minWidth: '140',
-          label: '下单账号'
-        },
-        {
           prop: 'orderDate',
           label: '下单时间',
           minWidth: '150',
-          formatter: row => formatDate(row.orderDate, 'YYYY-MM-DD HH:mm')
+          formatter: row => formatDate(row.orderDate, 'YYYY-MM-DD HH:mm:ss')
         }
       ],
       extraButtons: [
@@ -217,8 +229,8 @@ export default {
         },
         {
           $options: [],
-          $el: {placeholder: '请输入商品来源'},
-          label: '商品来源',
+          $el: {placeholder: '请输入商品渠道'},
+          label: '商品渠道',
           $id: 'source',
           $type: 'select'
         },
@@ -240,6 +252,38 @@ export default {
           $el: {placeholder: '请选择订单状态'},
           label: '订单状态',
           $id: 'orderStatus',
+          $type: 'select'
+        },
+        {
+          $el: {placeholder: '请输入会员手机号'},
+          label: '会员手机号',
+          $id: 'memberPhone',
+          $type: 'input'
+        },
+        {
+          $el: {placeholder: '请输入会员昵称'},
+          label: '会员昵称',
+          $id: 'memberName',
+          $type: 'input'
+        },
+        {
+          $options: [
+            {
+              value: '源通币支付',
+              label: '源通币支付'
+            },
+            {
+              value: '支付宝支付',
+              label: '支付宝支付'
+            },
+            {
+              value: '微信支付',
+              label: '微信支付'
+            }
+          ],
+          $el: {placeholder: '请选择支付渠道'},
+          label: '支付渠道',
+          $id: 'payChannel',
           $type: 'select'
         }
       ],

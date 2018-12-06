@@ -16,9 +16,36 @@
       :operationAttrs="operationAttrs"
       :searchForm="searchForm"
       :dataPath="dataPath"
-      :totalPath="totalPath">
+      :totalPath="totalPath"
+      :customQuery="customQuery"
+      @reset="handleReset"
+      @update="saveImportData"
+    >
+      <template slot="search">
+        <el-form-item label="创建时间">
+          <el-date-picker
+            @change="setCreateTime"
+            value-format="yyyy-MM-dd"
+            v-model="createDate"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="请选择开始时间"
+            end-placeholder="请选择结束时间"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="最后登录时间">
+          <el-date-picker
+            @change="setLoginTime"
+            value-format="yyyy-MM-dd"
+            v-model="lastLoginTime"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="请选择开始时间"
+            end-placeholder="请选择结束时间"
+          ></el-date-picker>
+        </el-form-item>
+      </template>
     </el-data-table>
-
     <el-dialog :title="topUpDialogTitle" :visible.sync="topUpDialogVisible">
       <el-form ref="topUpform" label-width="100px" label-position="right" :model="topUpform" :rules="topUpRules">
         <template v-if="currentDialog === single">
@@ -69,14 +96,60 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <el-upload
+      v-show="false"
+      ref="upload"
+      :on-change="importExcel"
+      :action='`${importUrl}`'
+      :multiple='false'
+      :auto-upload="false"
+      :http-request="httpRequest"
+      show-file-list
+      :on-success='onSuccess'
+      :file-list="fileList">
+      <el-button slot="trigger" size="small" type="primary" v-loading='importLoading'></el-button>
+    </el-upload>
+    <el-dialog title="错误提示" :visible.sync="dialogVisible"
+    >
+      <span>上传文件共{{totalLength}}条数据，校验合格{{totalLength-errorLength}}，有{{errorLength}}条数据检验未通过，请修改重新导入！</span>
+      <el-table :data="tableData" style="width: 70%"
+                v-bind="tableAttrs">
+        <el-table-column
+          prop="id"
+          label="序号"
+          min-width="30">
+        </el-table-column>
+        <el-table-column
+          prop="content"
+          label="提示内容"
+          min-width="180"
+          style="color: red;"
+          :formatter="(row)=>{return `第${row.index+1}行,${row.content}`}"
+        >
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {Upload} from 'element-ui'
 import {formatDate} from '@/const/filter'
-import {mcMemberInfos, getShopUserInfo, currency} from '@/const/api'
+import {
+  mcMemberInfos,
+  getShopUserInfo,
+  currency,
+  memberImportTem,
+  menberAccountsExport
+} from '@/const/api'
 import {customerDetail} from '@/const/path'
 import {integer, positiveInteger, telPattern} from '@/const/pattern'
+import qs from 'qs'
+import cookie from 'js-cookie'
+import {mapState} from 'vuex'
+import XLSX from 'xlsx'
+import {emailPattern} from '@/const/pattern'
 
 const dialogTitle = {
   batch: '批量充值',
@@ -84,6 +157,7 @@ const dialogTitle = {
 }
 const single = 'single'
 const batch = 'batch'
+
 export default {
   name: 'customer-list',
   data() {
@@ -126,10 +200,25 @@ export default {
       }
     }
     return {
+      totalLength: 0,
+      errorLength: 0,
+      fileList: [],
+      response: {},
+      xlsxJson: [],
+      resultArray: [],
+      leadingIn: '导入excel表格',
+      loading: false,
+      dialogVisible: false,
+      tableData: [
+        {
+          id: '',
+          content: ''
+        }
+      ],
       pageName: 'customer-list',
-      url: getShopUserInfo, //总部端分页查询
-      totalPath: 'payload.total',
-      dataPath: 'payload.list',
+      url: mcMemberInfos, //总部端分页查询
+      totalPath: 'payload.totalElements',
+      dataPath: 'payload.content',
       columns: [
         {
           prop: 'nickName',
@@ -170,7 +259,14 @@ export default {
           formatter: row => formatDate(row.lastLoginTime)
         }
       ],
-      loading: false,
+      createDate: [],
+      lastLoginTime: [],
+      customQuery: {
+        startCreateTime: '',
+        endCreateTime: '',
+        startLastLoginTime: '',
+        endLastLoginTime: ''
+      },
       operationAttrs: {
         width: '200px',
         fixed: 'right'
@@ -182,6 +278,31 @@ export default {
           atClick: selected => {
             this.currentDialog = batch
             this.topUpDialogVisible = true
+          }
+        },
+        {
+          text: '导出会员',
+          type: 'primary',
+          atClick: () => {
+            window.open(
+              `${menberAccountsExport}?${qs.stringify(this.exportQuery)}`,
+              '_blank'
+            )
+          }
+        },
+        {
+          text: '导入会员',
+          type: 'primary',
+          atClick: () => {
+            // 模拟点击导入组件
+            this.$refs.upload.$el.querySelector('[type=file]').click()
+          }
+        },
+        {
+          text: '下载导入模板',
+          type: 'primary',
+          atClick: () => {
+            window.open(`${memberImportTem}`, '_blank')
           }
         }
       ],
@@ -214,7 +335,6 @@ export default {
           $type: 'input'
         }
       ],
-
       single,
       batch,
       topUpLoading: false,
@@ -224,12 +344,38 @@ export default {
         mobiles: {trigger: 'blur', validator: validateMobile}
       },
       currentDialog: single,
-      topUpDialogVisible: false
+      topUpDialogVisible: false,
+      exportQuery: {},
+      importLoading: false,
+      tableAttrs: {
+        'tooltip-effect': 'light',
+        'cell-style': e => {
+          const row = e.row
+          const typeToColor = {
+            content: 'red'
+          }
+          return {color: typeToColor[e.column.property]}
+        }
+      }
     }
+  },
+  components: {
+    'el-upload': Upload
   },
   computed: {
     topUpDialogTitle() {
       return dialogTitle[this.currentDialog]
+    },
+    ...mapState({
+      tenantCode: function(state) {
+        return state.tenantCode
+      },
+      token: function(state) {
+        return state.token
+      }
+    }),
+    importUrl() {
+      return '/mall-deepexi-member-center/api/v1/mcMemberAccounts/importExcel'
     }
   },
   watch: {
@@ -299,6 +445,238 @@ export default {
       this.topUpDialogVisible = true
       this.topUpform = row
       this.getBalance()
+    },
+    setCreateTime() {
+      this.customQuery.startCreateTime = this.createDate[0]
+      this.customQuery.endCreateTime = this.createDate[1]
+    },
+    setLoginTime() {
+      this.customQuery.startLastLoginTime = this.lastLoginTime[0]
+      this.customQuery.endLastLoginTime = this.lastLoginTime[1]
+    },
+    handleReset() {
+      this.customQuery.startCreateTime = ''
+      this.customQuery.endCreateTime = ''
+      this.customQuery.startLastLoginTime = ''
+      this.customQuery.endLastLoginTime = ''
+      this.createDate = []
+      this.lastLoginTime = []
+    },
+    saveImportData() {
+      let memberData = this.$refs.dataTable.$refs.searchForm.getFormValue()
+      let authInfo = {
+        token: this.token,
+        tenantCode: this.tenantCode
+      }
+      Object.assign(this.exportQuery, memberData, this.customQuery, authInfo)
+    },
+    // 导入excel，csv格式
+    importExcel(file) {
+      // console.log(file)
+      const types = file.name.split('.')[1]
+      this.fileExcel(file).then(tabJson => {
+        // console.log(tabJson)
+        if (tabJson && tabJson.length > 0) {
+          this.xlsxJson = tabJson
+        }
+        if (this.totalLength > 1000) {
+          this.openError()
+          return
+        }
+        if (this.tableData.length) {
+          // 有错误！！！！
+          this.dialogVisible = true
+        } else {
+          this.importLoading = true
+          this.submitUpload()
+        }
+      })
+    },
+    submitUpload() {
+      this.$refs.upload.submit()
+    },
+    openSuccess() {
+      this.$notify({
+        title: '提示',
+        message: `上传文件共${this.totalLength}条数据，成功导入${
+          this.totalLength
+        }条！`,
+        type: 'success'
+      })
+    },
+    openError() {
+      this.$notify({
+        title: '提示',
+        message: `单次导入只支持1000条（含）以内记录！`,
+        type: 'error'
+      })
+    },
+    onSuccess(response, file, fileList) {
+      this.$refs.upload.clearFiles()
+    },
+    fileExcel(file) {
+      this.tableData = []
+      this.resultArray = []
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = e => {
+          let data = e.target.result
+
+          if (!FileReader.prototype.readAsBinaryString) {
+            var str = cptable.utils.decode(936, data) //字符编码转utf-8
+
+            data = new Uint8Array(str)
+          } else {
+            data = cptable.utils.decode(936, data) //字符编码转utf-8
+          }
+          let wb = XLSX.read(data, {
+            type: 'binary'
+          })
+          let result = []
+          let resuleChange
+          wb.SheetNames.forEach(sheetName => {
+            result.push({
+              sheetName: sheetName,
+              sheet: XLSX.utils.sheet_to_json(wb.Sheets[sheetName])
+            })
+          })
+          result.forEach((value, index) => {
+            if (result[index].sheet.length > 0) {
+              result[index].sheet.forEach((Ovalue, Oindex) => {
+                let mapKey = {
+                  '昵称(20字符以内)': 'nickName',
+                  '姓名(20字符以内)': 'realName',
+                  '手机号(不可为空)': 'mobile',
+                  '性别(男/女)': 'gender',
+                  生日: 'birthday',
+                  邮箱: 'email'
+                }
+                resuleChange = Object.keys(Ovalue).reduce((result, key) => {
+                  result[mapKey[key]] = Ovalue[key].toString()
+                  return result
+                }, {})
+                resuleChange.birthday = formatDate(
+                  new Date(1900, 0, resuleChange.birthday - 1),
+                  'YYYY-MM-DD'
+                )
+                // resuleChange.birthday = formatDate('a', 'YYYY-MM-DD')
+                this.resultArray.push(resuleChange)
+              })
+            }
+          })
+          this.totalLength = this.resultArray.length
+
+          console.log(this.totalLength)
+          if (this.totalLength < 1000) {
+            this.errorLength = 0
+            this.resultArray.forEach((value, index) => {
+              let temp = false
+              if (
+                value.nickName &&
+                (value.nickName.length < 2 || value.nickName.length > 20)
+              ) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '昵称格式不对，昵称长度为2-20个字符'
+                })
+                temp = true
+              }
+              if (value.reaLName && value.realName.length > 20) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '姓名格式不对，姓名长度最多20个字符'
+                })
+                temp = true
+              }
+              if (!/^1[3456789]\d{9}$/.test(value.mobile) || !value.mobile) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '手机格式不对'
+                })
+                temp = true
+              }
+              if (
+                value.gender &&
+                value.gender !== '男' &&
+                value.gender !== '女'
+              ) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '性别格式不对，性别只能为男，女'
+                })
+                temp = true
+              }
+              if (value.birthday && value.birthday == 'NaN-NaN-NaN') {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '生日格式不对，生日格式为yyyy-mm-dd'
+                })
+                temp = true
+              }
+              if (value.email && !emailPattern.test(value.email)) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '邮箱格式不对'
+                })
+                temp = true
+              }
+              if (temp) {
+                this.errorLength += 1
+              }
+            })
+          }
+
+          resolve(this.resultArray)
+        }
+        reader.readAsBinaryString(file.raw)
+      })
+    },
+    httpRequest() {
+      //自定义上传的实现
+      // console.log(this.errorLength,this.totalLength)
+      if (this.errorLength > 0 || this.totalLength > 1000) {
+        // return
+      }
+      this.$axios
+        .post(this.importUrl, this.resultArray)
+        .then(response => {
+          if (response.data.length > 0) {
+            this.openSuccess()
+            this.$refs.upload.clearFiles()
+            this.resultArray = []
+            this.importLoading = false
+          }
+        })
+        .catch(error => {
+          if (error.response) {
+            if (error.response.status == 400) {
+              // this.$notify({
+              //   title: '提示',
+              //   message: `单次导入只支持1000条（含）以内记录！`,
+              //   type: 'error'
+              // })
+            }
+            if (error.response.status == 406) {
+              let str = error.response.data.payload
+              let temp = JSON.parse(str)
+              // console.log(temp)
+              temp.result.forEach((item, index) => {
+                item.id = index + 1
+              })
+              this.$refs.upload.clearFiles()
+              this.tableData = temp.result
+              this.resultArray = []
+              this.dialogVisible = true
+              this.importLoading = false
+            }
+          }
+        })
     }
   }
 }
