@@ -133,7 +133,7 @@ export default {
       REFUND: REFUND,
       RETURN: RETURN,
       url: '',
-      active: 1,
+      activeStep: 1,
       extraParams: {},
       detail: {},
       statusOpts,
