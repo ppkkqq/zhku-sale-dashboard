@@ -7,6 +7,7 @@
       totalPath="payload.total"
       dataPath="payload.orderList"
       :customQuery="customQuery"
+      :headerButtons="headerButtons"
       :hasNew="false"
       :hasEdit="false"
       :hasDelete="false"
@@ -16,6 +17,7 @@
       :extraButtons="extraButtons"
       :searchForm="searchForm"
       @reset="handleReset"
+      @update="saveImportData"
       :operationAttrs="operationAttrs"
     >
       <template slot="search">
@@ -130,7 +132,9 @@
 <script>
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
 import {formatDate, price, toOptionsLabel, options2Object} from '@/const/filter'
-import {orderList, logistics} from '@/const/api'
+import {orderList, logistics, exportExcel} from '@/const/api'
+import qs from 'qs'
+import {mapState} from 'vuex'
 import searchFormMixin from '@/mixins/search-form-slot'
 const num2source = ['我买网订单', '自营订单']
 const num2day = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
@@ -151,6 +155,7 @@ export default {
     return {
       pageName: 'order-list',
       url: orderList,
+      exportQuery: {},
       columns: [
         {
           prop: 'orderCode',
@@ -289,6 +294,18 @@ export default {
           $type: 'select'
         }
       ],
+      headerButtons: [
+        {
+          text: '导出订单信息',
+          type: 'primary',
+          atClick: () => {
+            window.open(
+              `${exportExcel}?${qs.stringify(this.exportQuery)}`,
+              '_blank'
+            )
+          }
+        }
+      ],
       payTime: '',
       orderTime: '',
       customQuery: {
@@ -383,9 +400,27 @@ export default {
       this.trackDetail.phone = this.trackList[index].phone
       this.trackDetail.infos = this.trackList[index].infos
       this.innerVisible = true
+    },
+    saveImportData() {
+      let memberData = this.$refs.dataTable.$refs.searchForm.getFormValue()
+      let authInfo = {
+        token: this.token,
+        tenantCode: this.tenantCode,
+        shopOrPlat: 'plat'
+      }
+      Object.assign(this.exportQuery, memberData, this.customQuery, authInfo)
     }
   },
-  computed: {}
+  computed: {
+    ...mapState({
+      tenantCode: function(state) {
+        return state.tenantCode
+      },
+      token: function(state) {
+        return state.token
+      }
+    })
+  }
 }
 </script>
 
