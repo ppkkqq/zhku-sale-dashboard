@@ -24,6 +24,7 @@ export default {
 
       try {
         await this.$store.dispatch('fetchUserAndMenuList', {userId})
+        await this.$store.dispatch('fetchSource')
       } catch (e) {
         let path = this.$router.options.base
         if (path.slice(-1) === '/') {
