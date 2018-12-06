@@ -290,21 +290,21 @@ export default {
             )
           }
         }
-        {
-          text: '导入会员',
-          type: 'primary',
-          atClick: () => {
-            // 模拟点击导入组件
-            this.$refs.upload.$el.querySelector('[type=file]').click()
-          }
-        },
-        {
-          text: '下载导入模板',
-          type: 'primary',
-          atClick: () => {
-            window.open(`${memberImportTem}`, '_blank')
-          }
-        }
+        // {
+        //   text: '导入会员',
+        //   type: 'primary',
+        //   atClick: () => {
+        //     // 模拟点击导入组件
+        //     this.$refs.upload.$el.querySelector('[type=file]').click()
+        //   }
+        // },
+        // {
+        //   text: '下载导入模板',
+        //   type: 'primary',
+        //   atClick: () => {
+        //     window.open(`${memberImportTem}`, '_blank')
+        //   }
+        // }
       ],
       extraButtons: [
         {
