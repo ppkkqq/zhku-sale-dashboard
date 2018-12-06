@@ -189,7 +189,7 @@ export default {
         },
         {
           prop: 'source',
-          label: '商品来源',
+          label: '商品渠道',
           minWidth: '120'
           // formatter: row => num2source[row.source]
         },
