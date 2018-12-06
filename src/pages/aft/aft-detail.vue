@@ -212,7 +212,8 @@ export default {
         },
         {prop: 'payMoney', label: '实际退款'}
       ],
-      isShowRefundDes: false
+      isShowRefundDes: false,
+      activeStep: 0
     }
   },
   computed: {
