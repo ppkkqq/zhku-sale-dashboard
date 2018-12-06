@@ -1,5 +1,6 @@
 // import {appTypeList, bizModelList} from '@/const/api'
 import cookie from 'js-cookie'
+import {orderPlat} from '@/const/api'
 // 最好提前在你的 store 中初始化好所有所需属性
 // https://vuex.vuejs.org/zh-cn/mutations.html
 export const state = () => ({
@@ -13,7 +14,8 @@ export const state = () => ({
   menuList: [],
   permission: {},
   appTypeList: [],
-  bizModelList: []
+  bizModelList: [],
+  source: [] //商品渠道
 })
 
 const getCookiePath = that => {
@@ -32,16 +34,24 @@ export const mutations = {
 
     // 部署不一定是在根路径, 所以cookie要设置path
     let path = getCookiePath(this)
-    cookie.set('token', payload.key, {path})
-    cookie.set('userId', payload.id, {path})
+    cookie.set('token', payload.key, {
+      path
+    })
+    cookie.set('userId', payload.id, {
+      path
+    })
   },
   logout(state) {
     state.token = ''
     state.userId = ''
 
     let path = getCookiePath(this)
-    cookie.remove('token', {path})
-    cookie.remove('userId', {path})
+    cookie.remove('token', {
+      path
+    })
+    cookie.remove('userId', {
+      path
+    })
   },
   update(state, payload) {
     Object.keys(payload).forEach(k => {
@@ -63,7 +73,9 @@ export const actions = {
     )
     commit('login', resp.payload)
 
-    dispatch('fetchUserAndMenuList', {userId: resp.payload.id})
+    dispatch('fetchUserAndMenuList', {
+      userId: resp.payload.id
+    })
   },
   async fetchUserAndMenuList({commit}, {userId}) {
     let user = await this.$axios.$get(`/security/api/v1/users/${userId}`)
@@ -76,7 +88,9 @@ export const actions = {
       return
     }
 
-    commit('update', {user: user.payload})
+    commit('update', {
+      user: user.payload
+    })
 
     let menuResources = await this.$axios.$get(
       `/security/api/v1/users/${userId}/menuResources`
@@ -99,6 +113,22 @@ export const actions = {
     resp.payload.forEach(item => {
       meta[item.key] = item.value
     })
-    commit('update', {meta})
+    commit('update', {
+      meta
+    })
+  },
+  // 获取商品渠道
+  async fetchSource({commit}) {
+    let resp = await this.$axios.$get(orderPlat)
+    let source = resp.payload
+    commit('update', {
+      source
+    })
+  }
+}
+
+export const getters = {
+  source(state) {
+    return state.source
   }
 }

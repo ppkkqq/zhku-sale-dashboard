@@ -34,6 +34,7 @@
         </el-form-item>
       </template>
     </el-data-table>
+    <!-- 审核弹框 -->
     <el-dialog
       title="审核退款"
       :visible.sync="dialogVisible"
@@ -62,6 +63,49 @@
         <el-button size="small" type="primary" v-loading="comboLoading" @click="handleConfirm">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 物流弹框 -->
+    <el-dialog title="查看订单物流" :visible.sync="outerVisible">
+      <el-form :inline="true" class="demo-form-inline">
+        <el-form-item label="订单号: ">{{orderCode}}</el-form-item>
+      </el-form>
+      <div>
+        <el-table :data="trackList" style="width: 100%">
+          <el-table-column prop="logisticsCompanyName" label="快递公司" width="180"></el-table-column>
+          <el-table-column prop="trackNum" label="快递单号" width="180"></el-table-column>
+          <el-table-column prop="phone" label="快递联系电话" min-width="140"></el-table-column>
+          <el-table-column label="操作" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" @click="handleDetail(scope.$index, scope.row)">查看</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <el-dialog
+        class="inner-dialog"
+        title="查看"
+        :visible.sync="innerVisible"
+        @open="outerVisible=false"
+        @close="outerVisible = true"
+        append-to-body
+      >
+        <el-form class="title-left" v-model="trackDetail" ref="form" label-width="120px">
+          <el-form-item label="快递单号: ">{{trackDetail.trackNum}}</el-form-item>
+          <el-form-item label="快递公司: ">{{trackDetail.logisticsCompanyName}}</el-form-item>
+          <el-form-item label="快递联系电话: ">{{trackDetail.phone}}</el-form-item>
+          <el-form-item label="收货地址: ">{{ trackDetail.deliveryAddress}}</el-form-item>
+        </el-form>
+        <div v-for="(step,index) in trackDetail.infos" :key="index" class="steps is-flex">
+          <div class="steps-head"></div>
+          <div class="steps-body">
+            <div class="steps-date">{{step.date}}</div>
+            <div class="steps-day">{{step.day}}</div>
+            <div class="steps-time">{{step.time}}</div>
+            <div class="steps-description">{{step.remark}}</div>
+          </div>
+        </div>
+      </el-dialog>
+    </el-dialog>
   </div>
 </template>
 
@@ -83,10 +127,21 @@ export default {
         fixed: 'right'
       },
       dialogVisible: false,
+      outerVisible: false,
+      innerVisible: false,
       comboLoading: false,
       reviewForm: {
         approve: 'true',
         rejectRemark: ''
+      },
+      orderCode: '',
+      trackList: [],
+      trackDetail: {
+        deliveryAddress: '',
+        logisticsCompanyName: '',
+        trackNum: '',
+        phone: '',
+        infos: []
       },
       columns,
       extraButtons: [
@@ -94,17 +149,23 @@ export default {
           text: '查看',
           type: 'primary',
           atClick: this.go2Detail
-        }
+        },
         // {
         //   text: '审核',
         //   atClick: row => {this.dialogVisible = true}
         // },
-        // {
-        //   text: '查看物流',
-        //   type: 'primary',
-        //   show: row => {},
-        //   atClick: this.logistics
-        // }
+        {
+          text: '查看物流',
+          type: 'primary',
+          show: row => {
+            return (
+              row.status === '待收货' ||
+              row.status === '已完成' ||
+              row.status === '已评价'
+            )
+          },
+          atClick: this.go2Logistics
+        }
       ],
       dateRange: '',
       customQuery: {
@@ -148,6 +209,34 @@ export default {
     go2Detail(row) {
       //查看
       this.$router.push(`${aftDetail}?refundId=${row.id}`)
+    },
+    go2Logistics(row) {
+      this.$axios
+        .$get(`${logistics}?orderCode=${row.orderCode}&orderId=${row.orderId}`)
+        .then(res => {
+          let address = res.payload.address
+
+          this.trackList = res.payload.data
+          this.trackList.forEach(item => {
+            item.infos.forEach(info => {
+              info.date = formatDate(info.createTime, 'YYYY-MM-DD')
+              info.day = num2day[new Date(info.createTime).getUTCDay()]
+              info.time = formatDate(info.createTime, 'HH:mm:ss')
+            })
+          })
+          this.trackDetail.deliveryAddress =
+            (address.provinceName || '') +
+            (address.cityName || '') +
+            (address.districtName || '') +
+            ' ' +
+            (address.postcode || ' ') +
+            (address.receiverName || ' ') +
+            (address.receiverPhone || '')
+        })
+        .catch()
+      this.orderCode = row.orderCode
+      this.visible = true
+      this.outerVisible = true
     },
     handleConfirm() {
       this.$refs.comboForm.validate(valid => {

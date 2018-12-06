@@ -145,6 +145,9 @@ export const recommendList = MALL_CONFIG + '/featuredFirsts'
 export const orderList = TRADE_CENTER + '/order/shopOrderList'
 export const orderDetail = TRADE_CENTER + '/order/shopOrderDetail'
 
+//商品来源
+export const orderPlat = TRADE_CENTER + '/order/magement/orderPlat'
+
 //查询物流
 export const logistics = TRADE_CENTER + '/logistics'
 

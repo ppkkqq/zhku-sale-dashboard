@@ -55,3 +55,21 @@ export function Object2Options(object = {}, label = 'key') {
     return arr
   }, [])
 }
+
+// array [{id, name}] 转为 array [{label, value}]
+export function source2Options(sources = []) {
+  return sources.map(channel => {
+    return {
+      label: channel.name,
+      value: channel.id
+    }
+  })
+}
+// array[{id,name}] -> {id:name}
+export function source2Object(source = []) {
+  let obj = {}
+  source.forEach(channel => {
+    obj[channel.id] = channel.name
+  })
+  return obj
+}

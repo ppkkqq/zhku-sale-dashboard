@@ -129,9 +129,16 @@
 
 <script>
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
-import {formatDate, price, toOptionsLabel, options2Object} from '@/const/filter'
+import {
+  formatDate,
+  price,
+  toOptionsLabel,
+  options2Object,
+  source2Options
+} from '@/const/filter'
 import {orderList, logistics} from '@/const/api'
 import searchFormMixin from '@/mixins/search-form-slot'
+import {mapGetters} from 'vuex'
 const num2source = ['我买网订单', '自营订单']
 const num2day = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
 const status2chinese = {
@@ -183,8 +190,8 @@ export default {
         {
           prop: 'source',
           label: '商品渠道',
-          minWidth: '120',
-          formatter: row => num2source[row.source]
+          minWidth: '120'
+          // formatter: row => num2source[row.source]
         },
         {
           prop: 'orderStatusName',
@@ -201,7 +208,6 @@ export default {
       extraButtons: [
         {
           text: '查看物流',
-          type: 'primary',
           show: this.showLogisticsButton,
           atClick: this.go2Logistics,
           fixed: 'left'
@@ -221,17 +227,8 @@ export default {
           $type: 'input'
         },
         {
-          $options: [
-            {
-              value: '0',
-              label: '我买网订单'
-            },
-            {
-              value: '1',
-              label: '自营订单'
-            }
-          ],
-          $el: {placeholder: '请选择商品渠道'},
+          $options: [],
+          $el: {placeholder: '请输入商品渠道'},
           label: '商品渠道',
           $id: 'source',
           $type: 'select'
@@ -385,7 +382,12 @@ export default {
       this.innerVisible = true
     }
   },
-  computed: {}
+  computed: {
+    ...mapGetters(['source'])
+  },
+  created() {
+    this.searchForm[1].$options = source2Options(this.source)
+  }
 }
 </script>
 

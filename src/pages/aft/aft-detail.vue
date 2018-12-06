@@ -12,7 +12,7 @@
         </h2>
       </div>
       <h3 class="mb-1">{{type == REFUND ? '退款流转过程' : '退货流转过程'}}</h3>
-      <el-steps :active="1" align-center v-if="type != REFUND">
+      <el-steps :active="activeStep" align-center v-if="type != REFUND">
         <el-step title="提交订单" description></el-step>
         <el-step title="商家审核通过" description></el-step>
         <el-step title="买家寄回货物" description></el-step>
@@ -20,7 +20,7 @@
         <el-step title="验收货物" description></el-step>
         <el-step title="已完成" description></el-step>
       </el-steps>
-      <el-steps :active="1" align-center v-if="type == REFUND">
+      <el-steps :active="activeStep" align-center v-if="type == REFUND">
         <el-step title="提交申请" description></el-step>
         <el-step title="商家审核通过" description></el-step>
         <el-step title="退款已受理" description></el-step>
@@ -148,6 +148,7 @@ export default {
       REFUND: REFUND,
       RETURN: RETURN,
       url: '',
+      active: 1,
       extraParams: {},
       detail: {},
       statusOpts,
@@ -373,17 +374,20 @@ export default {
       switch (this.trade.status) {
         case '确认退货':
         case '退款中':
-          this.active = 2
+          this.activeStep = 2
           break
         case '确认退款':
         case '待收货':
-          this.active = 3
+          this.activeStep = 3
           break
         case '待发货':
-          this.active = 5
+          this.activeStep = 5
           break
         case '确认退货':
-          this.active = 6
+          this.activeStep = 6
+          break
+        default:
+          this.activeStep = 1
           break
       }
     },
