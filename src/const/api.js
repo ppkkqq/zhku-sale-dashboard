@@ -150,6 +150,7 @@ export const orderPlat = TRADE_CENTER + '/order/magement/orderPlat'
 
 //查询物流
 export const logistics = TRADE_CENTER + '/logistics'
+export const findLogisticsInfo = TRADE_CENTER + '/logistics/findLogisticsInfo'
 
 //导出订单列表
 export const exportExcel = TRADE_CENTER + '/order/exportExcel'
@@ -157,6 +158,8 @@ export const exportExcel = TRADE_CENTER + '/order/exportExcel'
 //商品
 // export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
 export const goodsLists = PRODUCT_CENTER + '/manager/pcItems/plat'
+export const goodsListsFromSkuId = PRODUCT_CENTER + '/pcItemSkus/get/item'
+
 // 商品审核
 export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
 export const getNeedCheckPcItem =
