@@ -55,3 +55,15 @@ export function Object2Options(object = {}, label = 'key') {
     return arr
   }, [])
 }
+
+// array [{id, name}] 转为 array [{label, value}]
+export function source2Options(sources = []) {
+  // debugger
+
+  return sources.map(channel => {
+    return {
+      label: channel.name,
+      value: channel.id
+    }
+  })
+}
