@@ -23,7 +23,7 @@ export function options2Object(options = []) {
  * @type String
  */
 export function price(val) {
-  if (isNull(val) || isNaN(val)) return
+  if (isNull(val) || isNaN(val)) return '0.00'
   let USPrice = Number.parseFloat(val).toLocaleString('en-US')
 
   // 完全是整数, 需要添加小数点
@@ -55,7 +55,6 @@ export function Object2Options(object = {}, label = 'key') {
     return arr
   }, [])
 }
-
 // array [{id, name}] 转为 array [{label, value}]
 export function source2Options(sources = []) {
   return sources.map(channel => {

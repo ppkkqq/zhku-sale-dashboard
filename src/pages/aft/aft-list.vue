@@ -71,12 +71,12 @@
       </el-form>
       <div>
         <el-table :data="trackList" style="width: 100%">
-          <el-table-column prop="logisticsCompanyName" label="快递公司" width="180"></el-table-column>
-          <el-table-column prop="trackNum" label="快递单号" width="180"></el-table-column>
-          <el-table-column prop="phone" label="快递联系电话" min-width="140"></el-table-column>
+          <el-table-column prop="expTextName" label="快递公司" width="180"></el-table-column>
+          <el-table-column prop="mailNo" label="快递单号" width="180"></el-table-column>
+          <el-table-column prop="tel" label="快递联系电话" min-width="140"></el-table-column>
           <el-table-column label="操作" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" @click="handleDetail(scope.$index, scope.row)">查看</el-button>
+              <el-button size="mini" @click="handleDetail()">查看</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -90,12 +90,12 @@
         append-to-body
       >
         <el-form class="title-left" v-model="trackDetail" ref="form" label-width="120px">
-          <el-form-item label="快递单号: ">{{trackDetail.trackNum}}</el-form-item>
-          <el-form-item label="快递公司: ">{{trackDetail.logisticsCompanyName}}</el-form-item>
-          <el-form-item label="快递联系电话: ">{{trackDetail.phone}}</el-form-item>
-          <el-form-item label="收货地址: ">{{ trackDetail.deliveryAddress}}</el-form-item>
+          <el-form-item label="快递单号: ">{{trackDetail.mailNo}}</el-form-item>
+          <el-form-item label="快递公司: ">{{trackDetail.expTextName}}</el-form-item>
+          <el-form-item label="快递联系电话: ">{{trackDetail.tel}}</el-form-item>
+          <!-- <el-form-item label="收货地址: ">{{ trackDetail.deliveryAddress}}</el-form-item> -->
         </el-form>
-        <div v-for="(step,index) in trackDetail.infos" :key="index" class="steps is-flex">
+        <div v-for="(step,index) in trackDetail.data" :key="index" class="steps is-flex">
           <div class="steps-head"></div>
           <div class="steps-body">
             <div class="steps-date">{{step.date}}</div>
@@ -111,9 +111,12 @@
 
 <script>
 import {orderStatusOptions, orderTypeOptions} from '@/const/config'
-import {refundList, refundAudit} from '@/const/api'
+import {refundList, refundAudit, findLogisticsInfo} from '@/const/api'
 import {statusOpts, searchForm, columns} from '@/const/aft'
 import {aftDetail} from '@/const/path'
+import {formatDate} from '@/const/filter'
+
+const num2day = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
 
 export default {
   name: 'aft-list',
@@ -212,31 +215,31 @@ export default {
     },
     go2Logistics(row) {
       this.$axios
-        .$get(`${logistics}?orderCode=${row.orderCode}&orderId=${row.orderId}`)
+        .$get(logisticsCompanyCode, {
+          params: {
+            logisticsCompanyCode: row.logisticsCompanyCode,
+            logisticsOrder: row.logisticsCode
+          }
+        })
         .then(res => {
-          let address = res.payload.address
+          let logisticsDetail = res.payload
+          this.trackList.push(logisticsDetail)
+          this.trackDetail = logisticsDetail
 
-          this.trackList = res.payload.data
-          this.trackList.forEach(item => {
-            item.infos.forEach(info => {
-              info.date = formatDate(info.createTime, 'YYYY-MM-DD')
-              info.day = num2day[new Date(info.createTime).getUTCDay()]
-              info.time = formatDate(info.createTime, 'HH:mm:ss')
+          this.trackDetail &&
+            this.trackDetail.data.forEach(info => {
+              info.date = formatDate(info.time, 'YYYY-MM-DD')
+              info.day = num2day[new Date(info.time).getUTCDay()]
+              info.time = formatDate(info.time, 'HH:mm:ss')
             })
-          })
-          this.trackDetail.deliveryAddress =
-            (address.provinceName || '') +
-            (address.cityName || '') +
-            (address.districtName || '') +
-            ' ' +
-            (address.postcode || ' ') +
-            (address.receiverName || ' ') +
-            (address.receiverPhone || '')
         })
         .catch()
       this.orderCode = row.orderCode
       this.visible = true
       this.outerVisible = true
+    },
+    handleDetail() {
+      this.innerVisible = true
     },
     handleConfirm() {
       this.$refs.comboForm.validate(valid => {
@@ -269,3 +272,27 @@ export default {
   }
 }
 </script>
+<style scoped lang="stylus">
+.inner-dialog{
+  .el-form-item {
+    margin-bottom 0
+  }
+  .steps-body{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+
+    .steps-date {
+      margin-right 10px
+      font-weight bold
+    }
+    .steps-day {
+      margin-right 10px
+      font-weight bold
+    }
+    .steps-time {
+      margin-right 10px
+    }
+  }
+}
+</style>

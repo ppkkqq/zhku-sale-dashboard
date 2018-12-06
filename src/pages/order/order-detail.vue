@@ -199,8 +199,10 @@ export default {
         couponName,
         couponMoney
       } = this.detail
-      const integral = `${integralDiscount} / ${integralMoney}`
-      const coupon = `${couponName} / ${couponMoney}`
+      const integral = `${integralDiscount ? integralDiscount : 0} / ${price(
+        integralMoney
+      )}`
+      const coupon = `${couponName ? couponName : '-'} / ${price(couponMoney)}`
       const data = {
         订单编号: orderCode,
         订单总金额: price(itemMoney),
