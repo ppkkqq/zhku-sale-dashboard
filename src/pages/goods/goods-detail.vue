@@ -13,7 +13,7 @@
 </template>
 <script>
 import goodsTemplate from '@/components/goods-template'
-import {backendCatalogDetail, shopItems} from '@/const/api'
+import {backendCatalogDetail, shopItems, goodsListsFromSkuId} from '@/const/api'
 
 export default {
   name: 'GoodsTemplateDetail',
@@ -45,8 +45,15 @@ export default {
 
     this.loading = true
 
-    this.$axios
-      .$get(`${shopItems}/${this.$route.query.productId}`)
+    let promise
+    if (this.$route.query.skuId) {
+      promise = this.$axios.$get(goodsListsFromSkuId, {
+        params: {skuId: this.$route.query.skuId}
+      })
+    } else {
+      promise = this.$axios.$get(`${shopItems}/${this.$route.query.productId}`)
+    }
+    promise
       .then(resp => {
         this.templateDetail = resp.payload
         this.loading = false

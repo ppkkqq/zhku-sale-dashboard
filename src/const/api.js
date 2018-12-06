@@ -158,6 +158,8 @@ export const exportExcel = TRADE_CENTER + '/order/exportExcel'
 //商品
 // export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
 export const goodsLists = PRODUCT_CENTER + '/manager/pcItems/plat'
+export const goodsListsFromSkuId = PRODUCT_CENTER + '/pcItemSkus/get/item'
+
 // 商品审核
 export const goodsAudit = id => PRODUCT_CENTER + `/admin/items/${id}/status`
 export const getNeedCheckPcItem =
