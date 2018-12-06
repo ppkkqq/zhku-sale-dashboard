@@ -150,6 +150,7 @@ export const orderPlat = TRADE_CENTER + '/order/magement/orderPlat'
 
 //查询物流
 export const logistics = TRADE_CENTER + '/logistics'
+export const findLogisticsInfo = TRADE_CENTER + '/logistics/findLogisticsInfo'
 
 //商品
 // export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
