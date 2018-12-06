@@ -208,7 +208,6 @@ export default {
       extraButtons: [
         {
           text: '查看物流',
-          type: 'primary',
           show: this.showLogisticsButton,
           atClick: this.go2Logistics,
           fixed: 'left'
