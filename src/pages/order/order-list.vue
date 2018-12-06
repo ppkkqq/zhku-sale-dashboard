@@ -189,7 +189,7 @@ export default {
         },
         {
           prop: 'source',
-          label: '商品来源',
+          label: '商品渠道',
           minWidth: '120'
           // formatter: row => num2source[row.source]
         },
@@ -208,7 +208,6 @@ export default {
       extraButtons: [
         {
           text: '查看物流',
-          type: 'primary',
           show: this.showLogisticsButton,
           atClick: this.go2Logistics,
           fixed: 'left'

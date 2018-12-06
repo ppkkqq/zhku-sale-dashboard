@@ -93,35 +93,18 @@
                            label="支付方式">
           </el-table-column>
           <el-table-column prop="payStreamId"
-                           width='80'
+                           width='180'
                            label="支付流水">
           </el-table-column>
           <el-table-column prop="payChannel"
-                           width='80'
                            label="支付渠道">
           </el-table-column>
           <el-table-column prop="payMoney"
-                           width='80'
                            label="支付金额">
           </el-table-column>
           <el-table-column prop="payDateStr"
-                           width='180'
                            label="支付时间">
           </el-table-column>
-          <el-table-column prop="payDateStr"
-                           width='180'
-                           label="现金支付">
-                           <!--  -->
-          </el-table-column>
-          <el-table-column prop="payDateStr"
-                           width='180'
-                           label="源通币支付">
-                           <!--  -->
-          </el-table-column>
-          <el-table-column prop="payDateStr"
-                           width='180'
-                           label="平台">
-                           <!--  -->
           </el-table-column>
         </el-table>
       </card-table>
@@ -135,7 +118,14 @@ import CardTable from '@/components/card-table'
 import TableInfo from '@/components/table-info'
 import {orderDetail, orderDetailUpdate, orderDetailAudit} from '@/const/api'
 import {goodsDetail} from '@/const/path'
-import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
+import {
+  formatDate,
+  Object2Options,
+  toOptionsLabel,
+  price,
+  source2Object
+} from '@/const/filter'
+import {mapGetters} from 'vuex'
 
 const itemSource = {
   '0': '我买网',
@@ -195,22 +185,31 @@ export default {
       const {
         orderCode,
         itemMoney,
-        source, // 0 我买网 1自营
+        source,
         orderDateStr,
         status,
         payDateStr,
         user,
-        remark
+        remark,
+        freightMoney,
+        payMoney,
+        discountMoney,
+        integralDiscount,
+        integralMoney,
+        couponName,
+        couponMoney
       } = this.detail
+      const integral = `${integralDiscount} / ${integralMoney}`
+      const coupon = `${couponName} / ${couponMoney}`
       const data = {
         订单编号: orderCode,
         订单总金额: price(itemMoney),
-        商品来源: itemSource[source],
-        运费: itemSource[source], //
-        实付金额: itemSource[source], //
-        优惠金额: itemSource[source], //
-        '积分抵扣（分/金额）': itemSource[source], //
-        '优惠券（名称/金额）': itemSource[source], //
+        商品来源: source2Object(this.source)[source],
+        运费: price(freightMoney),
+        实付金额: price(payMoney),
+        优惠金额: price(discountMoney),
+        '积分抵扣（分/金额）': integral,
+        '优惠券（名称/金额）': coupon,
         下单时间: orderDateStr,
         支付状态: status,
         支付时间: payDateStr,
@@ -220,6 +219,7 @@ export default {
       return Object2Options(data, 'value')
     },
     deliveryInfoTable() {
+      // 收货信息
       const {
         receiverName,
         receiverEmail,
@@ -239,7 +239,8 @@ export default {
         详细地址: address
       }
       return Object2Options(data, 'value')
-    }
+    },
+    ...mapGetters(['source'])
   },
   created() {
     this.price = price
