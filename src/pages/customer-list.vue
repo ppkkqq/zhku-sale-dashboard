@@ -582,7 +582,7 @@ export default {
                 })
                 temp = true
               }
-              if (value.reaLName && value.realName.length > 20) {
+              if (value.realName && value.realName.length > 20) {
                 this.tableData.push({
                   id: this.tableData.length + 1,
                   index: index,
