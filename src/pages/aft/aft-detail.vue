@@ -372,24 +372,41 @@ export default {
         })
     },
     getStep() {
-      switch (this.trade.status) {
-        // case '确认退货':
-        case '退款中':
-          this.activeStep = 2
-          break
-        case '确认退款':
-        case '待收货':
-          this.activeStep = 3
-          break
-        case '待发货':
-          this.activeStep = 5
-          break
-        case '确认退货':
-          this.activeStep = 6
-          break
-        default:
-          this.activeStep = 1
-          break
+      if (this.detail.refundTypeCode == 1) {
+        // 退款
+        switch (this.trade.status) {
+          case '退款中':
+            this.activeStep = 2
+            break
+          case '已完成':
+            this.activeStep = 3
+            break
+          default:
+            this.activeStep = 1
+            break
+        }
+      } else if (this.detail.refundTypeCode == 2) {
+        // 退货
+        switch (this.trade.status) {
+          case '退款中':
+            this.activeStep = 2
+            break
+          case '待发货':
+            this.activeStep = 3
+            break
+          case '待收货':
+            this.activeStep = 4
+            break
+          case '确认退货':
+            this.activeStep = 5
+            break
+          case '已完成':
+            this.activeStep = 6
+            break
+          default:
+            this.activeStep = 1
+            break
+        }
       }
     },
     imgFormatter(row) {
