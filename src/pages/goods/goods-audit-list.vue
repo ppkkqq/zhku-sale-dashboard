@@ -99,11 +99,11 @@ export default {
     return {
       options: [
         {
-          value: 0,
+          value: 1,
           label: '我买网'
         },
         {
-          value: 1,
+          value: 4,
           label: '京东'
         },
         {

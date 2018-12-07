@@ -127,10 +127,6 @@ import {
 } from '@/const/filter'
 import {mapGetters} from 'vuex'
 
-const itemSource = {
-  '0': '我买网',
-  '1': '自营'
-}
 export default {
   name: 'order-detail-car',
   components: {
@@ -206,7 +202,7 @@ export default {
       const data = {
         订单编号: orderCode,
         订单总金额: price(itemMoney),
-        商品来源: source2Object(this.source)[source],
+        商品渠道: source,
         运费: price(freightMoney),
         实付金额: price(payMoney),
         优惠金额: price(discountMoney),
@@ -215,7 +211,7 @@ export default {
         下单时间: orderDateStr,
         支付状态: status,
         支付时间: payDateStr,
-        下单账号: user, //
+        会员手机号: user,
         下单备注: remark
       }
       return Object2Options(data, 'value')

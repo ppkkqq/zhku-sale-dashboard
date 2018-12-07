@@ -238,7 +238,7 @@ export default {
         currency = '',
         freightMoney = '',
         payMoney = '',
-        actualRefundMoney = ''
+        refundMoney = ''
       } = this.trade
       const data = {
         订单编号: tradeOrderId,
@@ -252,7 +252,7 @@ export default {
         国源通币: currency,
         运费: price(freightMoney),
         实付金额: price(payMoney),
-        实退款总金额: price(actualRefundMoney)
+        实退款总金额: price(refundMoney)
       }
       return Object2Options(data, 'value')
     },
@@ -268,7 +268,7 @@ export default {
         currency = '',
         freightMoney = '',
         payMoney = '',
-        actualRefundMoney = ''
+        refundMoney = ''
       } = this.trade
       const data = {
         退货单号: id,
@@ -282,7 +282,7 @@ export default {
         国源通币: currency,
         运费: price(freightMoney),
         实付金额: price(payMoney),
-        实退款总金额: price(actualRefundMoney)
+        实退款总金额: price(refundMoney)
       }
       return Object2Options(data, 'value')
     },

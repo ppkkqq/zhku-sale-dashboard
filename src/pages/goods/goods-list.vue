@@ -144,15 +144,15 @@ export default {
           $options: [
             {
               label: '我买网',
-              value: '0'
+              value: 1
             },
             {
               label: '京东',
-              value: '1'
+              value: 4
             },
             {
               label: '自营',
-              value: '2'
+              value: 2
             }
           ]
         }

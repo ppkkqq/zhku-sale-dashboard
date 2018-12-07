@@ -117,3 +117,8 @@ export const certificateType = {
   6: '驾驶证',
   7: '行驶证'
 }
+export const source = {
+  1: '我买网',
+  4: '京东',
+  2: '自营'
+}
