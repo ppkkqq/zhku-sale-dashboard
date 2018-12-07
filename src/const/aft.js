@@ -31,14 +31,14 @@ const format = {
 export const statusOpts = {
   // 退款
   under_review: '售后申请',
-  failed_review: '  审核不通过',
+  failed_review: '审核不通过',
   refunding: '审核通过',
   confirm_refund: '确认退款',
   cancel_refund: '取消售后',
 
   // 退款退货：
-  under_review: '售后申请',
-  failed_review: '审核不通过',
+  // under_review: '售后申请',
+  // failed_review: '审核不通过',
   daifahuo: '审核通过',
   daishouhuo: '录入单号',
   returning: '确认收货',
@@ -179,8 +179,8 @@ export const columns = [
   {
     prop: 'status',
     label: '售后申请状态',
-    minWidth: 120
-    // formatter: row => statusOpts[row.status]
+    minWidth: 120,
+    formatter: row => statusOpts[row.status]
   }
 ]
 
@@ -188,3 +188,14 @@ export const AUDIT = 'AUDIT'
 export const RECEIVING = 'RECEIVING'
 export const REFUND = 'REFUND'
 export const RETURN = 'RETURN'
+
+export const under_review = 'under_review'
+export const failed_review = 'failed_review'
+export const refunding = 'refunding'
+export const confirm_refund = 'confirm_refund'
+export const cancel_refund = 'cancel_refund'
+export const daifahuo = 'daifahuo'
+export const daishouhuo = 'daishouhuo'
+export const returning = 'returning'
+export const confirm_return = 'confirm_return'
+export const cancel_return = 'cancel_return'
