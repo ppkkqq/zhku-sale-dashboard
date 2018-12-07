@@ -34,15 +34,15 @@ export const statusOpts = {
   failed_review: '已拒绝',
 
   refunding: '退款中',
-  confirm_refund: '已完成',
-  cancel_refund: '已取消',
+  confirm_refund: '退款已完成',
+  cancel_refund: '退款已取消',
 
   // 退款退货：
   daifahuo: '待发货',
   daishouhuo: '待收货',
-  returning: '退款中',
-  confirm_return: '已完成',
-  cancel_return: '已取消'
+  returning: '退货中',
+  confirm_return: '退货已完成',
+  cancel_return: '退货已取消'
 }
 
 export const searchForm = [
