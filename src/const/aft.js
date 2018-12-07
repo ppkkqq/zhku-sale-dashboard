@@ -30,20 +30,19 @@ const format = {
 
 export const statusOpts = {
   // 退款
-  under_review: '售后申请',
-  failed_review: '审核不通过',
-  refunding: '审核通过',
-  confirm_refund: '确认退款',
-  cancel_refund: '取消售后',
+  under_review: '待审核',
+  failed_review: '已拒绝',
+
+  refunding: '退款中',
+  confirm_refund: '已完成',
+  cancel_refund: '已取消',
 
   // 退款退货：
-  // under_review: '售后申请',
-  // failed_review: '审核不通过',
-  daifahuo: '审核通过',
-  daishouhuo: '录入单号',
-  returning: '确认收货',
-  confirm_return: '确认退款',
-  cancel_return: '取消售后'
+  daifahuo: '待发货',
+  daishouhuo: '待收货',
+  returning: '退款中',
+  confirm_return: '已完成',
+  cancel_return: '已取消'
 }
 
 export const searchForm = [
