@@ -73,8 +73,8 @@
         <el-table :data="trackList" style="width: 100%">
           <el-table-column prop="expTextName" label="快递公司" width="180"></el-table-column>
           <el-table-column prop="mailNo" label="快递单号" width="180"></el-table-column>
-          <el-table-column prop="tel" label="快递联系电话" min-width="140"></el-table-column>
-          <el-table-column label="操作" fixed="right">
+          <el-table-column prop="tel" label="快递联系电话" min-width="180"></el-table-column>
+          <el-table-column label="操作" fixed="right" v-if="canViewInner">
             <template slot-scope="scope">
               <el-button size="mini" @click="handleDetail()">查看</el-button>
             </template>
@@ -139,11 +139,13 @@ export default {
       outerVisible: false,
       innerVisible: false,
       comboLoading: false,
+      canViewInner: false,
       reviewForm: {
         approve: 'true',
         rejectRemark: ''
       },
       orderCode: '',
+      trackCache: {},
       trackList: [],
       trackDetail: {
         deliveryAddress: '',
@@ -215,24 +217,52 @@ export default {
       this.$router.push(`${aftDetail}?refundId=${row.id}`)
     },
     go2Logistics(row) {
-      this.$axios
-        .$get(logisticsCompanyCode, {
-          params: {
-            logisticsCompanyCode: row.logisticsCompanyCode,
-            logisticsOrder: row.logisticsCode
-          }
+      let logisticsCompanyCode = row.logisticsCompanyCode
+      let logisticsCode = row.logisticsCode
+      this.trackList = []
+      if (!logisticsCompanyCode || !logisticsCode) {
+        this.$message({
+          type: 'warn',
+          message: '没有快递信息'
         })
+        return
+      }
+
+      // 缓存
+      let cache = this.trackCache[logisticsCode]
+      if (cache && cache.data) {
+        this.trackList = [cache]
+        this.trackDetail = cache
+        this.canViewInner = true
+        this.orderCode = row.orderCode
+        this.visible = true
+        this.outerVisible = true
+        return
+      }
+
+      let url = `${findLogisticsInfo}?logisticsCompanyCode=${logisticsCompanyCode}&logisticsOrder=${logisticsCode}`
+      this.$axios
+        .$post(url)
         .then(res => {
           let logisticsDetail = res.payload
-          this.trackList.push(logisticsDetail)
-          this.trackDetail = logisticsDetail
-
-          this.trackDetail &&
-            this.trackDetail.data.forEach(info => {
-              info.date = formatDate(info.time, 'YYYY-MM-DD')
-              info.day = num2day[new Date(info.time).getUTCDay()]
-              info.time = formatDate(info.time, 'HH:mm:ss')
+          if (!logisticsDetail) {
+            this.$message({
+              type: 'warn',
+              message: '没有快递信息'
             })
+            return
+          }
+          this.canViewInner = true
+
+          logisticsDetail.data.forEach(info => {
+            info.date = formatDate(info.time, 'YYYY-MM-DD')
+            info.day = num2day[new Date(info.time).getUTCDay()]
+            info.time = formatDate(info.time, 'HH:mm:ss')
+            info.remark = info.context
+          })
+          this.trackCache[logisticsDetail.mailNo] = logisticsDetail
+          this.trackList = [logisticsDetail]
+          this.trackDetail = logisticsDetail
         })
         .catch()
       this.orderCode = row.orderCode
