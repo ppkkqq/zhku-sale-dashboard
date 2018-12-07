@@ -5,27 +5,45 @@ const format = {
   money: (row, column, val) => price(val)
 }
 
+// export const statusOpts = {
+//   // 退款
+//   REFUNDING: '退款中',
+//   CONFIRM_REFUND: '确认退款',
+//   CANCEL_REFUND: '取消退款',
+//   // 退货
+//   RETURNING: '退货中',
+//   CONFIRM_RETURN: '确认退货',
+//   CANCEL_RETURN: '取消退货退款',
+//   // 换货
+//   DAISHOUHUO: '待收货',
+//   DAIFAHUO: '待发货',
+//   CONFIRM_FAHUO: '确认换货',
+//   CANCEL: '取消',
+//   FAILED_REVIEW: '审核失败',
+
+//   WAIT_AUDIT: '待审核',
+//   AUDITED: '已审核',
+//   REFUNDED: '已退款',
+//   REJECTED: '已拒绝',
+//   UNDER_REVIEW: '审核中'
+// }
+
 export const statusOpts = {
   // 退款
-  REFUNDING: '退款中',
-  CONFIRM_REFUND: '确认退款',
-  CANCEL_REFUND: '取消退款',
-  // 退货
-  RETURNING: '退货中',
-  CONFIRM_RETURN: '确认退货',
-  CANCEL_RETURN: '取消退货退款',
-  // 换货
-  DAISHOUHUO: '待收货',
-  DAIFAHUO: '待发货',
-  CONFIRM_FAHUO: '确认换货',
-  CANCEL: '取消',
-  FAILED_REVIEW: '审核失败',
+  under_review: '售后申请',
+  failed_review: '  审核不通过',
+  refunding: '审核通过',
+  confirm_refund: '确认退款',
+  cancel_refund: '取消售后',
 
-  WAIT_AUDIT: '待审核',
-  AUDITED: '已审核',
-  REFUNDED: '已退款',
-  REJECTED: '已拒绝',
-  UNDER_REVIEW: '审核中'
+  // 退款退货：
+  under_review: '售后申请',
+  failed_review: '审核不通过',
+  daifahuo: '审核通过',
+  daishouhuo: '录入单号',
+  returning: '确认收货',
+  confirm_return: '确认退款',
+  cancel_return: '取消售后'
 }
 
 export const searchForm = [
