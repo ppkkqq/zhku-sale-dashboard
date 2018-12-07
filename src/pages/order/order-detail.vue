@@ -193,7 +193,8 @@ export default {
         integralDiscount,
         integralMoney,
         couponName,
-        couponMoney
+        couponMoney,
+        crashPay
       } = this.detail
       const integral = `${integralDiscount ? integralDiscount : 0} / ${price(
         integralMoney
@@ -204,7 +205,7 @@ export default {
         订单总金额: price(itemMoney),
         商品渠道: source,
         运费: price(freightMoney),
-        实付金额: price(payMoney),
+        实付金额: price(crashPay),
         优惠金额: price(discountMoney),
         '积分抵扣（分/金额）': integral,
         '优惠券（名称/金额）': coupon,
