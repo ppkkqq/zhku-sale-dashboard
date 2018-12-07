@@ -133,18 +133,12 @@
 import {mapGetters, mapState} from 'vuex'
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
 import {orderList, logistics, exportExcel} from '@/const/api'
+import {source} from '@/const/config'
 import qs from 'qs'
-import {
-  formatDate,
-  price,
-  toOptionsLabel,
-  options2Object,
-  source2Options
-} from '@/const/filter'
+import {formatDate, price, toOptionsLabel, source2Options} from '@/const/filter'
 
 import searchFormMixin from '@/mixins/search-form-slot'
 
-const num2source = ['我买网订单', '自营订单']
 const num2day = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
 const status2chinese = {
   to_be_paid: '待支付',
@@ -233,7 +227,20 @@ export default {
           $type: 'input'
         },
         {
-          $options: [],
+          $options: [
+            {
+              label: '我买网',
+              value: 1
+            },
+            {
+              label: '自营',
+              value: 2
+            },
+            {
+              label: '京东',
+              value: 4
+            }
+          ],
           $el: {placeholder: '请输入商品渠道'},
           label: '商品渠道',
           $id: 'source',
@@ -417,11 +424,14 @@ export default {
       token: function(state) {
         return state.token
       }
-    }),
-    ...mapGetters(['source'])
+    })
+    // ...mapGetters(['source'])
   },
   created() {
-    this.searchForm[1].$options = source2Options(this.source)
+    // this.source2Options = source2Options
+    this.source = source
+    // this.searchForm[1].$options =
+    // this.searchForm[1].$options = source2Options(this.source)
   }
 }
 </script>
