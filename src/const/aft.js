@@ -66,7 +66,7 @@ export const searchForm = [
       placeholder: '请输入'
     },
     label: '商品渠道',
-    $id: 'source',
+    $id: 'orderPlat',
     $type: 'select',
     $options: [
       {
@@ -77,6 +77,10 @@ export const searchForm = [
         label: '自营',
         value: 1
       }
+      // {
+      //   label: '京东',
+      //   value: 2
+      // },
     ]
   },
   {

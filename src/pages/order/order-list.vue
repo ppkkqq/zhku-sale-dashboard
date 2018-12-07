@@ -7,6 +7,7 @@
       totalPath="payload.total"
       dataPath="payload.orderList"
       :customQuery="customQuery"
+      :headerButtons="headerButtons"
       :hasNew="false"
       :hasEdit="false"
       :hasDelete="false"
@@ -16,6 +17,7 @@
       :extraButtons="extraButtons"
       :searchForm="searchForm"
       @reset="handleReset"
+      @update="saveImportData"
       :operationAttrs="operationAttrs"
     >
       <template slot="search">
@@ -128,10 +130,20 @@
 </template>
 
 <script>
+import {mapGetters, mapState} from 'vuex'
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
-import {formatDate, price, toOptionsLabel, options2Object} from '@/const/filter'
-import {orderList, logistics} from '@/const/api'
+import {orderList, logistics, exportExcel} from '@/const/api'
+import qs from 'qs'
+import {
+  formatDate,
+  price,
+  toOptionsLabel,
+  options2Object,
+  source2Options
+} from '@/const/filter'
+
 import searchFormMixin from '@/mixins/search-form-slot'
+
 const num2source = ['我买网订单', '自营订单']
 const num2day = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
 const status2chinese = {
@@ -151,6 +163,7 @@ export default {
     return {
       pageName: 'order-list',
       url: orderList,
+      exportQuery: {},
       columns: [
         {
           prop: 'orderCode',
@@ -183,8 +196,8 @@ export default {
         {
           prop: 'source',
           label: '商品渠道',
-          minWidth: '120',
-          formatter: row => num2source[row.source]
+          minWidth: '120'
+          // formatter: row => num2source[row.source]
         },
         {
           prop: 'orderStatusName',
@@ -195,13 +208,12 @@ export default {
           prop: 'orderDate',
           label: '下单时间',
           minWidth: '150',
-          formatter: row => formatDate(row.orderDate, 'YYYY-MM-DD HH:mm')
+          formatter: row => formatDate(row.orderDate, 'YYYY-MM-DD HH:mm:ss')
         }
       ],
       extraButtons: [
         {
           text: '查看物流',
-          type: 'primary',
           show: this.showLogisticsButton,
           atClick: this.go2Logistics,
           fixed: 'left'
@@ -221,17 +233,8 @@ export default {
           $type: 'input'
         },
         {
-          $options: [
-            {
-              value: '0',
-              label: '我买网订单'
-            },
-            {
-              value: '1',
-              label: '自营订单'
-            }
-          ],
-          $el: {placeholder: '请选择商品渠道'},
+          $options: [],
+          $el: {placeholder: '请输入商品渠道'},
           label: '商品渠道',
           $id: 'source',
           $type: 'select'
@@ -287,6 +290,18 @@ export default {
           label: '支付渠道',
           $id: 'payChannel',
           $type: 'select'
+        }
+      ],
+      headerButtons: [
+        {
+          text: '导出订单信息',
+          type: 'primary',
+          atClick: () => {
+            window.open(
+              `${exportExcel}?${qs.stringify(this.exportQuery)}`,
+              '_blank'
+            )
+          }
         }
       ],
       payTime: '',
@@ -383,9 +398,31 @@ export default {
       this.trackDetail.phone = this.trackList[index].phone
       this.trackDetail.infos = this.trackList[index].infos
       this.innerVisible = true
+    },
+    saveImportData() {
+      let memberData = this.$refs.dataTable.$refs.searchForm.getFormValue()
+      let authInfo = {
+        token: this.token,
+        tenantCode: this.tenantCode,
+        shopOrPlat: 'plat'
+      }
+      Object.assign(this.exportQuery, memberData, this.customQuery, authInfo)
     }
   },
-  computed: {}
+  computed: {
+    ...mapState({
+      tenantCode: function(state) {
+        return state.tenantCode
+      },
+      token: function(state) {
+        return state.token
+      }
+    }),
+    ...mapGetters(['source'])
+  },
+  created() {
+    this.searchForm[1].$options = source2Options(this.source)
+  }
 }
 </script>
 

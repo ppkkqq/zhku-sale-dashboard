@@ -27,6 +27,10 @@
                            :show-overflow-tooltip="true"
                            label="商品名称">
           </el-table-column>
+          <el-table-column prop="propName"
+                           min-width='120'
+                           label="商品规格">
+          </el-table-column>
           <el-table-column prop="sellPrice"
                            min-width='120'
                            label="商品单价（元）"
@@ -41,15 +45,13 @@
                            label="合计金额"
                            :formatter="row =>price(row.itemMoney)">
           </el-table-column>
-          <el-table-column prop="freight"
+          <!-- <el-table-column prop="freight"
                            min-width='100'
-                           label="运费"
-                           :formatter="row =>price(row.freight)">
+                           label="运费">
           </el-table-column>
           <el-table-column prop="discountMoney"
                            min-width='100'
-                           label="优惠金额"
-                           :formatter="row =>price(row.discountMoney)">
+                           label="优惠金额">
           </el-table-column>
           <el-table-column prop="integrationMoney"
                            min-width='160'
@@ -58,6 +60,18 @@
           <el-table-column prop="couponMoney"
                            min-width='160'
                            label="优惠券（名称/金额）">
+          </el-table-column> -->
+          <el-table-column prop="operation"
+                           min-width='160'
+                           label="操作">
+            <template slot-scope="scope">
+              <el-button
+                size="medium"
+                center
+                type="primary"
+                @click="goDetail(scope.row)">查看商品详情
+              </el-button>
+            </template>
           </el-table-column>
         </el-table>
       </card-table>
@@ -67,9 +81,9 @@
 
       <card-table header="订单支付信息"
                   v-if="payList.length>0">
-        <el-row  class="row-bg">
+        <el-row class="row-bg">
           <el-col :span="12" style="margin-bottom: 20px">订单编号: {{detail.orderCode}}</el-col>
-          <el-col :span="12" style="margin-bottom: 20px">国源通币支付: {{detail.currencyPay}}</el-col>
+          <el-col :span="12" style="margin-bottom: 20px">源通币支付: {{detail.currencyPay}}</el-col>
           <el-col :span="12" style="margin-bottom: 20px">现金支付: {{detail.crashPay}}</el-col>
         </el-row>
         <el-table :data="payList"
@@ -79,20 +93,18 @@
                            label="支付方式">
           </el-table-column>
           <el-table-column prop="payStreamId"
-                           width='80'
+                           width='180'
                            label="支付流水">
           </el-table-column>
           <el-table-column prop="payChannel"
-                           width='80'
-                           label="支付通道">
+                           label="支付渠道">
           </el-table-column>
           <el-table-column prop="payMoney"
-                           width='80'
                            label="支付金额">
           </el-table-column>
           <el-table-column prop="payDateStr"
-                           width='180'
                            label="支付时间">
+          </el-table-column>
           </el-table-column>
         </el-table>
       </card-table>
@@ -104,8 +116,16 @@
 import GoBack from '@/components/GoBack'
 import CardTable from '@/components/card-table'
 import TableInfo from '@/components/table-info'
-import {orderDetail} from '@/const/api'
-import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
+import {orderDetail, orderDetailUpdate, orderDetailAudit} from '@/const/api'
+import {goodsDetail} from '@/const/path'
+import {
+  formatDate,
+  Object2Options,
+  toOptionsLabel,
+  price,
+  source2Object
+} from '@/const/filter'
+import {mapGetters} from 'vuex'
 
 const itemSource = {
   '0': '我买网',
@@ -121,7 +141,7 @@ export default {
   data() {
     return {
       loading: false,
-      detail: {} //订单详情
+      detail: {} //订单详情,
     }
   },
   methods: {
@@ -134,19 +154,18 @@ export default {
         .$get(`${orderDetail}?orderId=${this.orderId}`)
         .then(result => {
           this.detail = result.payload
-          // this.detail.payList = [
-          //   {
-          //     payType: '', //支付方式
-          //     payStreamId: '', //支付流水id
-          //     payChannel: '', //支付通道
-          //     payMoney: '', //支付金额
-          //     payDateStr: '' //支付时间
-          //   }
-          // ]
         })
         .finally(() => {
           this.loading = false
         })
+    },
+    goDetail(row) {
+      this.$router.push({
+        path: goodsDetail,
+        query: {
+          skuId: row.skuId
+        }
+      })
     }
   },
   computed: {
@@ -166,26 +185,43 @@ export default {
       const {
         orderCode,
         itemMoney,
-        source, // 0 我买网 1自营
+        source,
         orderDateStr,
         status,
         payDateStr,
         user,
-        remark
+        remark,
+        freightMoney,
+        payMoney,
+        discountMoney,
+        integralDiscount,
+        integralMoney,
+        couponName,
+        couponMoney
       } = this.detail
+      const integral = `${integralDiscount ? integralDiscount : 0} / ${price(
+        integralMoney
+      )}`
+      const coupon = `${couponName ? couponName : '-'} / ${price(couponMoney)}`
       const data = {
         订单编号: orderCode,
         订单总金额: price(itemMoney),
-        商品来源: itemSource[source],
+        商品来源: source2Object(this.source)[source],
+        运费: price(freightMoney),
+        实付金额: price(payMoney),
+        优惠金额: price(discountMoney),
+        '积分抵扣（分/金额）': integral,
+        '优惠券（名称/金额）': coupon,
         下单时间: orderDateStr,
         支付状态: status,
         支付时间: payDateStr,
-        下单账号: user,
+        下单账号: user, //
         下单备注: remark
       }
       return Object2Options(data, 'value')
     },
     deliveryInfoTable() {
+      // 收货信息
       const {
         receiverName,
         receiverEmail,
@@ -195,7 +231,6 @@ export default {
         area,
         address
       } = this.detail
-
       const data = {
         收货人: receiverName,
         收货人邮箱: receiverEmail,
@@ -206,7 +241,8 @@ export default {
         详细地址: address
       }
       return Object2Options(data, 'value')
-    }
+    },
+    ...mapGetters(['source'])
   },
   created() {
     this.price = price
@@ -218,7 +254,7 @@ export default {
 </script>
 
 <style lang="stylus">
-.order-detail {
-  position: relative;
-}
+  .order-detail {
+    position: relative;
+  }
 </style>
