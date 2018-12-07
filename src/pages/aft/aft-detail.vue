@@ -8,7 +8,7 @@
         <go-back class="ml-2"></go-back>
         <h2>
           售后申请状态：
-          <span class="red">{{this.trade.status ? this.trade.status : ''}}</span>
+          <span class="red">{{this.trade.status ? statusOpts[this.trade.status] : ''}}</span>
         </h2>
       </div>
       <h3 class="mb-1">{{type == REFUND ? '退款流转过程' : '退货流转过程'}}</h3>
@@ -130,7 +130,21 @@ import TableInfo from '@/components/table-info'
 import {refundDetail} from '@/const/api'
 import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
-import {statusOpts, REFUND, RETURN} from '@/const/aft'
+import {
+  statusOpts,
+  REFUND,
+  RETURN,
+  under_review,
+  failed_review,
+  refunding,
+  confirm_refund,
+  cancel_refund,
+  daifahuo,
+  daishouhuo,
+  returning,
+  confirm_return,
+  cancel_return
+} from '@/const/aft'
 import GoBack from '@/components/GoBack'
 import Viewer from 'viewer'
 
@@ -375,10 +389,10 @@ export default {
       if (this.detail.refundTypeCode == 1) {
         // 退款
         switch (this.trade.status) {
-          case '退款中':
+          case refunding: //'退款中':
             this.activeStep = 2
             break
-          case '已完成':
+          case confirm_refund: //'已完成':
             this.activeStep = 3
             break
           default:
@@ -388,19 +402,19 @@ export default {
       } else if (this.detail.refundTypeCode == 2) {
         // 退货
         switch (this.trade.status) {
-          case '退款中':
+          case refunding: // '退款中':
             this.activeStep = 2
             break
-          case '待发货':
+          case daifahuo: //'待发货':
             this.activeStep = 3
             break
-          case '待收货':
+          case daishouhuo: //'待收货':
             this.activeStep = 4
             break
-          case '确认退货':
+          case returning: // '确认退货':
             this.activeStep = 5
             break
-          case '已完成':
+          case confirm_return: //'已完成':
             this.activeStep = 6
             break
           default:
