@@ -7,8 +7,8 @@
         </h2>-->
         <go-back class="ml-2"></go-back>
         <h2>
-          订单状态：
-          <span class="red">{{toOptionsLabel(this.trade.orderStatus, orderStatusOptions)}}</span>
+          售后申请状态：
+          <span class="red">{{this.trade.status ? this.trade.status : ''}}</span>
         </h2>
       </div>
       <h3 class="mb-1">{{type == REFUND ? '退款流转过程' : '退货流转过程'}}</h3>
@@ -212,8 +212,7 @@ export default {
         },
         {prop: 'payMoney', label: '实际退款'}
       ],
-      isShowRefundDes: false,
-      activeStep: 0
+      isShowRefundDes: false
     }
   },
   computed: {
@@ -366,6 +365,7 @@ export default {
         .$get(refundDetail + `?id=${this.query.refundId}`)
         .then(resp => {
           this.detail = resp.payload
+          this.getStep()
         })
         .catch(err => {
           this.$message.error('获取退款详情失败! 请稍后再试!')
@@ -373,7 +373,7 @@ export default {
     },
     getStep() {
       switch (this.trade.status) {
-        case '确认退货':
+        // case '确认退货':
         case '退款中':
           this.activeStep = 2
           break
