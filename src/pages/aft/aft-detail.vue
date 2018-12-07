@@ -7,8 +7,8 @@
         </h2>-->
         <go-back class="ml-2"></go-back>
         <h2>
-          订单状态：
-          <span class="red">{{toOptionsLabel(this.trade.orderStatus, orderStatusOptions)}}</span>
+          售后申请状态：
+          <span class="red">{{this.trade.status}}</span>
         </h2>
       </div>
       <h3 class="mb-1">{{type == REFUND ? '退款流转过程' : '退货流转过程'}}</h3>
