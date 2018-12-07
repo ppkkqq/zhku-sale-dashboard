@@ -474,7 +474,7 @@ export default {
     importExcel(file) {
       // console.log(file)
       const types = file.name.split('.')[1]
-      if (types == 'csv') {
+      if (types !== 'csv') {
         this.$notify({
           title: '提示',
           message: `文件格式不正确，只支持.csv文件`,
