@@ -211,7 +211,7 @@ export default {
         下单时间: orderDateStr,
         支付状态: status,
         支付时间: payDateStr,
-        下单账号: user, //
+        会员手机号: user,
         下单备注: remark
       }
       return Object2Options(data, 'value')
