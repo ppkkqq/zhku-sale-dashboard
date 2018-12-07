@@ -97,7 +97,19 @@ module.exports = {
     meta: [
       {charset: 'utf-8'},
       {name: 'viewport', content: 'width=device-width, initial-scale=1'},
-      {'http-equiv': 'x-ua-compatible', content: 'IE=edge, chrome=1'}
+      {'http-equiv': 'x-ua-compatible', content: 'IE=edge, chrome=1'},
+      {
+        'http-equiv': 'Cache-Control',
+        content: 'no-cache, no-store, must-revalidate'
+      },
+      {
+        'http-equiv': 'Pragma',
+        content: 'no-cache'
+      },
+      {
+        'http-equiv': 'Expires',
+        content: '0'
+      }
     ],
     link: [
       {

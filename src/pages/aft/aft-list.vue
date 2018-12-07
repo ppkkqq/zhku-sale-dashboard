@@ -112,7 +112,13 @@
 <script>
 import {orderStatusOptions, orderTypeOptions} from '@/const/config'
 import {refundList, refundAudit, findLogisticsInfo} from '@/const/api'
-import {statusOpts, searchForm, columns} from '@/const/aft'
+import {
+  statusOpts,
+  searchForm,
+  columns,
+  daishouhuo,
+  returning
+} from '@/const/aft'
 import {aftDetail} from '@/const/path'
 import {formatDate} from '@/const/filter'
 
@@ -126,7 +132,7 @@ export default {
       pageName: 'aft-list',
       url: refundList,
       operationAttrs: {
-        width: 160,
+        width: 180,
         fixed: 'right'
       },
       dialogVisible: false,
@@ -159,13 +165,8 @@ export default {
         // },
         {
           text: '查看物流',
-          type: 'primary',
           show: row => {
-            return (
-              row.status === '待收货' ||
-              row.status === '已完成' ||
-              row.status === '已评价'
-            )
+            return row.status === daishouhuo || row.status === returning
           },
           atClick: this.go2Logistics
         }
