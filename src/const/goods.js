@@ -144,7 +144,7 @@ export const tplStatus = {
 }
 
 export const channel = {
-  0: '我买网',
-  1: '京东',
+  1: '我买网',
+  4: '京东',
   2: '自营'
 }

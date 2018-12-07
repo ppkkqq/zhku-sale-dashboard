@@ -40,7 +40,7 @@ export default {
         },
         {
           prop: 'userName',
-          label: '用户名称'
+          label: '操作人员'
         },
         {
           prop: 'batchAmt',

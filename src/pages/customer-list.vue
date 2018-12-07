@@ -107,9 +107,29 @@
       :http-request="httpRequest"
       show-file-list
       :on-success='onSuccess'
-      :file-list="[]">
+      :file-list="fileList">
       <el-button slot="trigger" size="small" type="primary" v-loading='importLoading'></el-button>
     </el-upload>
+    <el-dialog title="错误提示" :visible.sync="dialogVisible"
+    >
+      <span>上传文件共{{totalLength}}条数据，校验合格{{totalLength-errorLength}}，有{{errorLength}}条数据检验未通过，请修改重新导入！</span>
+      <el-table :data="tableData" style="width: 70%"
+                v-bind="tableAttrs">
+        <el-table-column
+          prop="id"
+          label="序号"
+          min-width="30">
+        </el-table-column>
+        <el-table-column
+          prop="content"
+          label="提示内容"
+          min-width="180"
+          style="color: red;"
+          :formatter="(row)=>{return `第${row.index+1}行,${row.content}`}"
+        >
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -128,6 +148,9 @@ import {integer, positiveInteger, telPattern} from '@/const/pattern'
 import qs from 'qs'
 import cookie from 'js-cookie'
 import {mapState} from 'vuex'
+import XLSX from 'xlsx'
+import {emailPattern} from '@/const/pattern'
+
 const dialogTitle = {
   batch: '批量充值',
   single: '国源通币充值'
@@ -177,6 +200,21 @@ export default {
       }
     }
     return {
+      totalLength: 0,
+      errorLength: 0,
+      fileList: [],
+      response: {},
+      xlsxJson: [],
+      resultArray: [],
+      leadingIn: '导入excel表格',
+      loading: false,
+      dialogVisible: false,
+      tableData: [
+        {
+          id: '',
+          content: ''
+        }
+      ],
       pageName: 'customer-list',
       url: mcMemberInfos, //总部端分页查询
       totalPath: 'payload.totalElements',
@@ -229,7 +267,6 @@ export default {
         startLastLoginTime: '',
         endLastLoginTime: ''
       },
-      loading: false,
       operationAttrs: {
         width: '200px',
         fixed: 'right'
@@ -252,22 +289,22 @@ export default {
               '_blank'
             )
           }
+        },
+        {
+          text: '导入会员',
+          type: 'primary',
+          atClick: () => {
+            // 模拟点击导入组件
+            this.$refs.upload.$el.querySelector('[type=file]').click()
+          }
+        },
+        {
+          text: '下载导入模板',
+          type: 'primary',
+          atClick: () => {
+            window.open(`${memberImportTem}`, '_blank')
+          }
         }
-        // {
-        //   text: '导入会员',
-        //   type: 'primary',
-        //   atClick: () => {
-        //     // 模拟点击导入组件
-        //     this.$refs.upload.$el.querySelector('[type=file]').click()
-        //   }
-        // },
-        // {
-        //   text: '下载导入模板',
-        //   type: 'primary',
-        //   atClick: () => {
-        //     window.open(`${memberImportTem}`, '_blank')
-        //   }
-        // }
       ],
       extraButtons: [
         {
@@ -309,7 +346,17 @@ export default {
       currentDialog: single,
       topUpDialogVisible: false,
       exportQuery: {},
-      importLoading: false
+      importLoading: false,
+      tableAttrs: {
+        'tooltip-effect': 'light',
+        'cell-style': e => {
+          const row = e.row
+          const typeToColor = {
+            content: 'red'
+          }
+          return {color: typeToColor[e.column.property]}
+        }
+      }
     }
   },
   components: {
@@ -328,9 +375,7 @@ export default {
       }
     }),
     importUrl() {
-      return (
-        '/pmsX-api/api/v1/admin/manhours/manhourbacktrack?token=' + this.token
-      )
+      return '/mall-deepexi-member-center/api/v1/mcMemberAccounts/importExcel'
     }
   },
   watch: {
@@ -427,14 +472,31 @@ export default {
     },
     // 导入excel，csv格式
     importExcel(file) {
+      // console.log(file)
       const types = file.name.split('.')[1]
+      if (types == 'csv') {
+        this.$notify({
+          title: '提示',
+          message: `文件格式不正确，只支持.csv文件`,
+          type: 'error'
+        })
+        return
+      }
       this.fileExcel(file).then(tabJson => {
+        // console.log(tabJson)
         if (tabJson && tabJson.length > 0) {
           this.xlsxJson = tabJson
         }
-        if (this.xlsxJson.length > 0) {
-          this.submitUpload()
+        if (this.totalLength > 1000) {
+          this.openError()
+          return
+        }
+        if (this.tableData.length) {
+          // 有错误！！！！
+          this.dialogVisible = true
+        } else {
           this.importLoading = true
+          this.submitUpload()
         }
       })
     },
@@ -443,40 +505,26 @@ export default {
     },
     openSuccess() {
       this.$notify({
-        title: '工时补录',
-        message: '上传成功',
+        title: '提示',
+        message: `上传文件共${this.totalLength}条数据，成功导入${
+          this.totalLength
+        }条！`,
         type: 'success'
       })
     },
-    openFail() {
-      this.$notify.error({
-        title: '工时补录',
-        message: '工时类型应该是加班或正常'
+    openError() {
+      this.$notify({
+        title: '提示',
+        message: `单次导入只支持1000条（含）以内记录！`,
+        type: 'error'
       })
     },
     onSuccess(response, file, fileList) {
       this.$refs.upload.clearFiles()
     },
-    transferCouponValueTime(startDate, valueTime) {
-      var date = new Date(startDate)
-      var newDate = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate() - 1 + valueTime
-      )
-      var year1 = date.getFullYear()
-      var month1 = date.getMonth() + 1
-      var day1 = date.getDate()
-      var year2 = newDate.getFullYear() - 70
-      var month2 = newDate.getMonth() + 1
-      var day2 = newDate.getDate()
-      if (day2 > 10) {
-        return year2 + '-' + month2 + '-' + day2
-      } else {
-        return year2 + '-' + month2 + '-' + '0' + day2
-      }
-    },
     fileExcel(file) {
+      this.tableData = []
+      this.resultArray = []
       return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = e => {
@@ -497,55 +545,101 @@ export default {
           wb.SheetNames.forEach(sheetName => {
             result.push({
               sheetName: sheetName,
-              // sheet: XLSX.utils.sheet_to_json(wb.Sheets[sheetName])
-              sheet: XLSX.utils.sheet_to_csv(wb.Sheets[sheetName])
+              sheet: XLSX.utils.sheet_to_json(wb.Sheets[sheetName])
             })
           })
-          console.log(wb)
-          console.log(result)
           result.forEach((value, index) => {
-            if (value.sheet.length > 0) {
-              value.sheet.forEach((Ovalue, Oindex) => {
-                // let mapKey = {
-                //   任务内容: 'taskContent',
-                //   工时: 'manHour',
-                //   工时类型: 'hourType',
-                //   漏填时间: 'fillDate',
-                //   用户名: 'name',
-                //   项目名称: 'projectName'
-                // }
+            if (result[index].sheet.length > 0) {
+              result[index].sheet.forEach((Ovalue, Oindex) => {
                 let mapKey = {
-                  昵称: 'nickName',
-                  姓名: 'name',
-                  手机号: 'mobile',
-                  性别: 'gender',
-                  生日: 'birth',
+                  '昵称(20字符以内)': 'nickName',
+                  '姓名(20字符以内)': 'realName',
+                  '手机号(不可为空)': 'mobile',
+                  '性别(男/女)': 'gender',
+                  生日: 'birthday',
                   邮箱: 'email'
                 }
                 resuleChange = Object.keys(Ovalue).reduce((result, key) => {
-                  result[mapKey[key]] = Ovalue[key]
-
+                  result[mapKey[key]] = Ovalue[key].toString()
                   return result
                 }, {})
-
+                resuleChange.birthday = formatDate(
+                  new Date(1900, 0, resuleChange.birthday - 1),
+                  'YYYY-MM-DD'
+                )
+                // resuleChange.birthday = formatDate('a', 'YYYY-MM-DD')
                 this.resultArray.push(resuleChange)
               })
             }
           })
-          this.resultArray.forEach((value, index) => {
-            if (value.hourType == '加班') {
-              value.hourType = 1
-              value.fillDate = this.transferCouponValueTime(1, value.fillDate)
-            } else if (value.hourType == '正常') {
-              value.hourType = 0
-              value.fillDate = this.transferCouponValueTime(1, value.fillDate)
-            } else {
-              value.hourType = 2
-              this.resultArray = []
-              this.openFail()
-              this.$refs.upload.clearFiles()
-            }
-          })
+          this.totalLength = this.resultArray.length
+
+          console.log(this.totalLength)
+          if (this.totalLength < 1000) {
+            this.errorLength = 0
+            this.resultArray.forEach((value, index) => {
+              let temp = false
+              if (
+                value.nickName &&
+                (value.nickName.length < 2 || value.nickName.length > 20)
+              ) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '昵称格式不对，昵称长度为2-20个字符'
+                })
+                temp = true
+              }
+              if (value.realName && value.realName.length > 20) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '姓名格式不对，姓名长度最多20个字符'
+                })
+                temp = true
+              }
+              if (!/^1[3456789]\d{9}$/.test(value.mobile) || !value.mobile) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '手机格式不对'
+                })
+                temp = true
+              }
+              if (
+                value.gender &&
+                value.gender !== '男' &&
+                value.gender !== '女'
+              ) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '性别格式不对，性别只能为男，女'
+                })
+                temp = true
+              }
+              if (value.birthday && value.birthday == 'NaN-NaN-NaN') {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '生日格式不对，生日格式为yyyy-mm-dd'
+                })
+                temp = true
+              }
+              if (value.email && !emailPattern.test(value.email)) {
+                this.tableData.push({
+                  id: this.tableData.length + 1,
+                  index: index,
+                  content: '邮箱格式不对'
+                })
+                temp = true
+              }
+              if (temp) {
+                this.errorLength += 1
+              }
+            })
+          }
+
           resolve(this.resultArray)
         }
         reader.readAsBinaryString(file.raw)
@@ -553,8 +647,12 @@ export default {
     },
     httpRequest() {
       //自定义上传的实现
+      // console.log(this.errorLength,this.totalLength)
+      if (this.errorLength > 0 || this.totalLength > 1000) {
+        // return
+      }
       this.$axios
-        .post(this.url, this.resultArray)
+        .post(this.importUrl, this.resultArray)
         .then(response => {
           if (response.data.length > 0) {
             this.openSuccess()
@@ -565,9 +663,26 @@ export default {
         })
         .catch(error => {
           if (error.response) {
-            this.$refs.upload.clearFiles()
-            this.resultArray = []
-            this.importLoading = false
+            if (error.response.status == 400) {
+              // this.$notify({
+              //   title: '提示',
+              //   message: `单次导入只支持1000条（含）以内记录！`,
+              //   type: 'error'
+              // })
+            }
+            if (error.response.status == 406) {
+              let str = error.response.data.payload
+              let temp = JSON.parse(str)
+              // console.log(temp)
+              temp.result.forEach((item, index) => {
+                item.id = index + 1
+              })
+              this.$refs.upload.clearFiles()
+              this.tableData = temp.result
+              this.resultArray = []
+              this.dialogVisible = true
+              this.importLoading = false
+            }
           }
         })
     }

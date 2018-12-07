@@ -7,12 +7,12 @@
         </h2>-->
         <go-back class="ml-2"></go-back>
         <h2>
-          订单状态：
-          <span class="red">{{toOptionsLabel(this.trade.orderStatus, orderStatusOptions)}}</span>
+          售后申请状态：
+          <span class="red">{{this.trade.status ? this.trade.status : ''}}</span>
         </h2>
       </div>
       <h3 class="mb-1">{{type == REFUND ? '退款流转过程' : '退货流转过程'}}</h3>
-      <el-steps :active="1" align-center v-if="type != REFUND">
+      <el-steps :active="activeStep" align-center v-if="type != REFUND">
         <el-step title="提交订单" description></el-step>
         <el-step title="商家审核通过" description></el-step>
         <el-step title="买家寄回货物" description></el-step>
@@ -20,15 +20,28 @@
         <el-step title="验收货物" description></el-step>
         <el-step title="已完成" description></el-step>
       </el-steps>
-      <el-steps :active="1" align-center v-if="type == REFUND">
+      <el-steps :active="activeStep" align-center v-if="type == REFUND">
         <el-step title="提交申请" description></el-step>
         <el-step title="商家审核通过" description></el-step>
         <el-step title="退款已受理" description></el-step>
       </el-steps>
       <card-table>
-        <table-info :table="orderInfoTableForReturn" v-if="type != REFUND"></table-info>
-        <table-info :table="orderInfoTableForRefund" v-if="type == REFUND"></table-info>
+        <table-info :table="orderInfoTableForReturn" v-if="type != REFUND" @send="show"></table-info>
+        <table-info :table="orderInfoTableForRefund" v-if="type == REFUND" @send="show"></table-info>
       </card-table>
+      <div class="showRefundDes" v-if="isShowRefundDes">
+        <div style="margin: 20px 30px;">内容说明<p style="margin: 10px 0 0 20px;">{{detail.description}}</p></div>
+        <i class="el-icon-close" style="position: absolute;top: 10px;right: 10px;cursor:pointer;" @click="isShowRefundDes=false"></i>
+        <div v-if="detail.refundProofUrlList">
+          <p style="margin: 20px 30px;">图片</p>
+          <ul class="refundImgs">
+            <li v-for="(url) in detail.refundProofUrlList">
+              <viewer :height="'100%'" :width="'100%'" :src=url
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
       <div class="refund-table-info">
         <card-table header="退款人信息" v-if="type == REFUND">
           <table class="table-info-one-column">
@@ -119,13 +132,15 @@ import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
 import {statusOpts, REFUND, RETURN} from '@/const/aft'
 import GoBack from '@/components/GoBack'
+import Viewer from 'viewer'
 
 export default {
   name: 'refund-detail',
   components: {
     CardTable,
     TableInfo,
-    GoBack
+    GoBack,
+    Viewer
   },
   data() {
     return {
@@ -133,6 +148,7 @@ export default {
       REFUND: REFUND,
       RETURN: RETURN,
       url: '',
+      activeStep: 1,
       extraParams: {},
       detail: {},
       statusOpts,
@@ -195,7 +211,8 @@ export default {
           formatter: row => price(row.quantity * row.itemMoney)
         },
         {prop: 'payMoney', label: '实际退款'}
-      ]
+      ],
+      isShowRefundDes: false
     }
   },
   computed: {
@@ -220,7 +237,7 @@ export default {
         currency = '',
         freightMoney = '',
         payMoney = '',
-        actualRefundMoney = ''
+        refundMoney = ''
       } = this.trade
       const data = {
         订单编号: tradeOrderId,
@@ -234,7 +251,7 @@ export default {
         国源通币: currency,
         运费: price(freightMoney),
         实付金额: price(payMoney),
-        实退款总金额: price(actualRefundMoney)
+        实退款总金额: price(refundMoney)
       }
       return Object2Options(data, 'value')
     },
@@ -250,7 +267,7 @@ export default {
         currency = '',
         freightMoney = '',
         payMoney = '',
-        actualRefundMoney = ''
+        refundMoney = ''
       } = this.trade
       const data = {
         退货单号: id,
@@ -264,7 +281,7 @@ export default {
         国源通币: currency,
         运费: price(freightMoney),
         实付金额: price(payMoney),
-        实退款总金额: price(actualRefundMoney)
+        实退款总金额: price(refundMoney)
       }
       return Object2Options(data, 'value')
     },
@@ -340,11 +357,15 @@ export default {
     }
   },
   methods: {
+    show(h) {
+      this.isShowRefundDes = h
+    },
     getDetail() {
       this.$axios
         .$get(refundDetail + `?id=${this.query.refundId}`)
         .then(resp => {
           this.detail = resp.payload
+          this.getStep()
         })
         .catch(err => {
           this.$message.error('获取退款详情失败! 请稍后再试!')
@@ -352,19 +373,22 @@ export default {
     },
     getStep() {
       switch (this.trade.status) {
-        case '确认退货':
+        // case '确认退货':
         case '退款中':
-          this.active = 2
+          this.activeStep = 2
           break
         case '确认退款':
         case '待收货':
-          this.active = 3
+          this.activeStep = 3
           break
         case '待发货':
-          this.active = 5
+          this.activeStep = 5
           break
         case '确认退货':
-          this.active = 6
+          this.activeStep = 6
+          break
+        default:
+          this.activeStep = 1
           break
       }
     },
@@ -487,5 +511,22 @@ export default {
       word-wrap: break-word
     }
   }
+}
+.showRefundDes {
+  width: 500px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  position: fixed;
+  z-index: 3000
+  top: 10%;
+  left: 30%;
+  padding-bottom: 20px;
+}
+.showRefundDes .refundImgs li{
+  display: inline-block;
+  list-style: none;
+  width: 120px;
+  height: 120px;
+  margin: 12px;
 }
 </style>
