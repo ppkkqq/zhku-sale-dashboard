@@ -474,6 +474,14 @@ export default {
     importExcel(file) {
       // console.log(file)
       const types = file.name.split('.')[1]
+      if (types == 'csv') {
+        this.$notify({
+          title: '提示',
+          message: `文件格式不正确，只支持.csv文件`,
+          type: 'error'
+        })
+        return
+      }
       this.fileExcel(file).then(tabJson => {
         // console.log(tabJson)
         if (tabJson && tabJson.length > 0) {
