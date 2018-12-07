@@ -26,9 +26,22 @@
         <el-step title="退款已受理" description></el-step>
       </el-steps>
       <card-table>
-        <table-info :table="orderInfoTableForReturn" v-if="type != REFUND"></table-info>
-        <table-info :table="orderInfoTableForRefund" v-if="type == REFUND"></table-info>
+        <table-info :table="orderInfoTableForReturn" v-if="type != REFUND" @send="show"></table-info>
+        <table-info :table="orderInfoTableForRefund" v-if="type == REFUND" @send="show"></table-info>
       </card-table>
+      <div class="showRefundDes" v-if="isShowRefundDes">
+        <div style="margin: 20px 30px;">内容说明<p style="margin: 10px 0 0 20px;">{{detail.description}}</p></div>
+        <i class="el-icon-close" style="position: absolute;top: 10px;right: 10px;cursor:pointer;" @click="isShowRefundDes=false"></i>
+        <div v-if="detail.refundProofUrlList">
+          <p style="margin: 20px 30px;">图片</p>
+          <ul class="refundImgs">
+            <li v-for="(url) in detail.refundProofUrlList">
+              <viewer :height="'100%'" :width="'100%'" :src=url
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
       <div class="refund-table-info">
         <card-table header="退款人信息" v-if="type == REFUND">
           <table class="table-info-one-column">
@@ -119,13 +132,15 @@ import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
 import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
 import {statusOpts, REFUND, RETURN} from '@/const/aft'
 import GoBack from '@/components/GoBack'
+import Viewer from 'viewer'
 
 export default {
   name: 'refund-detail',
   components: {
     CardTable,
     TableInfo,
-    GoBack
+    GoBack,
+    Viewer
   },
   data() {
     return {
@@ -196,7 +211,9 @@ export default {
           formatter: row => price(row.quantity * row.itemMoney)
         },
         {prop: 'payMoney', label: '实际退款'}
-      ]
+      ],
+      isShowRefundDes: false,
+      activeStep: 0
     }
   },
   computed: {
@@ -341,6 +358,9 @@ export default {
     }
   },
   methods: {
+    show(h) {
+      this.isShowRefundDes = h
+    },
     getDetail() {
       this.$axios
         .$get(refundDetail + `?id=${this.query.refundId}`)
@@ -491,5 +511,22 @@ export default {
       word-wrap: break-word
     }
   }
+}
+.showRefundDes {
+  width: 500px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  position: fixed;
+  z-index: 3000
+  top: 10%;
+  left: 30%;
+  padding-bottom: 20px;
+}
+.showRefundDes .refundImgs li{
+  display: inline-block;
+  list-style: none;
+  width: 120px;
+  height: 120px;
+  margin: 12px;
 }
 </style>

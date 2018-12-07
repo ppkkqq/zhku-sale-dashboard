@@ -474,6 +474,14 @@ export default {
     importExcel(file) {
       // console.log(file)
       const types = file.name.split('.')[1]
+      if (types == 'csv') {
+        this.$notify({
+          title: '提示',
+          message: `文件格式不正确，只支持.csv文件`,
+          type: 'error'
+        })
+        return
+      }
       this.fileExcel(file).then(tabJson => {
         // console.log(tabJson)
         if (tabJson && tabJson.length > 0) {
@@ -582,7 +590,7 @@ export default {
                 })
                 temp = true
               }
-              if (value.reaLName && value.realName.length > 20) {
+              if (value.realName && value.realName.length > 20) {
                 this.tableData.push({
                   id: this.tableData.length + 1,
                   index: index,
