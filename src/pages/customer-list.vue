@@ -563,10 +563,13 @@ export default {
                   result[mapKey[key]] = Ovalue[key].toString()
                   return result
                 }, {})
-                resuleChange.birthday = formatDate(
-                  new Date(1900, 0, resuleChange.birthday - 1),
-                  'YYYY-MM-DD'
-                )
+                resuleChange.birthday = resuleChange.birthday
+                  ? formatDate(
+                      new Date(1900, 0, resuleChange.birthday - 1),
+                      'YYYY-MM-DD'
+                    )
+                  : ''
+                // console.log(resuleChange.birthday,'我是birthday')
                 // resuleChange.birthday = formatDate('a', 'YYYY-MM-DD')
                 this.resultArray.push(resuleChange)
               })
