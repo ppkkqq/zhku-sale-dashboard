@@ -34,10 +34,10 @@
 
           <el-form-item label="门店图片" prop="shopUrl">
             <el-row :span="24" type="flex">
-              <simple-upload 
-                @load="submitForm.shopUrl = $event" 
-                :hidden="isView"
-                protocol="https">
+              <simple-upload
+                v-model="submitForm.shopUrl"
+                :compressOptions="{}"
+                :hidden="isView">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
@@ -72,10 +72,10 @@
           <el-form-item>
             <span slot="label"><span class="red">*</span> 营业执照</span>
             <el-row :span="24" type="flex">
-              <simple-upload 
-                @load="onUpLoadFile($event, 'businessLicenseUrl')" 
-                :hidden="isView"
-                protocol="https">
+              <simple-upload
+                v-model="submitForm.shopCompany.businessLicenseUrl"
+                :compressOptions="{}"
+                :hidden="isView">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
@@ -90,10 +90,10 @@
           <el-form-item>
             <span slot="label"><span class="red">*</span> 社会统一信用代码证</span>
             <el-row :span="24" type="flex">
-              <simple-upload 
-              @load="onUpLoadFile($event, 'socialCreditCoUrl')" 
-              :hidden="isView"
-              protocol="https">
+              <simple-upload
+                v-model="submitForm.shopCompany.socialCreditCoUrl"
+                :hidden="isView"
+                :compressOptions="{}">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
@@ -108,10 +108,10 @@
           <el-form-item label="企业法人身份证">
             <span slot="label"><span class="red">*</span> 企业法人身份证</span>
             <el-row :span="24" type="flex">
-              <simple-upload 
-              @load="onUpLoadFile($event, 'legalPersonIDCardUrl')" 
-              :hidden="isView"
-              protocol="https">
+              <simple-upload
+                v-model="submitForm.shopCompany.legalPersonIDCardUrl"
+                :hidden="isView"
+                :compressOptions="{}">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
@@ -126,10 +126,10 @@
           <el-form-item label="合同">
             <span slot="label"><span class="red">*</span> 合同</span>
             <el-row :span="24" type="flex">
-              <simple-upload 
-                @load="onUpLoadFile($event, 'contractUrl')" 
+              <simple-upload
+                v-model="submitForm.shopCompany.contractUrl"
                 :hidden="isView"
-                protocol="https">
+                :compressOptions="{}">
                 <span class="upload-btn-wrap">
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
@@ -333,18 +333,18 @@ export default {
   },
   methods: {
     /*
-      @func onUpLoadFile
-      @desc 前端直传文件成功，通知服务器文件已经上传
-      @pamas {obj} res 成功返回对象
-    */
-    onUpLoadFile(url, type) {
-      this.submitForm.shopCompany[type] = url
-    },
+        @func onUpLoadFile
+        @desc 前端直传文件成功，通知服务器文件已经上传
+        @pamas {obj} res 成功返回对象
+      */
+    // onUpLoadFile(url, type) {
+    //   this.submitForm.shopCompany[type] = url
+    // },
     /*
-      @func onUploadError
-      @desc 前端直传失败
-      @pamas {obj} err 失败原因
-    */
+        @func onUploadError
+        @desc 前端直传失败
+        @pamas {obj} err 失败原因
+      */
     onUploadError(err) {
       this.$message({
         type: 'error',
@@ -581,40 +581,40 @@ export default {
 }
 </script>
 <style lang="stylus">
-.store-detail {
-  .area-select-wrap {
-    .area-select {
-      // margin-bottom: 22px;
-    }
-  }
-
-  .upload-btn-wrap {
-    width: 100px;
-    height: 100px;
-    color: #ccc;
-    border: 1px dashed #ccc;
-    line-height: 70px;
-    text-align: center;
-    font-size: 50px;
-    display: block;
-    margin-right: 30px;
-    cursor: pointer;
-    box-sizing: border-box;
-
-    > img {
-      width: 100%;
-      height: @width;
+  .store-detail {
+    .area-select-wrap {
+      .area-select {
+        // margin-bottom: 22px;
+      }
     }
 
-    div {
-      font-size: 16px;
-      width: 100%;
-      line-height: 1;
+    .upload-btn-wrap {
+      width: 100px;
+      height: 100px;
+      color: #ccc;
+      border: 1px dashed #ccc;
+      line-height: 70px;
+      text-align: center;
+      font-size: 50px;
+      display: block;
+      margin-right: 30px;
+      cursor: pointer;
+      box-sizing: border-box;
+
+      > img {
+        width: 100%;
+        height: @width;
+      }
+
+      div {
+        font-size: 16px;
+        width: 100%;
+        line-height: 1;
+      }
+    }
+
+    .red {
+      color: #f56c6c;
     }
   }
-
-  .red {
-    color: #f56c6c;
-  }
-}
 </style>
