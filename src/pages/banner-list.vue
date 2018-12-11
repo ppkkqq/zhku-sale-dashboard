@@ -34,9 +34,9 @@
         <div class="form-label">
           <span class="star">*</span>图片</div>
         <span>
-          <upload-to-ali @load="onUpLoadFile($event, 'extraParams.url')"
-                         protocol="https"
-                         :fileUrl="extraParams.url">
+           <upload-to-ali :value="extraParams.url"
+                          @input="extraParams.url = $event[0]"
+                          :compressOptions="{}">
           </upload-to-ali>
         </span>
         <p class="tip-text ">(建议尺寸：pc端1200*360、移动端750*438，仅支持jpg,png格式，图片大小1M以内）</p>
@@ -228,9 +228,6 @@ export default {
           }}
         />
       )
-    },
-    onUpLoadFile(url, type) {
-      this.extraParams.url = url
     },
     beforeConfirm() {
       if (!this.extraParams.url) {
