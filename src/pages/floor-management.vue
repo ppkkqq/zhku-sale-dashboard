@@ -35,20 +35,18 @@
                         prop="classifyIcon">
             <upload-to-ali
               :disabled="!editForm.id"
-              @load="onUpLoadFile($event, 'editForm','classifyIcon')"
+              v-model="editForm.classifyIcon"
               accept="image/png, image/jpeg, image/jpg"
-              protocol="https"
-              :fileUrl="editForm.classifyIcon">
+              :compressOptions="{}">
             </upload-to-ali>
           </el-form-item>
           <el-form-item label="广告图"
                         prop="advertisementPhoto">
             <upload-to-ali
               :disabled="!editForm.id"
-              @load="onUpLoadFile($event, 'editForm','advertisementPhoto')"
+              v-model="editForm.advertisementPhoto"
               accept="image/png, image/jpeg, image/jpg"
-              protocol="https"
-              :fileUrl="editForm.advertisementPhoto">
+              :compressOptions="{}">
             </upload-to-ali>
             <el-input placeholder="请输入广告位地址" v-model.trim="editForm.advertisementPhoto"></el-input>
             <el-button><a :href="editForm.advertisementPhoto" target="_blank">测试</a></el-button>
@@ -156,18 +154,16 @@
             </el-form-item>
             <el-form-item label="分类图标"
                           prop="classifyIcon">
-              <upload-to-ali @load="onUpLoadFile($event, 'newForm','classifyIcon')"
-                             accept="image/png, image/jpeg, image/jpg"
-                             protocol="https"
-                             :fileUrl="newForm.classifyIcon">
+              <upload-to-ali accept="image/png, image/jpeg, image/jpg"
+                             v-model="newForm.classifyIcon"
+                             :compressOptions="{}">
               </upload-to-ali>
             </el-form-item>
             <el-form-item label="广告图"
                           prop="advertisementPhoto">
-              <upload-to-ali @load="onUpLoadFile($event, 'newForm','advertisementPhoto')"
-                             accept="image/png, image/jpeg, image/jpg"
-                             protocol="https"
-                             :fileUrl="newForm.advertisementPhoto">
+              <upload-to-ali accept="image/png, image/jpeg, image/jpg"
+                             v-model="newForm.advertisementPhoto"
+                             :compressOptions="{}">
               </upload-to-ali>
               <el-input placeholder="请输入广告位地址" v-model.trim="newForm.advertisementPhoto"></el-input>
               <el-button><a :href="newForm.advertisementPhoto" target="_blank">测试</a></el-button>
