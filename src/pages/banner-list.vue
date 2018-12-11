@@ -34,8 +34,7 @@
         <div class="form-label">
           <span class="star">*</span>图片</div>
         <span>
-           <upload-to-ali :value="extraParams.url"
-                          @input="extraParams.url = $event[0]"
+           <upload-to-ali v-model="extraParams.url"
                           :compressOptions="{}">
           </upload-to-ali>
         </span>
