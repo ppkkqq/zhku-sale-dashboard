@@ -201,7 +201,7 @@
           </el-card>
         </template>
       </div>
-      <div v-if="isAddSeconde">
+      <div v-if="isAddSecond">
         <el-card
           class="box-card"
           header="新增子楼层">
@@ -295,7 +295,7 @@ export default {
       isAddRoot: false,
       isEditSecond: false,
       isAddSecond: false,
-      isEditRoot: false,
+      isEditRoot: true,
       pageName: 'floor-management',
       url: `/mall-deepexi-mall-config-api/api/v1/floor`,
       // bindBackendUrl: bindBackendUrl,
