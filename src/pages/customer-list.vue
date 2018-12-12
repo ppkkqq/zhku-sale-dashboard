@@ -221,12 +221,24 @@ export default {
       dataPath: 'payload.content',
       columns: [
         {
+          //prop: 'nickName',
+          label: '会员ID'
+        },
+        {
           prop: 'nickName',
           label: '昵称'
         },
         {
           prop: 'realName',
           label: '姓名'
+        },
+        {
+          // prop: 'nickName',
+          label: '会员等级'
+        },
+        {
+          // prop: 'nickName',
+          label: '会员标签'
         },
         {
           prop: 'mobile',
@@ -308,6 +320,7 @@ export default {
       ],
       extraButtons: [
         {
+          style: 'margin-left: 10px',
           text: '国源通币充值',
           type: 'primary',
           atClick: this.showTopUp
@@ -315,6 +328,20 @@ export default {
         {
           text: '查看',
           atClick: this.go2Detail
+        },
+        {
+          text: '内部员工标签',
+          show: row => {
+            return true
+          },
+          atClick: this.addLabel
+        },
+        {
+          text: '取消内部标签',
+          show: row => {
+            return true
+          },
+          atClick: this.cancelLabel
         }
       ],
       searchForm: [
@@ -689,6 +716,32 @@ export default {
             }
           }
         })
+    },
+    addLabel() {
+      this.$confirm('是否将该会员标签为内部员工?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        //TODO：接口数据
+        this.$message({
+          type: 'success',
+          message: '标签成功!'
+        })
+      })
+    },
+    cancelLabel() {
+      this.$confirm('是否取消该会员的内部员工标签?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        //TODO：接口数据
+        this.$message({
+          type: 'success',
+          message: '取消成功!'
+        })
+      })
     }
   }
 }
