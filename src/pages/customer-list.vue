@@ -521,6 +521,10 @@ export default {
     },
     onSuccess(response, file, fileList) {
       this.$refs.upload.clearFiles()
+      this.$message({
+        type: 'success',
+        message: `上传成功`
+      })
     },
     fileExcel(file) {
       this.tableData = []
