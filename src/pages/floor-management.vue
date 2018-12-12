@@ -251,6 +251,9 @@
 </template>
 
 <script>
+import BindAttributeFilter from '@/components/category/bind-attribute-filter'
+import BackendCategoryGoodsList from '@/components/category/backend-category-goods-list'
+import BindFrontendCategory from '@/components/category/bind-frontend-category'
 import ElCrudTree from '@/components/floor-tree/el-crud-tree'
 import UploadToAli from 'upload-to-ali'
 import {
@@ -258,16 +261,12 @@ import {
   frontendCatalogBaseUrl,
   selectedFilterCondition,
   AllfilterCondition,
-  frontendCatalogTree
+  frontendCatalogTree,
+  frontCatalogSingle
 } from '@/const/api'
-
-import BindAttributeFilter from '@/components/category/bind-attribute-filter'
 
 //这个组件 bind-frontend-category  用来显示楼层关联的类目
 // import BindFrontendCategory from '../components/category/bind-frontend-category'
-import BackendCategoryGoodsList from '../components/category/backend-category-goods-list'
-import BindFrontendCategory from '../components/category/bind-frontend-category'
-import {frontCatalogSingle} from '../const/api'
 
 export default {
   name: 'floor-management',
