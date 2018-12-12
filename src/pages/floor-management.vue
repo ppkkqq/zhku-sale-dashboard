@@ -408,13 +408,13 @@ export default {
       this.catalogIds = ''
       if (type === 'addRoot') {
         this.isFirstStep = true
-        this.isEditRoot = false
+        this.isEditRoot = true
         this.isAddSecond = false
         this.isEditSecond = false
         this.isAddRoot = true
       } else {
         this.isAddRoot = false
-        this.isEditRoot = false
+        this.isEditRoot = true
         this.isAddSecond = true
         this.isEditSecond = false
       }
