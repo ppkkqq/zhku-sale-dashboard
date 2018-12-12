@@ -87,7 +87,7 @@
         </el-card>
       </template>
     </div>
-    <div v-else>
+    <div v-if="isEditSecond">
       <el-card
         class="box-card"
         header="编辑子楼层">
@@ -201,7 +201,7 @@
           </el-card>
         </template>
       </div>
-      <div v-else>
+      <div v-if="isAddSeconde">
         <el-card
           class="box-card"
           header="新增子楼层">
@@ -293,7 +293,9 @@ export default {
       singleFrontendTree: [],
       isFirstStep: false,
       isAddRoot: false,
-      isEditRoot: true,
+      isEditSecond: false,
+      isAddSecond: false,
+      isEditRoot: false,
       pageName: 'floor-management',
       url: `/mall-deepexi-mall-config-api/api/v1/floor`,
       // bindBackendUrl: bindBackendUrl,
@@ -403,11 +405,18 @@ export default {
       }
     },
     setAddType(type) {
-      this.isAddRoot = type === 'addRoot' ? true : false
       this.catalogIds = ''
-      if (this.isAddRoot) {
+      if (type === 'addRoot') {
         this.isFirstStep = true
         this.isEditRoot = false
+        this.isAddSecond = false
+        this.isEditSecond = false
+        this.isAddRoot = true
+      } else {
+        this.isAddRoot = false
+        this.isEditRoot = false
+        this.isAddSecond = true
+        this.isEditSecond = false
       }
       this.newForm = {
         id: '',
@@ -435,7 +444,17 @@ export default {
       // console.log(data, node)
       this.editForm = {...data, parentName: node.parent.data.name || ''}
       this.compareData = {...data, parentName: node.parent.data.name || ''}
-      this.isEditRoot = node.parent.parent ? false : true
+      if (node.parent.parent) {
+        this.isEditRoot = false
+        this.isEditSecond = true
+        this.isAddRoot = false
+        this.isAddSecond = false
+      } else {
+        this.isEditRoot = true
+        this.isEditSecond = false
+        this.isAddRoot = false
+        this.isAddSecond = false
+      }
       if (data.parentId == '0') {
         this.singleFloorId = data.id
       } else {
@@ -447,7 +466,6 @@ export default {
         if (data.id) {
           this.loadBackendTree()
         }
-        this.isAddRoot = false
       }
       this.rootId = data.id
       // 获取筛选条件
