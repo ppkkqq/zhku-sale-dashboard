@@ -556,13 +556,14 @@ export default {
                   '姓名(20字符以内)': 'realName',
                   '手机号(不可为空)': 'mobile',
                   '性别(男/女)': 'gender',
-                  生日: 'birthday',
+                  '生日(yyyy-MM-dd)': 'birthday',
                   邮箱: 'email'
                 }
                 resuleChange = Object.keys(Ovalue).reduce((result, key) => {
                   result[mapKey[key]] = Ovalue[key].toString()
                   return result
                 }, {})
+                debugger
                 resuleChange.birthday = resuleChange.birthday
                   ? formatDate(
                       new Date(1900, 0, resuleChange.birthday - 1),
