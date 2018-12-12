@@ -75,6 +75,7 @@
                  :disabled="!editForm.id"
                  header="推荐商品">
           <backend-category-goods-list
+            ref="BackendCategoryGoodsList"
             :data="backendTree"
             :baseUrl="bindBackendUrl"
             :disabled="!editForm.id"
@@ -88,7 +89,6 @@
     </div>
     <div v-else>
       <el-card
-
         class="box-card"
         header="编辑子楼层">
         <el-form :model="editForm"
@@ -350,16 +350,16 @@ export default {
       let temp = {}
       this.$refs.tree.tree.forEach(item => {
         if (item.id == id) {
-          console.log('item', item)
+          // console.log('item', item)
           temp = item
         }
       })
       if (!this.isAddRoot) {
         this.editForm = temp
-        console.log('editForm', this.editForm)
+        // console.log('editForm', this.editForm)
       } else {
         this.newForm = temp
-        console.log('newForm', this.newForm)
+        // console.log('newForm', this.newForm)
       }
     },
     addItems(id) {
@@ -369,10 +369,10 @@ export default {
       if (id) {
         this.loadBackendTree()
       }
-      console.log('isFirstStep', this.isFirstStep)
+      // console.log('isFirstStep', this.isFirstStep)
     },
     setCatalogIds(isRoot, ids) {
-      console.log('测试', ids)
+      // console.log('测试', ids)
       this.catalogIds = ids
     },
     createData(id, name) {
@@ -418,8 +418,8 @@ export default {
         categoryId: '',
         categoryName: ''
       }
-      console.log('isAddRoot', this.isAddRoot)
-      console.log('isFirstStep', this.isFirstStep)
+      // console.log('isAddRoot', this.isAddRoot)
+      // console.log('isFirstStep', this.isFirstStep)
       //type 值有两种情况 'addChild'   addRoot
     },
     //树形
@@ -430,7 +430,7 @@ export default {
       return !node.isLeaf
     },
     handleNodeClick({data, node}) {
-      console.log(data, node)
+      // console.log(data, node)
       this.editForm = {...data, parentName: node.parent.data.name || ''}
       this.compareData = {...data, parentName: node.parent.data.name || ''}
 
@@ -473,7 +473,7 @@ export default {
     },
     //todo  编辑  还没有对
     updateNode() {
-      console.log(this.compareData.id)
+      // console.log(this.compareData.id)
       // 节点保存成功
       this.$refs.editForm.validate(valid => {
         if (valid) {
@@ -489,6 +489,29 @@ export default {
               advertisementPhoto: this.editForm.advertisementPhoto
             }
             url = url + `/updateFloor?id=${this.compareData.id}`
+            // console.log('compareData',this.compareData)
+            // console.log('editForm',this.editForm)
+            // console.log('catalogIds',this.catalogIds)
+            if (
+              this.catalogIds &&
+              this.catalogIds !== this.compareData.categoryId
+            ) {
+              // debugger
+              this.$confirm(
+                '更改楼层将会清除当前所有的推荐商品, 是否继续?',
+                '提示',
+                {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                }
+              )
+                .then(() => {
+                  this.$refs.BackendCategoryGoodsList.handleClear()
+                  this.$refs.tree.updateNode(obj, url)
+                })
+                .catch(() => {})
+            }
           } else {
             obj = {
               name,
@@ -496,8 +519,8 @@ export default {
               secondCategoryId: this.catalogIds
             }
             url = url + `/updateSecondFloor?id=${this.compareData.id}`
+            this.$refs.tree.updateNode(obj, url)
           }
-          this.$refs.tree.updateNode(obj, url)
         }
       })
     },
