@@ -74,7 +74,7 @@ export default {
           $el: {
             placeholder: '请输入用户名称'
           },
-          label: '用户名称',
+          label: '操作人员',
           $id: 'fullname',
           $type: 'input'
         }
