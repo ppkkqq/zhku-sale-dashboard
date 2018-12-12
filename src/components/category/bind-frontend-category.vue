@@ -141,7 +141,7 @@ export default {
       //     temp.push(item.id)
       //   })
       // }
-      console.log(temp)
+      // console.log(temp)
       this.$emit('catalogIds', this.isRoot, temp)
       this.name = data.name
       this.dialogVisible = false
@@ -167,6 +167,10 @@ export default {
   watch: {
     filterText(val) {
       this.tree.filter(val)
+    },
+    categoryName(val, old) {
+      // console.log('监听val变化',val,old)
+      this.name = val
     }
   }
 }
