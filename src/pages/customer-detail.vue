@@ -4,10 +4,18 @@
       <table-info :table="baseInfo">
       </table-info>
     </card-table>
-
-    <card-table header="资金信息">
-      <table-info :table="assetsInfo">
+    <card-table header="用户画像">
+      <table-info :table="statusInfo">
       </table-info>
+    </card-table>
+    <card-table header="资产信息">
+      <el-data-table
+        :columns="assetsColumns"
+        :extraButtons="extraButtons"
+        :hasNew="false"
+        :hasPagination="false"
+      >
+      </el-data-table>
     </card-table>
     <card-table header="收货地址">
       <el-data-table
@@ -32,13 +40,30 @@
         v-bind="dataTableConfig"
       ></el-data-table>
     </card-table>
-
+    <el-dialog title="积分收支明细" :visible.sync="dialogVisible" width="70%">
+      <el-table :data="integralList" size="small">
+        <el-table-column prop="createdAt" label="时间">
+        </el-table-column>
+        <el-table-column prop="batchAMT" label="收支明细">
+          <template slot-scope="scope">
+            <span v-if="scope.row.types === 'USED'">-{{scope.row.batchAMT}}</span>
+            <span v-else>+{{scope.row.batchAMT}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="types" label="详细说明">
+          <template slot-scope="scope">
+            <span>{{scope.row.types === 'USED' ? '购买商品' : '购买商品'}}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import TableInfo from '@/components/table-info'
 import CardTable from '@/components/card-table'
+import {queryIntegralList} from '@/const/api'
 import Viewer from 'viewer'
 import {
   mcMemberInfos,
@@ -93,11 +118,13 @@ export default {
     let accountId = `?accountId=${this.$route.query.memberId}`
     return {
       baseInfo: [],
+      statusInfo: [],
       addressInfo: [],
       invoiceInfo: [],
       collectInfo: [],
       browserHistoryInfo: [],
-
+      dialogVisible: false,
+      integralList: [],
       dataTableConfig: {
         hasNew: false,
         hasOperation: false,
@@ -109,7 +136,7 @@ export default {
       collect: collect + accountId,
       browserHistory: browserHistory + accountId,
       address: address + accountId,
-
+      assetsUrl: '',
       collectColumns: [
         ...commonColumns,
         {
@@ -172,6 +199,43 @@ export default {
           label: '详细地址',
           prop: 'address'
         }
+      ],
+      assetsColumns: [
+        {
+          label: '类型'
+          //prop: 'deliveryName'
+        },
+        {
+          label: '当前总数'
+          //prop: 'deliveryName'
+        },
+        {
+          label: '近3个月消耗数'
+          // prop: 'deliveryName'
+        }
+      ],
+      extraButtons: [
+        {
+          text: '查看明细',
+          type: 'primary',
+          atClick: () => {
+            this.showIntegralDetail()
+          }
+        }
+      ],
+      integralColumns: [
+        {
+          label: '时间',
+          prop: 'deliveryName'
+        },
+        {
+          label: '收支明细',
+          prop: 'deliveryName'
+        },
+        {
+          label: '详细说明',
+          prop: 'deliveryName'
+        }
       ]
     }
   },
@@ -195,16 +259,22 @@ export default {
       生日: formatDate(data.birthday),
       邮箱: data.email,
       注册时间: formatDate(data.createdAt),
-      最后登录时间: formatDate(data.lastLoginTime)
+      最后登录时间: formatDate(data.lastLoginTime),
+      会员等级: '注册会员'
     }
+    //TODO： 会员等级接口数据
 
     const assetsInfo = {
       国源通币: payload.userBalance,
       积分: `${payload.userPoint}分`
     }
+    const statusInfo = {
+      基础属性: '内部员工'
+    }
     return {
       baseInfo: Object2Options(baseInfo, ''),
-      assetsInfo: Object2Options(assetsInfo, '')
+      // assetsInfo: Object2Options(assetsInfo, ''),
+      statusInfo: Object2Options(statusInfo, '')
     }
   },
   computed: {
@@ -250,9 +320,26 @@ export default {
       // 暂无
     },
     getCollect() {},
-    getBrowserHistory() {}
+    getBrowserHistory() {},
+    showIntegralDetail() {
+      this.$axios
+        .$get(
+          `${queryIntegralList(this.$route.query.memberId)}?page=${this.page}`
+        )
+        .then(resp => {
+          const payload = resp.payload
+          const content = payload.content
+          this.integralList = content
+        })
+        .catch(resp => {})
+        .finally(() => {
+          this.dialogVisible = true
+        })
+    }
   },
-
+  created() {
+    this.assetsUrl = queryIntegralList(this.$route.query.memberId)
+  },
   mounted() {}
 }
 </script>

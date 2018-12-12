@@ -217,3 +217,7 @@ export const addRule = MARKETING_CENTER + '/presell/rule/add'
 export const goodQuery = MARKETING_CENTER + '/presell/rule/goods/query'
 export const updateRule = MARKETING_CENTER + '/presell/rule/update'
 export const ruleDetail = MARKETING_CENTER + '/presell/rule/detail'
+
+//积分详细
+export const queryIntegralList = id =>
+  ACCOUNT_CENTER + `/point/member/${id}/list`
