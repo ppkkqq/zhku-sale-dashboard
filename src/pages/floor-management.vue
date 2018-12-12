@@ -114,7 +114,7 @@
                         prop="name">
             <!--//todo-->
             <bind-frontend-category
-              :data="frontendTree"
+              :data="singleFrontendTree"
               :disabled="!editForm.id"
               :isRoot="false"
               :categoryName="editForm.secondCategoryName"
@@ -228,7 +228,7 @@
               label="关联类目"
               prop="category">
               <bind-frontend-category
-                :data="frontendTree"
+                :data="singleFrontendTree"
                 :disabled="false"
                 :isRoot="false"
                 :categoryName="newForm.categoryName"
@@ -267,6 +267,7 @@ import BindAttributeFilter from '@/components/category/bind-attribute-filter'
 // import BindFrontendCategory from '../components/category/bind-frontend-category'
 import BackendCategoryGoodsList from '../components/category/backend-category-goods-list'
 import BindFrontendCategory from '../components/category/bind-frontend-category'
+import {frontCatalogSingle} from '../const/api'
 
 export default {
   name: 'floor-management',
@@ -289,6 +290,8 @@ export default {
       }
     }
     return {
+      singleFloorId: '',
+      singleFrontendTree: [],
       isFirstStep: false,
       isAddRoot: false,
       isEditRoot: true,
@@ -433,10 +436,15 @@ export default {
       // console.log(data, node)
       this.editForm = {...data, parentName: node.parent.data.name || ''}
       this.compareData = {...data, parentName: node.parent.data.name || ''}
-
       this.isEditRoot = node.parent.parent ? false : true
+      if (data.parentId == '0') {
+        this.singleFloorId = data.id
+      } else {
+        this.singleFloorId = data.parentId
+      }
+      this.loadSingleFrontendTree()
       if (this.isEditRoot) {
-        this.floorId = data.id
+        this.singleFloorId = data.id
         if (data.id) {
           this.loadBackendTree()
         }
@@ -578,6 +586,13 @@ export default {
       this.$axios.$get(frontendCatalogTree).then(result => {
         this.frontendTree = result.payload
       })
+    },
+    loadSingleFrontendTree() {
+      this.$axios
+        .$get(`${frontCatalogSingle}?floorId=${this.singleFloorId}`)
+        .then(result => {
+          this.singleFrontendTree = result.payload
+        })
     },
     // 获取筛选条件
     async getSelectedFilters() {
