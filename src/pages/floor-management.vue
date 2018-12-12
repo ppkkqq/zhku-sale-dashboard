@@ -444,7 +444,7 @@ export default {
       }
       this.loadSingleFrontendTree()
       if (this.isEditRoot) {
-        this.singleFloorId = data.id
+        this.floorId = data.id
         if (data.id) {
           this.loadBackendTree()
         }
