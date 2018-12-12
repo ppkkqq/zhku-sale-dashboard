@@ -366,6 +366,9 @@ export default {
       this.isFirstStep = false
       this.rootId = id
       this.floorId = id
+      if (id) {
+        this.loadBackendTree()
+      }
       console.log('isFirstStep', this.isFirstStep)
     },
     setCatalogIds(isRoot, ids) {
@@ -434,6 +437,9 @@ export default {
       this.isEditRoot = node.parent.parent ? false : true
       if (this.isEditRoot) {
         this.floorId = data.id
+        if (data.id) {
+          this.loadBackendTree()
+        }
         this.isAddRoot = false
       }
       this.rootId = data.id
@@ -567,11 +573,11 @@ export default {
     // newForm (val){
     //   console.log('我是watch',val)
     // }
-    floorId(val) {
-      if (val) {
-        this.loadBackendTree()
-      }
-    }
+    // floorId(val) {
+    //   if (val) {
+    //     this.loadBackendTree()
+    //   }
+    // }
   },
   computed: {
     hasChildren() {
