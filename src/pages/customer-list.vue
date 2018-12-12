@@ -567,7 +567,6 @@ export default {
                   result[mapKey[key]] = Ovalue[key].toString()
                   return result
                 }, {})
-                debugger
                 resuleChange.birthday = resuleChange.birthday
                   ? formatDate(
                       new Date(1900, 0, resuleChange.birthday - 1),
@@ -663,10 +662,11 @@ export default {
         .post(this.importUrl, this.resultArray)
         .then(response => {
           if (response.data.length > 0) {
-            this.openSuccess()
             this.$refs.upload.clearFiles()
             this.resultArray = []
             this.importLoading = false
+          } else {
+            this.openSuccess()
           }
         })
         .catch(error => {

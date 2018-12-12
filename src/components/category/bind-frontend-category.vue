@@ -95,7 +95,7 @@ export default {
       multipleSelection: [],
       props: {
         label: 'name',
-        children: 'children',
+        children: this.isRoot ? 'children' : 'list',
         disabled: function(data, node) {
           // 禁用为父节点没有子节点的后台类目
           return (
