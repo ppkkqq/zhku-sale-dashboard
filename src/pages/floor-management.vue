@@ -507,8 +507,10 @@ export default {
                 }
               )
                 .then(() => {
+                  this.floorId = this.editForm.id
                   this.$refs.BackendCategoryGoodsList.handleClear()
                   this.$refs.tree.updateNode(obj, url)
+                  this.loadBackendTree()
                 })
                 .catch(() => {})
             }
