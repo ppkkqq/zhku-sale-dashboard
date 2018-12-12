@@ -1,8 +1,7 @@
 <template>
-  <upload-to-ali @load="onUpLoadFile($event)"
-                   v-on="$listeners"
+  <upload-to-ali   v-on="$listeners"
                    v-bind="$attrs"
-                   :fileUrl="value">
+                   v-model="value">
   </upload-to-ali>
 </template>
 

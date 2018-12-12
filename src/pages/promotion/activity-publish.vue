@@ -52,10 +52,9 @@
           <el-form-item label="活动展示图片">
             <upload-to-ali
               v-if="!form.tmaPicture"
-              @load="onUpLoadFile($event)"
               accept="image/png, image/jpeg, image/jpg"
-              protocol="https"
-              :fileUrl="form.tmaPicture"
+              v-model="form.tmaPicture"
+              :compressOptions="{}"
             ></upload-to-ali>
             <viewer v-if="form.tmaPicture" :src="form.tmaPicture"/>
           </el-form-item>

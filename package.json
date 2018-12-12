@@ -41,7 +41,7 @@
     "qs": "^6.6.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
-    "upload-to-ali": "^2.3.0",
+    "upload-to-ali": "^5.1.1",
     "viewer": "^1.0.0",
     "xlsx": "^0.14.1"
   },

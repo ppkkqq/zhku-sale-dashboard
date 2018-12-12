@@ -28,11 +28,10 @@
         </el-form-item>
         <el-form-item label="图片"
                       prop="displayUrl">
-          <upload-to-ali @load="onUpLoadFile($event, 'editForm')"
-                         protocol="https"
-                         :disabled="!editForm.id"
+          <upload-to-ali :disabled="!editForm.id"
+                         :compressOptions="{}"
                          accept="image/png, image/jpeg, image/jpg"
-                         :fileUrl="editForm.displayUrl">
+                         v-model="editForm.displayUrl">
           </upload-to-ali>
           <div class="el-form-item__warning">
             建议尺寸：128*128，仅支持jpg,png格式，图片大小1M以内。
@@ -100,10 +99,9 @@
         </el-form-item>
         <el-form-item label="图片"
                       prop="displayUrl">
-          <upload-to-ali @load="onUpLoadFile($event, 'newForm')"
-                         protocol="https"
-                         accept="image/png, image/jpeg, image/jpg"
-                         :fileUrl="newForm.displayUrl">
+          <upload-to-ali accept="image/png, image/jpeg, image/jpg"
+                         :compressOptions="{}"
+                         v-model="newForm.displayUrl">
           </upload-to-ali>
           <div class="el-form-item__warning">
             建议尺寸：128*128，仅支持jpg,png格式，图片大小1M以内。

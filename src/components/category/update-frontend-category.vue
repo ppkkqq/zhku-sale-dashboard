@@ -1,12 +1,12 @@
 /*
- * @Author: wukunpeng 
- * @Date: 2018-08-02 18:19:44 
+ * @Author: wukunpeng
+ * @Date: 2018-08-02 18:19:44
  * @Last Modified by: wukunpeng
  * @Last Modified time: 2018-08-25 21:50:38
  * 用于后台管理页面，类目编辑
  */
 
- 
+
 <template>
   <el-card class="box-card"
            header="类目编辑">
@@ -28,9 +28,9 @@
       </el-form-item>
       <el-form-item label="图片"
                     prop="description">
-        <upload-to-ali @load="onUpLoadFile($event, 'displayUrl')"
-                       accept="image/png, image/jpeg, image/jpg"
-                       :fileUrl="form.displayUrl">
+        <upload-to-ali accept="image/png, image/jpeg, image/jpg"
+                       :compressOptions="{}"
+                       v-model="form.displayUrl">
         </upload-to-ali>
         <div class="el-form-item__warning">
           建议尺寸：128*128，仅支持jpg,png格式，图片大小1M以内。
