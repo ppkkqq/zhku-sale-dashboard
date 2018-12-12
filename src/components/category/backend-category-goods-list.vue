@@ -151,6 +151,7 @@ export default {
         .then(res => {
           console.log(res)
           this.dialogVisible = false
+          this.tableData3 = []
           console.log()
           this.$emit('refresh', this.rootId)
         })

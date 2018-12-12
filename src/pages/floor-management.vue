@@ -87,7 +87,7 @@
         </el-card>
       </template>
     </div>
-    <div v-else>
+    <div v-if="isEditSecond">
       <el-card
         class="box-card"
         header="编辑子楼层">
@@ -201,7 +201,7 @@
           </el-card>
         </template>
       </div>
-      <div v-else>
+      <div v-if="isAddSecond">
         <el-card
           class="box-card"
           header="新增子楼层">
@@ -251,6 +251,9 @@
 </template>
 
 <script>
+import BindAttributeFilter from '@/components/category/bind-attribute-filter'
+import BackendCategoryGoodsList from '@/components/category/backend-category-goods-list'
+import BindFrontendCategory from '@/components/category/bind-frontend-category'
 import ElCrudTree from '@/components/floor-tree/el-crud-tree'
 import UploadToAli from 'upload-to-ali'
 import {
@@ -258,16 +261,12 @@ import {
   frontendCatalogBaseUrl,
   selectedFilterCondition,
   AllfilterCondition,
-  frontendCatalogTree
+  frontendCatalogTree,
+  frontCatalogSingle
 } from '@/const/api'
-
-import BindAttributeFilter from '@/components/category/bind-attribute-filter'
 
 //这个组件 bind-frontend-category  用来显示楼层关联的类目
 // import BindFrontendCategory from '../components/category/bind-frontend-category'
-import BackendCategoryGoodsList from '../components/category/backend-category-goods-list'
-import BindFrontendCategory from '../components/category/bind-frontend-category'
-import {frontCatalogSingle} from '../const/api'
 
 export default {
   name: 'floor-management',
@@ -294,6 +293,8 @@ export default {
       singleFrontendTree: [],
       isFirstStep: false,
       isAddRoot: false,
+      isEditSecond: false,
+      isAddSecond: false,
       isEditRoot: true,
       pageName: 'floor-management',
       url: `/mall-deepexi-mall-config-api/api/v1/floor`,
@@ -404,11 +405,18 @@ export default {
       }
     },
     setAddType(type) {
-      this.isAddRoot = type === 'addRoot' ? true : false
       this.catalogIds = ''
-      if (this.isAddRoot) {
+      if (type === 'addRoot') {
         this.isFirstStep = true
-        this.isEditRoot = false
+        this.isEditRoot = true
+        this.isAddSecond = false
+        this.isEditSecond = false
+        this.isAddRoot = true
+      } else {
+        this.isAddRoot = false
+        this.isEditRoot = true
+        this.isAddSecond = true
+        this.isEditSecond = false
       }
       this.newForm = {
         id: '',
@@ -436,7 +444,17 @@ export default {
       // console.log(data, node)
       this.editForm = {...data, parentName: node.parent.data.name || ''}
       this.compareData = {...data, parentName: node.parent.data.name || ''}
-      this.isEditRoot = node.parent.parent ? false : true
+      if (node.parent.parent) {
+        this.isEditRoot = false
+        this.isEditSecond = true
+        this.isAddRoot = false
+        this.isAddSecond = false
+      } else {
+        this.isEditRoot = true
+        this.isEditSecond = false
+        this.isAddRoot = false
+        this.isAddSecond = false
+      }
       if (data.parentId == '0') {
         this.singleFloorId = data.id
       } else {
@@ -444,11 +462,10 @@ export default {
       }
       this.loadSingleFrontendTree()
       if (this.isEditRoot) {
-        this.singleFloorId = data.id
+        this.floorId = data.id
         if (data.id) {
           this.loadBackendTree()
         }
-        this.isAddRoot = false
       }
       this.rootId = data.id
       // 获取筛选条件
