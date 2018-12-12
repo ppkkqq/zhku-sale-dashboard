@@ -72,7 +72,7 @@ export default {
         },
         {
           $el: {
-            placeholder: '请输入用户名称'
+            placeholder: '请输入操作人员'
           },
           label: '操作人员',
           $id: 'fullname',
