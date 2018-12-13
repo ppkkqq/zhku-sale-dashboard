@@ -613,7 +613,7 @@ export default {
                 ) {
                   this.tableData.push({
                     id: this.tableData.length + 1,
-                    index: index,
+                    index: index + 1,
                     content: '昵称格式不对，昵称长度为2-20个字符'
                   })
                   temp = true
@@ -621,7 +621,7 @@ export default {
                 if (value.realName && value.realName.length > 20) {
                   this.tableData.push({
                     id: this.tableData.length + 1,
-                    index: index,
+                    index: index + 1,
                     content: '姓名格式不对，姓名长度最多20个字符'
                   })
                   temp = true
@@ -629,7 +629,7 @@ export default {
                 if (!/^1[3456789]\d{9}$/.test(value.mobile) || !value.mobile) {
                   this.tableData.push({
                     id: this.tableData.length + 1,
-                    index: index,
+                    index: index + 1,
                     content: '手机格式不对'
                   })
                   temp = true
@@ -641,7 +641,7 @@ export default {
                 ) {
                   this.tableData.push({
                     id: this.tableData.length + 1,
-                    index: index,
+                    index: index + 1,
                     content: '性别格式不对，性别只能为男，女'
                   })
                   temp = true
@@ -649,7 +649,7 @@ export default {
                 if (value.birthday && value.birthday == 'NaN-NaN-NaN') {
                   this.tableData.push({
                     id: this.tableData.length + 1,
-                    index: index,
+                    index: index + 1,
                     content: '生日格式不对，生日格式为yyyy-mm-dd'
                   })
                   temp = true
@@ -657,7 +657,7 @@ export default {
                 if (value.email && !emailPattern.test(value.email)) {
                   this.tableData.push({
                     id: this.tableData.length + 1,
-                    index: index,
+                    index: index + 1,
                     content: '邮箱格式不对'
                   })
                   temp = true
@@ -682,13 +682,31 @@ export default {
       this.$axios
         .post(this.importUrl, this.resultArray)
         .then(response => {
-          if (response.data.length > 0) {
+          if (response.data.payload.code == 406) {
+            let payload = response.data.payload
+            payload.result.forEach((item, index) => {
+              item.id = index + 1
+            })
+            this.errorLength = payload.errorNum
+            this.totalLength = payload.total
             this.$refs.upload.clearFiles()
+            this.tableData = payload.result
             this.resultArray = []
+            this.dialogVisible = true
             this.importLoading = false
           } else {
-            this.openSuccess()
+            if (response.data.payload.code == 200) {
+              this.openSuccess()
+              this.totalLength = response.data.payload.total
+            }
           }
+          // if (response.data.length > 0) {
+          //   this.$refs.upload.clearFiles()
+          //   this.resultArray = []
+          //   this.importLoading = false
+          // } else {
+          //   this.openSuccess()
+          // }
         })
         .catch(error => {
           if (error.response) {
@@ -699,19 +717,19 @@ export default {
               //   type: 'error'
               // })
             }
-            if (error.response.status == 406) {
-              let str = error.response.data.payload
-              let temp = JSON.parse(str)
-              // console.log(temp)
-              temp.result.forEach((item, index) => {
-                item.id = index + 1
-              })
-              this.$refs.upload.clearFiles()
-              this.tableData = temp.result
-              this.resultArray = []
-              this.dialogVisible = true
-              this.importLoading = false
-            }
+            // if (error.response.status == 406) {
+            //   let str = error.response.data.payload
+            //   let temp = JSON.parse(str)
+            //   // console.log(temp)
+            //   temp.result.forEach((item, index) => {
+            //     item.id = index + 1
+            //   })
+            //   this.$refs.upload.clearFiles()
+            //   this.tableData = temp.result
+            //   this.resultArray = []
+            //   this.dialogVisible = true
+            //   this.importLoading = false
+            // }
           }
         })
     }
