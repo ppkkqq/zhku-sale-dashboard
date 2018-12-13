@@ -365,9 +365,6 @@ export default {
         this.newForm = temp
         // console.log('newForm', this.newForm)
       }
-      if (this.floorId) {
-        this.loadBackendTree()
-      }
     },
     addItems(id) {
       this.isFirstStep = false
@@ -546,7 +543,16 @@ export default {
                       this.$axios
                         .$post(url, obj)
                         .then(result => {
-                          this.refreshEditRoot(this.editForm.id)
+                          this.$axios
+                            .$get(
+                              `/mall-deepexi-mall-config-api/api/v1/floor/category?floorId=${
+                                this.floorId
+                              }`
+                            )
+                            .then(result => {
+                              this.backendTree = result.payload
+                              this.refreshEditRoot(this.editForm.id)
+                            })
                         })
                         .catch()
                     })
