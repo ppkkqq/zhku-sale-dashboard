@@ -257,12 +257,12 @@ import BindFrontendCategory from '@/components/category/bind-frontend-category'
 import ElCrudTree from '@/components/floor-tree/el-crud-tree'
 import UploadToAli from 'upload-to-ali'
 import {
-  backendCatalogBaseUrl,
-  frontendCatalogBaseUrl,
-  selectedFilterCondition,
   AllfilterCondition,
+  backendCatalogBaseUrl,
+  frontCatalogSingle,
+  frontendCatalogBaseUrl,
   frontendCatalogTree,
-  frontCatalogSingle
+  selectedFilterCondition
 } from '@/const/api'
 
 //这个组件 bind-frontend-category  用来显示楼层关联的类目
@@ -545,18 +545,9 @@ export default {
                     .then(result => {
                       this.$axios
                         .$post(url, obj)
-                        .then(
-                          this.$axios
-                            .$get(
-                              `/mall-deepexi-mall-config-api/api/v1/floor/category?floorId=${
-                                this.floorId
-                              }`
-                            )
-                            .then(result => {
-                              this.backendTree = result.payload
-                              this.refreshEditRoot(this.editForm.id)
-                            })
-                        )
+                        .then(result => {
+                          this.refreshEditRoot(this.editForm.id)
+                        })
                         .catch()
                     })
                     .catch(err => {
