@@ -46,7 +46,7 @@ export default {
       loading: false,
       url: shopItems,
       templateDetail: {},
-      auditStatus: false,
+      auditStatus: true,
       rejectReason: '',
 
       // editStatus: this.$route.query.isEdit > 0 ? ' isEdit' : 'isNew',
