@@ -221,3 +221,5 @@ export const ruleDetail = MARKETING_CENTER + '/presell/rule/detail'
 //积分详细
 export const queryIntegralList = id =>
   ACCOUNT_CENTER + `/point/member/${id}/list`
+// 楼层 获取单个一级前台类目 的前台类目详情
+export const frontCatalogSingle = MALL_CONFIG + `/floor/pcCategory`

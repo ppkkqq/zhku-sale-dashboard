@@ -75,6 +75,7 @@
                  :disabled="!editForm.id"
                  header="推荐商品">
           <backend-category-goods-list
+            ref="BackendCategoryGoodsList"
             :data="backendTree"
             :baseUrl="bindBackendUrl"
             :disabled="!editForm.id"
@@ -86,9 +87,8 @@
         </el-card>
       </template>
     </div>
-    <div v-else>
+    <div v-if="isEditSecond">
       <el-card
-
         class="box-card"
         header="编辑子楼层">
         <el-form :model="editForm"
@@ -114,7 +114,7 @@
                         prop="name">
             <!--//todo-->
             <bind-frontend-category
-              :data="frontendTree"
+              :data="singleFrontendTree"
               :disabled="!editForm.id"
               :isRoot="false"
               :categoryName="editForm.secondCategoryName"
@@ -201,7 +201,7 @@
           </el-card>
         </template>
       </div>
-      <div v-else>
+      <div v-if="isAddSecond">
         <el-card
           class="box-card"
           header="新增子楼层">
@@ -228,7 +228,7 @@
               label="关联类目"
               prop="category">
               <bind-frontend-category
-                :data="frontendTree"
+                :data="singleFrontendTree"
                 :disabled="false"
                 :isRoot="false"
                 :categoryName="newForm.categoryName"
@@ -251,6 +251,9 @@
 </template>
 
 <script>
+import BindAttributeFilter from '@/components/category/bind-attribute-filter'
+import BackendCategoryGoodsList from '@/components/category/backend-category-goods-list'
+import BindFrontendCategory from '@/components/category/bind-frontend-category'
 import ElCrudTree from '@/components/floor-tree/el-crud-tree'
 import UploadToAli from 'upload-to-ali'
 import {
@@ -258,15 +261,12 @@ import {
   frontendCatalogBaseUrl,
   selectedFilterCondition,
   AllfilterCondition,
-  frontendCatalogTree
+  frontendCatalogTree,
+  frontCatalogSingle
 } from '@/const/api'
-
-import BindAttributeFilter from '@/components/category/bind-attribute-filter'
 
 //这个组件 bind-frontend-category  用来显示楼层关联的类目
 // import BindFrontendCategory from '../components/category/bind-frontend-category'
-import BackendCategoryGoodsList from '../components/category/backend-category-goods-list'
-import BindFrontendCategory from '../components/category/bind-frontend-category'
 
 export default {
   name: 'floor-management',
@@ -289,8 +289,12 @@ export default {
       }
     }
     return {
+      singleFloorId: '',
+      singleFrontendTree: [],
       isFirstStep: false,
       isAddRoot: false,
+      isEditSecond: false,
+      isAddSecond: false,
       isEditRoot: true,
       pageName: 'floor-management',
       url: `/mall-deepexi-mall-config-api/api/v1/floor`,
@@ -350,26 +354,29 @@ export default {
       let temp = {}
       this.$refs.tree.tree.forEach(item => {
         if (item.id == id) {
-          console.log('item', item)
+          // console.log('item', item)
           temp = item
         }
       })
       if (!this.isAddRoot) {
         this.editForm = temp
-        console.log('editForm', this.editForm)
+        // console.log('editForm', this.editForm)
       } else {
         this.newForm = temp
-        console.log('newForm', this.newForm)
+        // console.log('newForm', this.newForm)
       }
     },
     addItems(id) {
       this.isFirstStep = false
       this.rootId = id
       this.floorId = id
-      console.log('isFirstStep', this.isFirstStep)
+      if (id) {
+        this.loadBackendTree()
+      }
+      // console.log('isFirstStep', this.isFirstStep)
     },
     setCatalogIds(isRoot, ids) {
-      console.log('测试', ids)
+      // console.log('测试', ids)
       this.catalogIds = ids
     },
     createData(id, name) {
@@ -398,11 +405,18 @@ export default {
       }
     },
     setAddType(type) {
-      this.isAddRoot = type === 'addRoot' ? true : false
       this.catalogIds = ''
-      if (this.isAddRoot) {
+      if (type === 'addRoot') {
         this.isFirstStep = true
-        this.isEditRoot = false
+        this.isEditRoot = true
+        this.isAddSecond = false
+        this.isEditSecond = false
+        this.isAddRoot = true
+      } else {
+        this.isAddRoot = false
+        this.isEditRoot = true
+        this.isAddSecond = true
+        this.isEditSecond = false
       }
       this.newForm = {
         id: '',
@@ -415,8 +429,8 @@ export default {
         categoryId: '',
         categoryName: ''
       }
-      console.log('isAddRoot', this.isAddRoot)
-      console.log('isFirstStep', this.isFirstStep)
+      // console.log('isAddRoot', this.isAddRoot)
+      // console.log('isFirstStep', this.isFirstStep)
       //type 值有两种情况 'addChild'   addRoot
     },
     //树形
@@ -427,14 +441,31 @@ export default {
       return !node.isLeaf
     },
     handleNodeClick({data, node}) {
-      console.log(data, node)
+      // console.log(data, node)
       this.editForm = {...data, parentName: node.parent.data.name || ''}
       this.compareData = {...data, parentName: node.parent.data.name || ''}
-
-      this.isEditRoot = node.parent.parent ? false : true
+      if (node.parent.parent) {
+        this.isEditRoot = false
+        this.isEditSecond = true
+        this.isAddRoot = false
+        this.isAddSecond = false
+      } else {
+        this.isEditRoot = true
+        this.isEditSecond = false
+        this.isAddRoot = false
+        this.isAddSecond = false
+      }
+      if (data.parentId == '0') {
+        this.singleFloorId = data.id
+      } else {
+        this.singleFloorId = data.parentId
+      }
+      this.loadSingleFrontendTree()
       if (this.isEditRoot) {
         this.floorId = data.id
-        this.isAddRoot = false
+        if (data.id) {
+          this.loadBackendTree()
+        }
       }
       this.rootId = data.id
       // 获取筛选条件
@@ -467,7 +498,7 @@ export default {
     },
     //todo  编辑  还没有对
     updateNode() {
-      console.log(this.compareData.id)
+      // console.log(this.compareData.id)
       // 节点保存成功
       this.$refs.editForm.validate(valid => {
         if (valid) {
@@ -483,6 +514,31 @@ export default {
               advertisementPhoto: this.editForm.advertisementPhoto
             }
             url = url + `/updateFloor?id=${this.compareData.id}`
+            // console.log('compareData',this.compareData)
+            // console.log('editForm',this.editForm)
+            // console.log('catalogIds',this.catalogIds)
+            if (
+              this.catalogIds &&
+              this.catalogIds !== this.compareData.categoryId
+            ) {
+              // debugger
+              this.$confirm(
+                '更改楼层将会清除当前所有的推荐商品, 是否继续?',
+                '提示',
+                {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                }
+              )
+                .then(() => {
+                  this.floorId = this.editForm.id
+                  this.$refs.BackendCategoryGoodsList.handleClear()
+                  this.$refs.tree.updateNode(obj, url)
+                  this.loadBackendTree()
+                })
+                .catch(() => {})
+            }
           } else {
             obj = {
               name,
@@ -490,8 +546,8 @@ export default {
               secondCategoryId: this.catalogIds
             }
             url = url + `/updateSecondFloor?id=${this.compareData.id}`
+            this.$refs.tree.updateNode(obj, url)
           }
-          this.$refs.tree.updateNode(obj, url)
         }
       })
     },
@@ -548,6 +604,13 @@ export default {
         this.frontendTree = result.payload
       })
     },
+    loadSingleFrontendTree() {
+      this.$axios
+        .$get(`${frontCatalogSingle}?floorId=${this.singleFloorId}`)
+        .then(result => {
+          this.singleFrontendTree = result.payload
+        })
+    },
     // 获取筛选条件
     async getSelectedFilters() {
       // let url = selectedFilterCondition + `?preCategoryId=${this.editForm.id}`
@@ -567,11 +630,11 @@ export default {
     // newForm (val){
     //   console.log('我是watch',val)
     // }
-    floorId(val) {
-      if (val) {
-        this.loadBackendTree()
-      }
-    }
+    // floorId(val) {
+    //   if (val) {
+    //     this.loadBackendTree()
+    //   }
+    // }
   },
   computed: {
     hasChildren() {
