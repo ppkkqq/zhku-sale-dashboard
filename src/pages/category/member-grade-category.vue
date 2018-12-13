@@ -8,47 +8,56 @@
       :extraButtons="extraButtons"
       dataPath="payload"
       :form="form"
+      :extraParams="extraParams"
       dialogNewTitle="新增会员等级"
       @edit="extraEdit"
       @new="clickNew"
     >
       <el-form slot="form">
-        <el-form-item prop="growth_range">
-          <span>成长值范围</span>
-          <el-input v-model="extraParams.lowerValue"></el-input><span>—</span>
-          <el-input v-model="extraParams.upperValue"></el-input>
+        <el-form-item prop="growth_range" label="成长值范围：">
+          <el-col :span="4"><el-input v-model="extraParams.lowerValue"></el-input></el-col>
+          <el-col :span="1"><span>——</span></el-col>
+          <el-col :span="4"><el-input v-model="extraParams.upperValue"></el-input></el-col>
         </el-form-item>
       </el-form>
       <div slot="form"
            prop="levelIcon">
-        <span>等级图标
-          <upload-to-ali v-model="extraParams.url">
+        <el-form-item prop="growth_range" label="等级图标：">
+          <upload-to-ali @load="onUpLoadFile($event, 'extraParams.levelIcon')"
+                         protocol="https"
+                         :fileUrl="extraParams.levelIcon">
           </upload-to-ali>
-            建议80*80像素，支持.JPG\.JPEG\.PNG格式
-        </span>
+        <span class="tip-text">建议80*80像素，支持.JPG\.JPEG\.PNG格式</span>
+        </el-form-item>
       </div>
-      <div slot="form"
-           prop="regularDeduction">
+      <div slot="form" prop="regularDeduction">
+        <div>
         <span>定期自动计算</span>
         <el-switch
           v-model="isAutomaticCalculate"
           active-color="#13ce66"
           inactive-color="#ff4949">
         </el-switch>
-        <span>开启后以注册日期为节点，满1年时，扣减后重新计算</span>
-        <p>扣减</p>
-        <el-input v-model="extraParams.regularDeduction" :disabled="!isAutomaticCalculate"></el-input>
-        <span>成长值</span>
+        <span class="tip-text">开启后以注册日期为节点，满1年时，扣减后重新计算</span>
+        <el-form-item prop="growth_range">
+          <el-col :span="3">&nbsp;</el-col>
+          <el-col :span="1.5">扣减</el-col>
+          <el-col :span="4"><el-input v-model="extraParams.regularDeduction" :disabled="!isAutomaticCalculate"></el-input></el-col>
+          <el-col :span="3">成长值</el-col>
+        </el-form-item>
+        </div>
       </div>
-      <div slot="form"
-           prop="isInternalWelfare">
+      <div  slot="form"
+           prop="internalWelfare">
         <span>内部员工专享</span>
         <el-switch
-          v-model="extraParams.isInternalWelfare"
+          v-model="extraParams.internalWelfare"
           active-color="#13ce66"
-          inactive-color="#ff4949">
+          inactive-color="#ff4949"
+          active-value="yes"
+          inactive-value="no">
         </el-switch>
-        <span>开启后，内部员工注册后默认此等级</span>
+        <span class="tip-text">开启后，内部员工注册后默认此等级</span>
       </div>
     </el-data-table>
   </div>
@@ -67,7 +76,7 @@ export default {
         'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberLevel',
       dialogColumns: [
         {
-          prop: 'gradeName',
+          prop: 'levelName',
           label: '等级名称',
           width: '130px'
         },
@@ -117,29 +126,19 @@ export default {
           text: '配置权益',
           atClick: row => alert('跳转' + row.code)
         }
-        // {
-        //   type: 'info',
-        //   text: '配置',
-        //   atClick: row => alert('跳转' + row.code)
-        // },
-        // {
-        //   type: 'default',
-        //   text: '删除',
-        //   atClick: row => alert('跳转' + row.code)
-        // }
       ],
       form: [
         {
           label: '等级名称',
-          $id: 'gradeName',
+          $id: 'levelName',
           $type: 'input'
         }
       ],
       extraParams: {
-        url: '',
+        levelIcon: '',
         lowerValue: '',
         upperValue: '',
-        isInternalWelfare: false,
+        internalWelfare: 'no',
         regularDeduction: ''
       },
       isAutomaticCalculate: false
@@ -159,24 +158,31 @@ export default {
       )
     },
     extraEdit(row) {
-      this.extraParams.url = row.url
+      this.extraParams.levelIcon = row.levelIcon
       this.extraParams.lowerValue = row.lowerValue
       this.extraParams.upperValue = row.upperValue
-      this.extraParams.isInternalWelfare = row.isInternalWelfare
+      this.extraParams.internalWelfare = row.internalWelfare
       this.extraParams.regularDeduction = row.regularDeduction
       this.isAutomaticCalculate = !!row.regularDeduction
     },
     clickNew() {
-      this.extraParams.url = ''
+      this.extraParams.levelIcon = ''
       this.extraParams.lowerValue = ''
       this.extraParams.upperValue = ''
-      this.extraParams.isInternalWelfare = false
+      this.extraParams.internalWelfare = 'no'
       this.extraParams.regularDeduction = ''
       this.isAutomaticCalculate = false
+    },
+    onUpLoadFile(levelIcon, type) {
+      this.extraParams.levelIcon = levelIcon
     }
   }
 }
 </script>
 
 <style scoped>
+.tip-text {
+  font-size: 12px;
+  color: #f56c6c;
+}
 </style>
