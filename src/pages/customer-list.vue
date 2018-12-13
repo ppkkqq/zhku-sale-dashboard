@@ -183,7 +183,10 @@ export default {
         callback('请输入充值手机号')
         return
       }
-
+      let temp = value.search(/[^0-9,]/)
+      if (temp != -1) {
+        callback(`充值账户格式不正确，第${temp + 1}位字符不能识别`)
+      }
       // 检查错误格式的手机号
       const mobiles = value.split(',')
       const errMobile = mobiles.reduce((result, mobile, index) => {
