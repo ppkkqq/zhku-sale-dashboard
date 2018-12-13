@@ -289,8 +289,8 @@ export default {
               label: '支付宝支付'
             },
             {
-              value: '微信公众号支付',
-              label: '微信公众号支付'
+              value: '微信支付',
+              label: '微信支付'
             }
           ],
           $el: {placeholder: '请选择支付渠道'},
