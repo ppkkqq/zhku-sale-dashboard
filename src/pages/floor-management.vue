@@ -453,7 +453,7 @@ export default {
         this.isEditRoot = true
         this.isEditSecond = false
         this.isAddRoot = false
-        this.isAddSecond = false
+        this.isAddSecond = true
       }
       if (data.parentId == '0') {
         this.singleFloorId = data.id

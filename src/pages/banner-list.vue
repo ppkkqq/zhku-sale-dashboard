@@ -60,10 +60,13 @@ export default {
   },
   data() {
     const checkUrl = (rule, value, callback) => {
-      //      if (value && !httpPattern.test(value)) {
-      //        callback('请输入以http开头的跳转链接地址')
-      //        return
-      //      }
+      if (value && !httpPattern.test(value)) {
+        callback('请输入以http或者https开头的跳转链接地址')
+        return
+      } else if (value && value.length > 100) {
+        callback('请输入长度在100以内的网址')
+        return
+      }
       callback()
     }
     const checkNum = (rule, value, callback) => {
@@ -150,7 +153,10 @@ export default {
       form: [
         {
           rules: [{required: false, trigger: 'blur', validator: checkUrl}],
-          $el: {placeholder: '请输入以http://开头,并且长度在100以内的网址'},
+          $el: {
+            placeholder:
+              '请输入以http://或者https://开头,并且长度在100以内的网址'
+          },
           label: '跳转链接',
           $id: 'jumpUrl',
           $type: 'input'
