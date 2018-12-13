@@ -365,6 +365,9 @@ export default {
         this.newForm = temp
         // console.log('newForm', this.newForm)
       }
+      if (this.floorId) {
+        this.loadBackendTree()
+      }
     },
     addItems(id) {
       this.isFirstStep = false
@@ -533,9 +536,32 @@ export default {
               )
                 .then(() => {
                   this.floorId = this.editForm.id
-                  this.$refs.BackendCategoryGoodsList.handleClear()
-                  this.$refs.tree.updateNode(obj, url)
-                  this.loadBackendTree()
+                  this.$axios
+                    .$delete(
+                      `/mall-deepexi-mall-config-api/api/v1/floor/clearItem?floorId=${
+                        this.rootId
+                      }`
+                    )
+                    .then(result => {
+                      this.$axios
+                        .$post(url, obj)
+                        .then(
+                          this.$axios
+                            .$get(
+                              `/mall-deepexi-mall-config-api/api/v1/floor/category?floorId=${
+                                this.floorId
+                              }`
+                            )
+                            .then(result => {
+                              this.backendTree = result.payload
+                              this.refreshEditRoot(this.editForm.id)
+                            })
+                        )
+                        .catch()
+                    })
+                    .catch(err => {
+                      console.log(err)
+                    })
                 })
                 .catch(() => {})
             }
