@@ -165,10 +165,12 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+      // console.log(this.multipleSelection)
       if (!this.multipleSelection.length) {
         // this.tableData3=[]
         return
       }
+      this.addItems = []
       this.multipleSelection.forEach(item => {
         this.addItems.push(item.id)
       })
