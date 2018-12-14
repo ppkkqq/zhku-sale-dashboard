@@ -551,12 +551,18 @@ export default {
           let result = []
           let resuleChange
           if (
+            !wb.Sheets[wb.SheetNames[0]].A1 ||
             wb.Sheets[wb.SheetNames[0]].A1.v !== '昵称(20字符以内)' ||
-            wb.Sheets[wb.SheetNames[0]].B1.v !== '姓名(20字符以内)' ||
-            wb.Sheets[wb.SheetNames[0]].C1.v !== '手机号(不可为空)' ||
-            wb.Sheets[wb.SheetNames[0]].D1.v !== '性别(男/女)' ||
-            wb.Sheets[wb.SheetNames[0]].E1.v !== '生日(yyyy-MM-dd)' ||
-            wb.Sheets[wb.SheetNames[0]].F1.v !== '邮箱'
+            (!wb.Sheets[wb.SheetNames[0]].B1 ||
+              wb.Sheets[wb.SheetNames[0]].B1.v !== '姓名(20字符以内)') ||
+            (!wb.Sheets[wb.SheetNames[0]].C1 ||
+              wb.Sheets[wb.SheetNames[0]].C1.v !== '手机号(不可为空)') ||
+            (!wb.Sheets[wb.SheetNames[0]].D1 ||
+              wb.Sheets[wb.SheetNames[0]].D1.v !== '性别(男/女)') ||
+            (!wb.Sheets[wb.SheetNames[0]].E1 ||
+              wb.Sheets[wb.SheetNames[0]].E1.v !== '生日(yyyy-MM-dd)') ||
+            (!wb.Sheets[wb.SheetNames[0]].F1 ||
+              wb.Sheets[wb.SheetNames[0]].F1.v !== '邮箱')
           ) {
             this.errorType = true
             this.$notify({
@@ -603,69 +609,81 @@ export default {
             this.totalLength = this.resultArray.length
 
             console.log(this.totalLength)
+
             if (this.totalLength < 1000) {
-              this.errorLength = 0
-              this.resultArray.forEach((value, index) => {
-                let temp = false
-                if (
-                  value.nickName &&
-                  (value.nickName.length < 2 || value.nickName.length > 20)
-                ) {
-                  this.tableData.push({
-                    id: this.tableData.length + 1,
-                    index: index + 1,
-                    content: '昵称格式不对，昵称长度为2-20个字符'
-                  })
-                  temp = true
-                }
-                if (value.realName && value.realName.length > 20) {
-                  this.tableData.push({
-                    id: this.tableData.length + 1,
-                    index: index + 1,
-                    content: '姓名格式不对，姓名长度最多20个字符'
-                  })
-                  temp = true
-                }
-                if (!/^1[3456789]\d{9}$/.test(value.mobile) || !value.mobile) {
-                  this.tableData.push({
-                    id: this.tableData.length + 1,
-                    index: index + 1,
-                    content: '手机格式不对'
-                  })
-                  temp = true
-                }
-                if (
-                  value.gender &&
-                  value.gender !== '男' &&
-                  value.gender !== '女'
-                ) {
-                  this.tableData.push({
-                    id: this.tableData.length + 1,
-                    index: index + 1,
-                    content: '性别格式不对，性别只能为男，女'
-                  })
-                  temp = true
-                }
-                if (value.birthday && value.birthday == 'NaN-NaN-NaN') {
-                  this.tableData.push({
-                    id: this.tableData.length + 1,
-                    index: index + 1,
-                    content: '生日格式不对，生日格式为yyyy-mm-dd'
-                  })
-                  temp = true
-                }
-                if (value.email && !emailPattern.test(value.email)) {
-                  this.tableData.push({
-                    id: this.tableData.length + 1,
-                    index: index + 1,
-                    content: '邮箱格式不对'
-                  })
-                  temp = true
-                }
-                if (temp) {
-                  this.errorLength += 1
-                }
-              })
+              if (this.totalLength !== 0) {
+                this.errorLength = 0
+                this.resultArray.forEach((value, index) => {
+                  let temp = false
+                  if (
+                    value.nickName &&
+                    (value.nickName.length < 2 || value.nickName.length > 20)
+                  ) {
+                    this.tableData.push({
+                      id: this.tableData.length + 1,
+                      index: index + 1,
+                      content: '昵称格式不对，昵称长度为2-20个字符'
+                    })
+                    temp = true
+                  }
+                  if (value.realName && value.realName.length > 20) {
+                    this.tableData.push({
+                      id: this.tableData.length + 1,
+                      index: index + 1,
+                      content: '姓名格式不对，姓名长度最多20个字符'
+                    })
+                    temp = true
+                  }
+                  if (
+                    !/^1[3456789]\d{9}$/.test(value.mobile) ||
+                    !value.mobile
+                  ) {
+                    this.tableData.push({
+                      id: this.tableData.length + 1,
+                      index: index + 1,
+                      content: '手机格式不对'
+                    })
+                    temp = true
+                  }
+                  if (
+                    value.gender &&
+                    value.gender !== '男' &&
+                    value.gender !== '女'
+                  ) {
+                    this.tableData.push({
+                      id: this.tableData.length + 1,
+                      index: index + 1,
+                      content: '性别格式不对，性别只能为男，女'
+                    })
+                    temp = true
+                  }
+                  if (value.birthday && value.birthday == 'NaN-NaN-NaN') {
+                    this.tableData.push({
+                      id: this.tableData.length + 1,
+                      index: index + 1,
+                      content: '生日格式不对，生日格式为yyyy-mm-dd'
+                    })
+                    temp = true
+                  }
+                  if (value.email && !emailPattern.test(value.email)) {
+                    this.tableData.push({
+                      id: this.tableData.length + 1,
+                      index: index + 1,
+                      content: '邮箱格式不对'
+                    })
+                    temp = true
+                  }
+                  if (temp) {
+                    this.errorLength += 1
+                  }
+                })
+              } else {
+                this.$notify({
+                  title: '提示',
+                  message: `单次导入记录不可为空！`,
+                  type: 'error'
+                })
+              }
             }
           }
           resolve(this.resultArray)
@@ -676,7 +694,12 @@ export default {
     httpRequest() {
       //自定义上传的实现
       // console.log(this.errorLength,this.totalLength)
-      if (this.errorType || this.errorLength > 0 || this.totalLength > 1000) {
+      if (
+        this.errorType ||
+        this.errorLength > 0 ||
+        this.totalLength > 1000 ||
+        this.totalLength == 0
+      ) {
         return
       }
       this.$axios
