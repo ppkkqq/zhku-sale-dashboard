@@ -216,7 +216,7 @@ export default {
           formatter: row => this.imgFormatter(row),
           width: '300px'
         },
-        {prop: 'itemCode', label: '商品编码'},
+        {prop: 'skuId', label: '商品编码'},
         {prop: 'quantity', label: '数量'},
         {prop: 'itemMoney', label: '单价'},
         {

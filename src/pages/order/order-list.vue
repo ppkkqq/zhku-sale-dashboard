@@ -281,16 +281,16 @@ export default {
         {
           $options: [
             {
-              value: '源通币支付',
-              label: '源通币支付'
+              value: '平台',
+              label: '平台'
             },
             {
-              value: '支付宝支付',
-              label: '支付宝支付'
+              value: '支付宝',
+              label: '支付宝'
             },
             {
-              value: '微信支付',
-              label: '微信支付'
+              value: '微信',
+              label: '微信'
             }
           ],
           $el: {placeholder: '请选择支付渠道'},
