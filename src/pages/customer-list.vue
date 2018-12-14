@@ -723,6 +723,7 @@ export default {
             this.importLoading = false
           } else {
             if (response.data.payload.code == 200) {
+              this.$refs.dataTable.getList()
               this.openSuccess()
               this.totalLength = response.data.payload.total
             }
