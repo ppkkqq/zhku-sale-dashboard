@@ -203,6 +203,7 @@ export default {
       }
     }
     return {
+      uploading: false,
       totalLength: 0,
       errorLength: 0,
       fileList: [],
@@ -694,7 +695,9 @@ export default {
     httpRequest() {
       //自定义上传的实现
       // console.log(this.errorLength,this.totalLength)
+
       if (
+        this.uploading ||
         this.errorType ||
         this.errorLength > 0 ||
         this.totalLength > 1000 ||
@@ -702,6 +705,7 @@ export default {
       ) {
         return
       }
+      this.uploading = true
       this.$axios
         .post(this.importUrl, this.resultArray)
         .then(response => {
@@ -719,6 +723,7 @@ export default {
             this.importLoading = false
           } else {
             if (response.data.payload.code == 200) {
+              this.$refs.dataTable.getList()
               this.openSuccess()
               this.totalLength = response.data.payload.total
             }
@@ -754,6 +759,9 @@ export default {
             //   this.importLoading = false
             // }
           }
+        })
+        .finally(() => {
+          this.uploading = false
         })
     }
   }
