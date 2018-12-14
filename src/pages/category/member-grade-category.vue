@@ -1,23 +1,23 @@
 <template>
   <div>
+    <div class="title">新增会员等级</div>
     <el-data-table
       :url="url"
       :columns="dialogColumns"
       :hasOperation="true"
-      :hasPagination="true"
+      :hasPagination="false"
       :extraButtons="extraButtons"
       dataPath="payload"
       :form="form"
       :extraParams="extraParams"
-      dialogNewTitle="新增会员等级"
       @edit="extraEdit"
       @new="clickNew"
+      @canDelete="checkCanDelete"
     >
       <el-form slot="form">
-        <el-form-item prop="growth_range" label="成长值范围：">
-          <el-col :span="4"><el-input v-model="extraParams.lowerValue"></el-input></el-col>
-          <el-col :span="1"><span>——</span></el-col>
-          <el-col :span="4"><el-input v-model="extraParams.upperValue"></el-input></el-col>
+        <el-form-item prop="growth_range" label="成长值下限：">
+          // todo：校验
+          <el-col :span="6"><el-input v-model="extraParams.lowerValue"></el-input></el-col>
         </el-form-item>
       </el-form>
       <div slot="form"
@@ -60,6 +60,36 @@
         <span class="tip-text">开启后，内部员工注册后默认此等级</span>
       </div>
     </el-data-table>
+    <el-dialog title="会员权益配置" :visible.sync="memberBenefitsVisible" width="50%">
+      <el-data-table
+        ref="dataTable"
+        :url="memberBenefitsUrl"
+        :columns="benefitsColumns"
+        :hasNew="false"
+        :hasEdit="false"
+        :hasDelete="false"
+        :hasOperation="false"
+        :isTree="false"
+        :hasPagination="false"
+        data-path="payload"
+        @update="getData"
+      ></el-data-table>
+      <el-button type="primary" @click="confirmEdit" class="btn-mg">确定</el-button>
+      <el-button @click="()=>{this.memberBenefitsVisible = false}" class="btn-mg">取消</el-button>
+    </el-dialog>
+    <div class="title" style="margin-top: 20px;">成长值计算策略</div>
+    <el-data-table
+      :url="growthValueUrl"
+      :columns="growthValueColumns"
+      :hasOperation="false"
+      :hasPagination="false"
+      :hasNew="false"
+      dataPath="payload"
+      :extraParams="extraParams"
+      @update="getValueData"
+    >
+    </el-data-table>
+    <el-button type="primary" @click="growthValueConfirm" class="btn-mg">确定</el-button>
   </div>
 </template>
 
@@ -72,28 +102,33 @@ export default {
   },
   data() {
     return {
+      memberData: [],
       url:
         'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberLevel',
+      memberId: '',
+      memberBenefitsUrl: '',
+      memberBenefitsVisible: false,
+      growthValueData: [],
+      growthValueUrl:
+        'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/experienceStrategy',
       dialogColumns: [
         {
           prop: 'levelName',
           label: '等级名称',
-          width: '130px'
+          width: '100px'
         },
         {
           prop: 'levelIcon',
           label: '图标',
-          width: '130px',
+          width: '110px',
           formatter: this.logoFormatter
         },
         {
           prop: 'growth_range',
           label: '成长值范围',
-          width: '130px',
+          width: '100px',
           formatter: row => {
-            if (row.lowerValue === '0' && row.upperValue === '0') {
-              return '无'
-            } else if (row.lowerValue && !row.upperValue) {
+            if (row.lowerValue && !row.upperValue) {
               return row.lowerValue + '以上'
             } else {
               return row.lowerValue + '-' + row.upperValue
@@ -109,7 +144,7 @@ export default {
         {
           prop: 'regularDeduction',
           label: '说明',
-          default: '',
+          width: '250px',
           formatter: row => {
             if (!row.regularDeduction) {
               return '永久有效'
@@ -124,7 +159,7 @@ export default {
         {
           type: 'primary',
           text: '配置权益',
-          atClick: row => alert('跳转' + row.code)
+          atClick: this.getMemberBenefits
         }
       ],
       form: [
@@ -137,11 +172,45 @@ export default {
       extraParams: {
         levelIcon: '',
         lowerValue: '',
-        upperValue: '',
         internalWelfare: 'no',
         regularDeduction: ''
       },
-      isAutomaticCalculate: false
+      isAutomaticCalculate: false,
+      benefitsColumns: [
+        {
+          prop: 'benefitName',
+          label: '用户权益'
+        },
+        {
+          prop: 'normalAccount',
+          label: '普通会员',
+          formatter: row => this.switchFormatter(row, 'normalAccount')
+        },
+        {
+          prop: 'internalStaff',
+          label: '内部员工',
+          formatter: row => this.switchFormatter(row, 'internalStaff')
+        }
+      ],
+      growthValueColumns: [
+        {
+          prop: 'behavior',
+          label: '用户行为'
+        },
+        {
+          prop: 'description',
+          label: '奖励成长值'
+        },
+        {
+          prop: 'rewardContent',
+          label: '说明'
+        },
+        {
+          prop: 'status',
+          label: '操作',
+          formatter: row => this.switchFormatter(row, 'status')
+        }
+      ]
     }
   },
   methods: {
@@ -157,10 +226,20 @@ export default {
         />
       )
     },
+    switchFormatter(row, type) {
+      return (
+        <el-switch
+          v-model={row[type]}
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="open"
+          inactive-value="close"
+        />
+      )
+    },
     extraEdit(row) {
       this.extraParams.levelIcon = row.levelIcon
       this.extraParams.lowerValue = row.lowerValue
-      this.extraParams.upperValue = row.upperValue
       this.extraParams.internalWelfare = row.internalWelfare
       this.extraParams.regularDeduction = row.regularDeduction
       this.isAutomaticCalculate = !!row.regularDeduction
@@ -168,14 +247,102 @@ export default {
     clickNew() {
       this.extraParams.levelIcon = ''
       this.extraParams.lowerValue = ''
-      this.extraParams.upperValue = ''
       this.extraParams.internalWelfare = 'no'
       this.extraParams.regularDeduction = ''
       this.isAutomaticCalculate = false
     },
     onUpLoadFile(levelIcon, type) {
       this.extraParams.levelIcon = levelIcon
+    },
+    getMemberBenefits(row) {
+      this.memberId = row.id
+      this.memberBenefitsVisible = true
+      //TODO: 修改url中的id  或者添加getList方法
+      this.memberBenefitsUrl =
+        'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberLevel/levelBenefit/id'
+    },
+    confirmEdit() {
+      let newArr = this.memberData.map(item => {
+        return {
+          benefitId: item.benefitId,
+          levelId: item.levelId,
+          normalAccount: item.normalAccount,
+          internalStaff: item.internalStaff
+        }
+      })
+      this.$axios
+        .$put(
+          'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberLevel/levelBenefit',
+          JSON.stringify(newArr)
+        )
+        .then(result => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+        })
+        .catch(err => {
+          this.$message.error('操作失败! 请稍后再试!')
+        })
+        .finally(res => {
+          this.memberBenefitsVisible = false
+        })
+    },
+    getData(data) {
+      this.memberData = data
+    },
+    getGrowthValueData() {
+      this.$axios
+        .$get(
+          'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/experienceStrategy'
+        )
+        .then(resp => {
+          this.growthValueData = resp.payload
+        })
+        .catch()
+    },
+    growthValueConfirm() {
+      let newArr = this.growthValueData.map(item => {
+        return {
+          id: item.id,
+          status: item.status
+        }
+      })
+      this.$axios
+        .$put(
+          'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/experienceStrategy',
+          JSON.stringify(newArr)
+        )
+        .then(result => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+        })
+        .catch(err => {
+          this.$message.error('操作失败! 请稍后再试!')
+        })
+    },
+    getValueData(data) {
+      this.growthValueData = data
+    },
+    checkCanDelete(result) {
+      if (!result) {
+        this.$confirm('无法删除该会员等级', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        return
+      }
+      this.$message({
+        type: 'success',
+        message: '操作成功'
+      })
     }
+  },
+  created() {
+    this.getGrowthValueData
   }
 }
 </script>
@@ -184,5 +351,12 @@ export default {
 .tip-text {
   font-size: 12px;
   color: #f56c6c;
+}
+.title {
+  font-size: 20px;
+  font-weight: 600;
+}
+.btn-mg {
+  margin: 15px;
 }
 </style>
