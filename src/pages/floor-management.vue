@@ -551,6 +551,7 @@ export default {
                             )
                             .then(result => {
                               this.backendTree = result.payload
+                              // console.log(this.backendTree)
                               this.refreshEditRoot(this.editForm.id)
                             })
                         })
@@ -620,6 +621,7 @@ export default {
         )
         .then(result => {
           this.backendTree = result.payload
+          // console.log(this.backendTree, result)
         })
     },
     loadFrontendTree() {
