@@ -58,7 +58,8 @@
                       v-model="filterText">
             </el-input>
           </div>
-          <el-tree class="filter-tree"
+          <el-tree v-if="$attrs.data[0]"
+                   class="filter-tree"
                    show-checkbox
                    v-bind="$attrs"
                    @check="hanldeCheck"
@@ -68,7 +69,9 @@
                    :filter-node-method="filterNode"
                    ref="tree">
           </el-tree>
-
+          <div class="empty-box" v-else>
+            <span>暂无数据</span>
+          </div>
         </div>
         <div class="content">
           <div class="up">
@@ -214,6 +217,9 @@ export default {
       this.dialogVisible = true
     },
     handleOpen() {
+      if (!this.$attrs.data[0]) {
+        return
+      }
       this.$nextTick(() => {
         this.checkedNodes = this.$refs.tree.getCheckedNodes()
       })
@@ -311,6 +317,18 @@ export default {
   .header {
     margin-bottom: 10px;
   }
+  .empty-box{
+    height: 80px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    span{
+      width: 50%;
+      color: #909399;
+    }
+  }
+
   .aside {
     flex: 0 0 35%;
     min-width: 430px;
