@@ -392,19 +392,15 @@ export default {
                 [
                   h(uploadToAli, {
                     props: {
-                      fileUrl: item,
-                      disabled: index > 9 || this.isView,
-                      showDel: !this.isView
+                      value: item,
+                      disabled: index > 9 || this.isView
                     },
                     on: {
-                      load: imgUrl => {
+                      input: imgUrl => {
                         value.splice(index, 1, imgUrl)
                         if (index === value.length - 1) {
                           value.push('')
                         }
-                      },
-                      delete: () => {
-                        value.splice(index, 1)
                       }
                     }
                   }),
