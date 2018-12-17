@@ -97,6 +97,10 @@
   version "1.4.0"
   resolved "http://registry.npm.taobao.org/@csstools/convert-colors/download/@csstools/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
 
+"@femessage/img-preview@^1.1.1":
+  version "1.1.1"
+  resolved "http://nexus.deepexi.top/repository/npm-group/@femessage/img-preview/-/img-preview-1.1.1.tgz#5a0a670ee52c6d55aefa8ad26787d13dee881997"
+
 "@nuxtjs/axios@^5.0.1":
   version "5.3.1"
   resolved "http://registry.npm.taobao.org/@nuxtjs/axios/download/@nuxtjs/axios-5.3.1.tgz#9f9e6c817dae44c16955af659f6d5ac2a8085148"
@@ -6720,9 +6724,9 @@ upload-to-ali@^2.0.0:
     ali-oss "^6.0.1"
     image-compressor.js "^1.1.4"
 
-upload-to-ali@^5.1.1:
-  version "5.1.1"
-  resolved "http://nexus.deepexi.top/repository/npm-private/upload-to-ali/-/upload-to-ali-5.1.1.tgz#5acc66b1fd317301c1da46d84bf1ed4be107c627"
+upload-to-ali@^6.0.0:
+  version "6.0.0"
+  resolved "http://nexus.deepexi.top/repository/npm-group/upload-to-ali/-/upload-to-ali-6.0.0.tgz#f013604358375d7cc6339783be140246aebeca13"
   dependencies:
     ali-oss "^6.0.1"
     image-compressor.js "^1.1.4"
