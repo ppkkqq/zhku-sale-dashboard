@@ -223,3 +223,9 @@ export const queryIntegralList = id =>
   ACCOUNT_CENTER + `/point/member/${id}/list`
 // 楼层 获取单个一级前台类目 的前台类目详情
 export const frontCatalogSingle = MALL_CONFIG + `/floor/pcCategory`
+
+//会员等级
+export const mcMemberLevel = MEMBER_CENTER + `/mcMemberLevel`
+export const levelBenefit = MEMBER_CENTER + `/mcMemberLevel/levelBenefit`
+export const experienceStrategy =
+  MEMBER_CENTER + `/mcMemberLevel/experienceStrategy`

@@ -15,14 +15,13 @@
       @canDelete="checkCanDelete"
     >
       <el-form slot="form">
-        <el-form-item prop="growth_range" label="成长值下限：">
-          // todo：校验
+        <el-form-item prop="growth_range" label="*成长值下限：">
           <el-col :span="6"><el-input v-model="extraParams.lowerValue"></el-input></el-col>
         </el-form-item>
       </el-form>
       <div slot="form"
            prop="levelIcon">
-        <el-form-item prop="growth_range" label="等级图标：">
+        <el-form-item prop="growth_range" label="*等级图标：">
           <upload-to-ali @load="onUpLoadFile($event, 'extraParams.levelIcon')"
                          protocol="https"
                          :fileUrl="extraParams.levelIcon">
@@ -54,8 +53,8 @@
           v-model="extraParams.internalWelfare"
           active-color="#13ce66"
           inactive-color="#ff4949"
-          active-value="yes"
-          inactive-value="no">
+          active-value="OPEN"
+          inactive-value="CLOSE">
         </el-switch>
         <span class="tip-text">开启后，内部员工注册后默认此等级</span>
       </div>
@@ -64,6 +63,7 @@
       <el-data-table
         ref="dataTable"
         :url="memberBenefitsUrl"
+        :customQuery="memberBenefitsQuery"
         :columns="benefitsColumns"
         :hasNew="false"
         :hasEdit="false"
@@ -95,6 +95,7 @@
 
 <script>
 import UploadToAli from 'upload-to-ali'
+import {mcMemberLevel, levelBenefit, experienceStrategy} from '@/const/api'
 export default {
   name: 'member-grade-category',
   components: {
@@ -103,14 +104,12 @@ export default {
   data() {
     return {
       memberData: [],
-      url:
-        'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberLevel',
-      memberId: '',
-      memberBenefitsUrl: '',
+      url: mcMemberLevel,
+      memberBenefitsUrl: levelBenefit,
+      memberBenefitsQuery: {},
       memberBenefitsVisible: false,
       growthValueData: [],
-      growthValueUrl:
-        'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/experienceStrategy',
+      growthValueUrl: experienceStrategy,
       dialogColumns: [
         {
           prop: 'levelName',
@@ -139,7 +138,9 @@ export default {
           prop: 'internalWelfare',
           label: '内部专享',
           width: '100px',
-          formatter: row => (row.internalWelfare === 'yes' ? '开启' : '')
+          formatter: row => {
+            return row.internalWelfare === 'OPEN' ? '开启' : ''
+          }
         },
         {
           prop: 'regularDeduction',
@@ -164,7 +165,7 @@ export default {
       ],
       form: [
         {
-          label: '等级名称',
+          label: '*等级名称',
           $id: 'levelName',
           $type: 'input'
         }
@@ -172,8 +173,8 @@ export default {
       extraParams: {
         levelIcon: '',
         lowerValue: '',
-        internalWelfare: 'no',
-        regularDeduction: ''
+        internalWelfare: 'CLOSE',
+        regularDeduction: 0
       },
       isAutomaticCalculate: false,
       benefitsColumns: [
@@ -213,13 +214,20 @@ export default {
       ]
     }
   },
+  watch: {
+    isAutomaticCalculate: function() {
+      if (!this.isAutomaticCalculate) {
+        this.extraParams.regularDeduction = 0
+      }
+    }
+  },
   methods: {
     logoFormatter(row) {
       return (
         <img
           src={row.levelIcon ? row.levelIcon : ''}
           style={{
-            width: '100px',
+            width: '60px',
             background: 'transparent',
             padding: '0'
           }}
@@ -247,34 +255,29 @@ export default {
     clickNew() {
       this.extraParams.levelIcon = ''
       this.extraParams.lowerValue = ''
-      this.extraParams.internalWelfare = 'no'
-      this.extraParams.regularDeduction = ''
+      this.extraParams.internalWelfare = 'CLOSE'
+      this.extraParams.regularDeduction = 0
       this.isAutomaticCalculate = false
     },
     onUpLoadFile(levelIcon, type) {
       this.extraParams.levelIcon = levelIcon
     },
     getMemberBenefits(row) {
-      this.memberId = row.id
+      // this.memberId = row.id
       this.memberBenefitsVisible = true
-      //TODO: 修改url中的id  或者添加getList方法
-      this.memberBenefitsUrl =
-        'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberLevel/levelBenefit/id'
+      this.memberBenefitsQuery = {id: row.id}
+      this.memberBenefitsUrl = levelBenefit + '?id=' + row.id
     },
     confirmEdit() {
       let newArr = this.memberData.map(item => {
         return {
-          benefitId: item.benefitId,
-          levelId: item.levelId,
+          id: item.id,
           normalAccount: item.normalAccount,
           internalStaff: item.internalStaff
         }
       })
       this.$axios
-        .$put(
-          'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/mcMemberLevel/levelBenefit',
-          JSON.stringify(newArr)
-        )
+        .$put(levelBenefit, newArr)
         .then(result => {
           this.$message({
             type: 'success',
@@ -293,9 +296,7 @@ export default {
     },
     getGrowthValueData() {
       this.$axios
-        .$get(
-          'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/experienceStrategy'
-        )
+        .$get(experienceStrategy)
         .then(resp => {
           this.growthValueData = resp.payload
         })
@@ -309,10 +310,7 @@ export default {
         }
       })
       this.$axios
-        .$put(
-          'http://levy.ren:3000/mock/308/mall-deepexi-member-center/api/v1/experienceStrategy',
-          JSON.stringify(newArr)
-        )
+        .$put(experienceStrategy, newArr)
         .then(result => {
           this.$message({
             type: 'success',
