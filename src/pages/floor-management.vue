@@ -257,12 +257,12 @@ import BindFrontendCategory from '@/components/category/bind-frontend-category'
 import ElCrudTree from '@/components/floor-tree/el-crud-tree'
 import UploadToAli from 'upload-to-ali'
 import {
-  backendCatalogBaseUrl,
-  frontendCatalogBaseUrl,
-  selectedFilterCondition,
   AllfilterCondition,
+  backendCatalogBaseUrl,
+  frontCatalogSingle,
+  frontendCatalogBaseUrl,
   frontendCatalogTree,
-  frontCatalogSingle
+  selectedFilterCondition
 } from '@/const/api'
 
 //这个组件 bind-frontend-category  用来显示楼层关联的类目
@@ -533,9 +533,33 @@ export default {
               )
                 .then(() => {
                   this.floorId = this.editForm.id
-                  this.$refs.BackendCategoryGoodsList.handleClear()
-                  this.$refs.tree.updateNode(obj, url)
-                  this.loadBackendTree()
+                  this.$axios
+                    .$delete(
+                      `/mall-deepexi-mall-config-api/api/v1/floor/clearItem?floorId=${
+                        this.rootId
+                      }`
+                    )
+                    .then(result => {
+                      this.$axios
+                        .$post(url, obj)
+                        .then(result => {
+                          this.$axios
+                            .$get(
+                              `/mall-deepexi-mall-config-api/api/v1/floor/category?floorId=${
+                                this.floorId
+                              }`
+                            )
+                            .then(result => {
+                              this.backendTree = result.payload
+                              // console.log(this.backendTree)
+                              this.refreshEditRoot(this.editForm.id)
+                            })
+                        })
+                        .catch()
+                    })
+                    .catch(err => {
+                      console.log(err)
+                    })
                 })
                 .catch(() => {})
             }
@@ -597,6 +621,7 @@ export default {
         )
         .then(result => {
           this.backendTree = result.payload
+          // console.log(this.backendTree, result)
         })
     },
     loadFrontendTree() {

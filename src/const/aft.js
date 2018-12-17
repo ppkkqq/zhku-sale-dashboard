@@ -88,15 +88,15 @@ export const searchForm = [
     $options: [
       {
         label: '我买网',
-        value: 1
+        value: '1'
       },
       {
         label: '自营',
-        value: 2
+        value: '2'
       },
       {
         label: '京东',
-        value: 4
+        value: '4'
       }
     ]
   },
