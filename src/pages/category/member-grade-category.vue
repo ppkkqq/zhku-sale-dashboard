@@ -1,0 +1,360 @@
+<template>
+  <div>
+    <div class="title">新增会员等级</div>
+    <el-data-table
+      :url="url"
+      :columns="dialogColumns"
+      :hasOperation="true"
+      :hasPagination="false"
+      :extraButtons="extraButtons"
+      dataPath="payload"
+      :form="form"
+      :extraParams="extraParams"
+      @edit="extraEdit"
+      @new="clickNew"
+      @canDelete="checkCanDelete"
+    >
+      <el-form slot="form">
+        <el-form-item prop="growth_range" label="*成长值下限：">
+          <el-col :span="6"><el-input v-model="extraParams.lowerValue"></el-input></el-col>
+        </el-form-item>
+      </el-form>
+      <div slot="form"
+           prop="levelIcon">
+        <el-form-item prop="growth_range" label="*等级图标：">
+          <upload-to-ali @load="onUpLoadFile($event, 'extraParams.levelIcon')"
+                         protocol="https"
+                         :fileUrl="extraParams.levelIcon">
+          </upload-to-ali>
+        <span class="tip-text">建议80*80像素，支持.JPG\.JPEG\.PNG格式</span>
+        </el-form-item>
+      </div>
+      <div slot="form" prop="regularDeduction">
+        <div>
+        <span>定期自动计算</span>
+        <el-switch
+          v-model="isAutomaticCalculate"
+          active-color="#13ce66"
+          inactive-color="#ff4949">
+        </el-switch>
+        <span class="tip-text">开启后以注册日期为节点，满1年时，扣减后重新计算</span>
+        <el-form-item prop="growth_range">
+          <el-col :span="3">&nbsp;</el-col>
+          <el-col :span="1.5">扣减</el-col>
+          <el-col :span="4"><el-input v-model="extraParams.regularDeduction" :disabled="!isAutomaticCalculate"></el-input></el-col>
+          <el-col :span="3">成长值</el-col>
+        </el-form-item>
+        </div>
+      </div>
+      <div  slot="form"
+           prop="internalWelfare">
+        <span>内部员工专享</span>
+        <el-switch
+          v-model="extraParams.internalWelfare"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="OPEN"
+          inactive-value="CLOSE">
+        </el-switch>
+        <span class="tip-text">开启后，内部员工注册后默认此等级</span>
+      </div>
+    </el-data-table>
+    <el-dialog title="会员权益配置" :visible.sync="memberBenefitsVisible" width="50%">
+      <el-data-table
+        ref="dataTable"
+        :url="memberBenefitsUrl"
+        :customQuery="memberBenefitsQuery"
+        :columns="benefitsColumns"
+        :hasNew="false"
+        :hasEdit="false"
+        :hasDelete="false"
+        :hasOperation="false"
+        :isTree="false"
+        :hasPagination="false"
+        data-path="payload"
+        @update="getData"
+      ></el-data-table>
+      <el-button type="primary" @click="confirmEdit" class="btn-mg">确定</el-button>
+      <el-button @click="()=>{this.memberBenefitsVisible = false}" class="btn-mg">取消</el-button>
+    </el-dialog>
+    <div class="title" style="margin-top: 20px;">成长值计算策略</div>
+    <el-data-table
+      :url="growthValueUrl"
+      :columns="growthValueColumns"
+      :hasOperation="false"
+      :hasPagination="false"
+      :hasNew="false"
+      dataPath="payload"
+      :extraParams="extraParams"
+      @update="getValueData"
+    >
+    </el-data-table>
+    <el-button type="primary" @click="growthValueConfirm" class="btn-mg">确定</el-button>
+  </div>
+</template>
+
+<script>
+import UploadToAli from 'upload-to-ali'
+import {mcMemberLevel, levelBenefit, experienceStrategy} from '@/const/api'
+export default {
+  name: 'member-grade-category',
+  components: {
+    UploadToAli
+  },
+  data() {
+    return {
+      memberData: [],
+      url: mcMemberLevel,
+      memberBenefitsUrl: levelBenefit,
+      memberBenefitsQuery: {},
+      memberBenefitsVisible: false,
+      growthValueData: [],
+      growthValueUrl: experienceStrategy,
+      dialogColumns: [
+        {
+          prop: 'levelName',
+          label: '等级名称',
+          width: '100px'
+        },
+        {
+          prop: 'levelIcon',
+          label: '图标',
+          width: '110px',
+          formatter: this.logoFormatter
+        },
+        {
+          prop: 'growth_range',
+          label: '成长值范围',
+          width: '100px',
+          formatter: row => {
+            if (row.lowerValue && !row.upperValue) {
+              return row.lowerValue + '以上'
+            } else {
+              return row.lowerValue + '-' + row.upperValue
+            }
+          }
+        },
+        {
+          prop: 'internalWelfare',
+          label: '内部专享',
+          width: '100px',
+          formatter: row => {
+            return row.internalWelfare === 'OPEN' ? '开启' : ''
+          }
+        },
+        {
+          prop: 'regularDeduction',
+          label: '说明',
+          width: '250px',
+          formatter: row => {
+            if (!row.regularDeduction) {
+              return '永久有效'
+            }
+            return `有效期1年，1年后扣除${
+              row.regularDeduction
+            }成长值，根据剩余成长值重新计算级别`
+          }
+        }
+      ],
+      extraButtons: [
+        {
+          type: 'primary',
+          text: '配置权益',
+          atClick: this.getMemberBenefits
+        }
+      ],
+      form: [
+        {
+          label: '*等级名称',
+          $id: 'levelName',
+          $type: 'input'
+        }
+      ],
+      extraParams: {
+        levelIcon: '',
+        lowerValue: '',
+        internalWelfare: 'CLOSE',
+        regularDeduction: 0
+      },
+      isAutomaticCalculate: false,
+      benefitsColumns: [
+        {
+          prop: 'benefitName',
+          label: '用户权益'
+        },
+        {
+          prop: 'normalAccount',
+          label: '普通会员',
+          formatter: row => this.switchFormatter(row, 'normalAccount')
+        },
+        {
+          prop: 'internalStaff',
+          label: '内部员工',
+          formatter: row => this.switchFormatter(row, 'internalStaff')
+        }
+      ],
+      growthValueColumns: [
+        {
+          prop: 'behavior',
+          label: '用户行为'
+        },
+        {
+          prop: 'description',
+          label: '奖励成长值'
+        },
+        {
+          prop: 'rewardContent',
+          label: '说明'
+        },
+        {
+          prop: 'status',
+          label: '操作',
+          formatter: row => this.switchFormatter(row, 'status')
+        }
+      ]
+    }
+  },
+  watch: {
+    isAutomaticCalculate: function() {
+      if (!this.isAutomaticCalculate) {
+        this.extraParams.regularDeduction = 0
+      }
+    }
+  },
+  methods: {
+    logoFormatter(row) {
+      return (
+        <img
+          src={row.levelIcon ? row.levelIcon : ''}
+          style={{
+            width: '60px',
+            background: 'transparent',
+            padding: '0'
+          }}
+        />
+      )
+    },
+    switchFormatter(row, type) {
+      return (
+        <el-switch
+          v-model={row[type]}
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="open"
+          inactive-value="close"
+        />
+      )
+    },
+    extraEdit(row) {
+      this.extraParams.levelIcon = row.levelIcon
+      this.extraParams.lowerValue = row.lowerValue
+      this.extraParams.internalWelfare = row.internalWelfare
+      this.extraParams.regularDeduction = row.regularDeduction
+      this.isAutomaticCalculate = !!row.regularDeduction
+    },
+    clickNew() {
+      this.extraParams.levelIcon = ''
+      this.extraParams.lowerValue = ''
+      this.extraParams.internalWelfare = 'CLOSE'
+      this.extraParams.regularDeduction = 0
+      this.isAutomaticCalculate = false
+    },
+    onUpLoadFile(levelIcon, type) {
+      this.extraParams.levelIcon = levelIcon
+    },
+    getMemberBenefits(row) {
+      // this.memberId = row.id
+      this.memberBenefitsVisible = true
+      this.memberBenefitsQuery = {id: row.id}
+      this.memberBenefitsUrl = levelBenefit + '?id=' + row.id
+    },
+    confirmEdit() {
+      let newArr = this.memberData.map(item => {
+        return {
+          id: item.id,
+          normalAccount: item.normalAccount,
+          internalStaff: item.internalStaff
+        }
+      })
+      this.$axios
+        .$put(levelBenefit, newArr)
+        .then(result => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+        })
+        .catch(err => {
+          this.$message.error('操作失败! 请稍后再试!')
+        })
+        .finally(res => {
+          this.memberBenefitsVisible = false
+        })
+    },
+    getData(data) {
+      this.memberData = data
+    },
+    getGrowthValueData() {
+      this.$axios
+        .$get(experienceStrategy)
+        .then(resp => {
+          this.growthValueData = resp.payload
+        })
+        .catch()
+    },
+    growthValueConfirm() {
+      let newArr = this.growthValueData.map(item => {
+        return {
+          id: item.id,
+          status: item.status
+        }
+      })
+      this.$axios
+        .$put(experienceStrategy, newArr)
+        .then(result => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+        })
+        .catch(err => {
+          this.$message.error('操作失败! 请稍后再试!')
+        })
+    },
+    getValueData(data) {
+      this.growthValueData = data
+    },
+    checkCanDelete(result) {
+      if (!result) {
+        this.$confirm('无法删除该会员等级', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        return
+      }
+      this.$message({
+        type: 'success',
+        message: '操作成功'
+      })
+    }
+  },
+  created() {
+    this.getGrowthValueData
+  }
+}
+</script>
+
+<style scoped>
+.tip-text {
+  font-size: 12px;
+  color: #f56c6c;
+}
+.title {
+  font-size: 20px;
+  font-weight: 600;
+}
+.btn-mg {
+  margin: 15px;
+}
+</style>
