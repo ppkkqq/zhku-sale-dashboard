@@ -635,17 +635,27 @@ export default {
                     })
                     temp = true
                   }
-                  if (
-                    !/^1[3456789]\d{9}$/.test(value.mobile) ||
-                    !value.mobile
-                  ) {
+                  if (!value.mobile) {
                     this.tableData.push({
                       id: this.tableData.length + 1,
                       index: index + 1,
-                      content: '手机格式不对'
+                      content: '手机号码不能为空'
                     })
                     temp = true
+                  } else {
+                    if (
+                      !/^1[3456789]\d{9}$/.test(value.mobile) ||
+                      !value.mobile
+                    ) {
+                      this.tableData.push({
+                        id: this.tableData.length + 1,
+                        index: index + 1,
+                        content: '手机格式不对'
+                      })
+                      temp = true
+                    }
                   }
+
                   if (
                     value.gender &&
                     value.gender !== '男' &&
