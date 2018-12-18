@@ -144,6 +144,7 @@ import {
   menberAccountsExport
 } from '@/const/api'
 import {customerDetail} from '@/const/path'
+import uniq from 'lodash/uniq'
 import {integer, positiveInteger, telPattern} from '@/const/pattern'
 import qs from 'qs'
 import cookie from 'js-cookie'
@@ -341,6 +342,7 @@ export default {
       ],
       single,
       batch,
+      mobileList: [],
       topUpLoading: false,
       topUpform: {},
       topUpRules: {
@@ -615,6 +617,7 @@ export default {
               if (this.totalLength !== 0) {
                 this.errorLength = 0
                 this.resultArray.forEach((value, index) => {
+                  this.mobileList.push(value.mobile)
                   let temp = false
                   if (
                     value.nickName &&
@@ -705,7 +708,14 @@ export default {
     httpRequest() {
       //自定义上传的实现
       // console.log(this.errorLength,this.totalLength)
-
+      if (this.mobileList.length !== uniq(this.mobileList).length) {
+        this.$notify({
+          title: '提示',
+          message: `导入会员中存在重复的手机号码，请检查导入的数据！`,
+          type: 'error'
+        })
+        return
+      }
       if (
         this.uploading ||
         this.errorType ||
