@@ -555,7 +555,7 @@ export default {
           let resuleChange
           if (
             !wb.Sheets[wb.SheetNames[0]].A1 ||
-            wb.Sheets[wb.SheetNames[0]].A1.v !== '昵称(20字符以内)' ||
+            wb.Sheets[wb.SheetNames[0]].A1.v !== '昵称(2-16字符)' ||
             (!wb.Sheets[wb.SheetNames[0]].B1 ||
               wb.Sheets[wb.SheetNames[0]].B1.v !== '姓名(20字符以内)') ||
             (!wb.Sheets[wb.SheetNames[0]].C1 ||
