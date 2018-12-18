@@ -144,6 +144,7 @@ import {
   menberAccountsExport
 } from '@/const/api'
 import {customerDetail} from '@/const/path'
+import uniq from 'lodash/uniq'
 import {integer, positiveInteger, telPattern} from '@/const/pattern'
 import qs from 'qs'
 import cookie from 'js-cookie'
@@ -341,6 +342,7 @@ export default {
       ],
       single,
       batch,
+      mobileList: [],
       topUpLoading: false,
       topUpform: {},
       topUpRules: {
@@ -579,12 +581,12 @@ export default {
                 sheet: XLSX.utils.sheet_to_json(wb.Sheets[sheetName])
               })
             })
-            console.log(result)
+
             result.forEach((value, index) => {
               if (result[index].sheet.length > 0) {
                 result[index].sheet.forEach((Ovalue, Oindex) => {
                   let mapKey = {
-                    '昵称(20字符以内)': 'nickName',
+                    '昵称(2-16字符)': 'nickName',
                     '姓名(20字符以内)': 'realName',
                     '手机号(不可为空)': 'mobile',
                     '性别(男/女)': 'gender',
@@ -609,21 +611,21 @@ export default {
             })
             this.totalLength = this.resultArray.length
 
-            console.log(this.totalLength)
-
             if (this.totalLength < 1000) {
               if (this.totalLength !== 0) {
                 this.errorLength = 0
                 this.resultArray.forEach((value, index) => {
+                  this.mobileList.push(value.mobile)
                   let temp = false
                   if (
                     value.nickName &&
-                    (value.nickName.length < 2 || value.nickName.length > 20)
+                    (value.nickName.length < 2 || value.nickName.length > 16)
                   ) {
                     this.tableData.push({
                       id: this.tableData.length + 1,
                       index: index + 1,
-                      content: '昵称格式不对，昵称长度为2-20个字符'
+
+                      content: '昵称格式不对，昵称长度为2-16个字符'
                     })
                     temp = true
                   }
@@ -706,6 +708,14 @@ export default {
       //自定义上传的实现
       // console.log(this.errorLength,this.totalLength)
 
+      if (this.mobileList.length !== uniq(this.mobileList).length) {
+        this.$notify({
+          title: '提示',
+          message: `导入会员中存在重复的手机号码，请检查导入的数据！`,
+          type: 'error'
+        })
+        return
+      }
       if (
         this.uploading ||
         this.errorType ||
@@ -746,30 +756,7 @@ export default {
           //   this.openSuccess()
           // }
         })
-        .catch(error => {
-          if (error.response) {
-            if (error.response.status == 400) {
-              // this.$notify({
-              //   title: '提示',
-              //   message: `单次导入只支持1000条（含）以内记录！`,
-              //   type: 'error'
-              // })
-            }
-            // if (error.response.status == 406) {
-            //   let str = error.response.data.payload
-            //   let temp = JSON.parse(str)
-            //   // console.log(temp)
-            //   temp.result.forEach((item, index) => {
-            //     item.id = index + 1
-            //   })
-            //   this.$refs.upload.clearFiles()
-            //   this.tableData = temp.result
-            //   this.resultArray = []
-            //   this.dialogVisible = true
-            //   this.importLoading = false
-            // }
-          }
-        })
+        .catch(error => {})
         .finally(() => {
           this.uploading = false
         })
