@@ -581,7 +581,7 @@ export default {
                 sheet: XLSX.utils.sheet_to_json(wb.Sheets[sheetName])
               })
             })
-            console.log(result)
+            // console.log(result)
             result.forEach((value, index) => {
               if (result[index].sheet.length > 0) {
                 result[index].sheet.forEach((Ovalue, Oindex) => {
@@ -611,7 +611,7 @@ export default {
             })
             this.totalLength = this.resultArray.length
 
-            console.log(this.totalLength)
+            // console.log(this.totalLength)
 
             if (this.totalLength < 1000) {
               if (this.totalLength !== 0) {
@@ -748,36 +748,11 @@ export default {
               this.totalLength = response.data.payload.total
             }
           }
-          // if (response.data.length > 0) {
-          //   this.$refs.upload.clearFiles()
-          //   this.resultArray = []
-          //   this.importLoading = false
-          // } else {
-          //   this.openSuccess()
-          // }
         })
         .catch(error => {
           if (error.response) {
             if (error.response.status == 400) {
-              // this.$notify({
-              //   title: '提示',
-              //   message: `单次导入只支持1000条（含）以内记录！`,
-              //   type: 'error'
-              // })
             }
-            // if (error.response.status == 406) {
-            //   let str = error.response.data.payload
-            //   let temp = JSON.parse(str)
-            //   // console.log(temp)
-            //   temp.result.forEach((item, index) => {
-            //     item.id = index + 1
-            //   })
-            //   this.$refs.upload.clearFiles()
-            //   this.tableData = temp.result
-            //   this.resultArray = []
-            //   this.dialogVisible = true
-            //   this.importLoading = false
-            // }
           }
         })
         .finally(() => {
