@@ -611,7 +611,7 @@ export default {
               }
             })
             this.totalLength = this.resultArray.length
-
+            this.mobileList = []
             // console.log(this.totalLength)
 
             if (this.totalLength < 1000) {
