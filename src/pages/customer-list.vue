@@ -586,7 +586,7 @@ export default {
               if (result[index].sheet.length > 0) {
                 result[index].sheet.forEach((Ovalue, Oindex) => {
                   let mapKey = {
-                    '昵称(20字符以内)': 'nickName',
+                    '昵称(2-16字符)': 'nickName',
                     '姓名(20字符以内)': 'realName',
                     '手机号(不可为空)': 'mobile',
                     '性别(男/女)': 'gender',
@@ -621,12 +621,12 @@ export default {
                   let temp = false
                   if (
                     value.nickName &&
-                    (value.nickName.length < 2 || value.nickName.length > 20)
+                    (value.nickName.length < 2 || value.nickName.length > 16)
                   ) {
                     this.tableData.push({
                       id: this.tableData.length + 1,
                       index: index + 1,
-                      content: '昵称格式不对，昵称长度为2-20个字符'
+                      content: '昵称格式不对，昵称长度为2-16个字符'
                     })
                     temp = true
                   }
