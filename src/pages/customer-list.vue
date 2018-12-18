@@ -612,6 +612,8 @@ export default {
             })
             this.totalLength = this.resultArray.length
 
+            this.mobileList = []
+
             if (this.totalLength < 1000) {
               if (this.totalLength !== 0) {
                 this.errorLength = 0
