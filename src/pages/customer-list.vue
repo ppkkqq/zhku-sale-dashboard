@@ -363,7 +363,8 @@ export default {
           }
           return {color: typeToColor[e.column.property]}
         }
-      }
+      },
+      isRepeat: false
     }
   },
   components: {
@@ -690,6 +691,16 @@ export default {
                     this.errorLength += 1
                   }
                 })
+                if (this.mobileList.length !== uniq(this.mobileList).length) {
+                  this.$notify({
+                    title: '提示',
+                    message: `导入会员中存在重复的手机号码，请检查导入的数据！`,
+                    type: 'error'
+                  })
+                  this.isRepeat = true
+                } else {
+                  this.isRepeat = false
+                }
               } else {
                 this.$notify({
                   title: '提示',
@@ -707,21 +718,13 @@ export default {
     httpRequest() {
       //自定义上传的实现
       // console.log(this.errorLength,this.totalLength)
-
-      if (this.mobileList.length !== uniq(this.mobileList).length) {
-        this.$notify({
-          title: '提示',
-          message: `导入会员中存在重复的手机号码，请检查导入的数据！`,
-          type: 'error'
-        })
-        return
-      }
       if (
         this.uploading ||
         this.errorType ||
         this.errorLength > 0 ||
         this.totalLength > 1000 ||
-        this.totalLength == 0
+        this.totalLength == 0 ||
+        this.isRepeat
       ) {
         return
       }
