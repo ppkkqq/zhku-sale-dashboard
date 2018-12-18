@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import cookie from 'js-cookie'
+// 为了finally的兼容性
+require('promise.prototype.finally').shim()
 
 export default function(context) {
   let {$axios, store, app, redirect} = context
