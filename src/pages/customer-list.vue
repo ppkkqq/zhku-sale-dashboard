@@ -617,9 +617,10 @@ export default {
             if (this.totalLength < 1000) {
               if (this.totalLength !== 0) {
                 this.errorLength = 0
+                this.repeatTemp = true //能够进行重复校验
                 this.resultArray.forEach((value, index) => {
-                  this.mobileList.push(value.mobile)
                   let temp = false
+
                   if (
                     value.nickName &&
                     (value.nickName.length < 2 || value.nickName.length > 16)
@@ -646,17 +647,18 @@ export default {
                       content: '手机号码不能为空'
                     })
                     temp = true
+                    this.repeatTemp = false
                   } else {
-                    if (
-                      !/^1[3456789]\d{9}$/.test(value.mobile) ||
-                      !value.mobile
-                    ) {
+                    if (!/^1[3456789]\d{9}$/.test(value.mobile)) {
                       this.tableData.push({
                         id: this.tableData.length + 1,
                         index: index + 1,
                         content: '手机格式不对'
                       })
                       temp = true
+                      this.repeatTemp = false
+                    } else {
+                      this.mobileList.push(value.mobile)
                     }
                   }
 
@@ -692,7 +694,11 @@ export default {
                     this.errorLength += 1
                   }
                 })
-                if (this.mobileList.length !== uniq(this.mobileList).length) {
+                if (
+                  this.repeatTemp &&
+                  this.errorLength == 0 &&
+                  this.mobileList.length !== uniq(this.mobileList).length
+                ) {
                   this.$notify({
                     title: '提示',
                     message: `导入会员中存在重复的手机号码，请检查导入的数据！`,
