@@ -425,11 +425,11 @@ export default {
             .$post(url, data)
             .then(resp => {
               this.$message.success('操作成功')
+              this.topUpDialogVisible = false
             })
             .catch(e => console.error(e))
             .finally(() => {
               this.topUpLoading = false
-              this.topUpDialogVisible = false
             })
         }
       })
