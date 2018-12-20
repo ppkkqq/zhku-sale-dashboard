@@ -159,6 +159,13 @@ const dialogTitle = {
 const single = 'single'
 const batch = 'batch'
 
+const equal = '='
+const valueSeparator = '~'
+const paramSeparator = ','
+const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
+const queryFlag = 'q='
+const queryPattern = new RegExp('q=.*' + paramSeparator)
+
 export default {
   name: 'customer-list',
   data() {
@@ -393,6 +400,22 @@ export default {
 
         this.topUpform = {}
       }
+    }
+  },
+  mounted() {
+    let matches = location.href.match(queryPattern)
+    if (matches) {
+      let query = matches[0].substr(2).replace(valueSeparatorPattern, equal)
+      let params = qs.parse(query, {delimiter: paramSeparator})
+      params.startCreateTime &&
+        params.endCreateTime &&
+        (this.createDate = [params.startCreateTime, params.endCreateTime])
+      params.startLastLoginTime &&
+        params.endLastLoginTime &&
+        (this.lastLoginTime = [
+          params.startLastLoginTime,
+          params.endLastLoginTime
+        ])
     }
   },
   methods: {
