@@ -116,3 +116,21 @@ export const columns = [
     formatter: row => activityStatus[row.tmaStatus]
   }
 ]
+
+export const status = {
+  // TODO: 对接字段
+  under_review: '全部',
+  failed_review: '未开始',
+  refunding: '进行中',
+  confirm_refund: '已结束',
+  cancel_refund: '已失效',
+  cancel_review: '已取消'
+}
+
+export const actStatus = {
+  // TODO: 对接字段
+  0: '未开始',
+  1: '进行中',
+  2: '已结束',
+  3: '已失效'
+}
