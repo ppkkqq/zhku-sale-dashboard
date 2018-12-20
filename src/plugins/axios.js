@@ -25,7 +25,7 @@ export default function(context) {
 
   $axios.onError(error => {
     if (error.message === networkError || !error.response) {
-      Vue.$notify.error('无法连接到网络，请检查网络设置或稍后重试')
+      Vue.$notify.error('网络请求失败，请检查您的网络')
       return
     }
 
