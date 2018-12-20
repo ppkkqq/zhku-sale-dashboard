@@ -18,7 +18,7 @@
       :customQuery="customQuery"
       :searchForm="searchForm"
       totalPath="payload.total"
-      data-path="payload.list"
+      data-path="limitedTimeList"
       @reset="handleReset"
     >
       <template slot="search">
@@ -44,6 +44,7 @@ const tabs = Object2Options(status)
 import {Object2Options} from '@/const/filter'
 import {goodsLists} from '@/const/api'
 import {status, actStatus} from '@/const/marketing'
+import {formatDate} from '@/const/filter'
 
 export default {
   name: 'discount-list',
@@ -51,8 +52,9 @@ export default {
   data() {
     return {
       pageName: 'discount-list',
-      url: goodsLists,
-      // url: 'http://yapi.deepexi.io:5002/mock/398/http://yapi.deepexi.io:5002/mock/398/mall-deepexi-marking-center/api/v1/earnest/list',
+      // url: goodsLists,
+      url:
+        'http://yapi.deepexi.io:5002/mock/477/mall-deepexi-marking-center/api/v1//supplier/limitedtime/platlist',
       activeName: '',
       // TODO: 对接
       customQuery: {
@@ -62,30 +64,38 @@ export default {
       effectTime: [],
       columns: [
         {
-          prop: 'code',
+          prop: 'title',
           label: '活动名称'
         },
         {
-          prop: 'code1',
+          prop: 'shopName',
           label: '所属商户'
         },
         {
-          prop: 'code3',
-          label: '有效时间'
+          prop: 'effectTime',
+          label: '有效时间',
+          width: '168px',
+          formatter: row => {
+            return (
+              formatDate(row.startTime, 'YYYY-MM-DD HH:mm:ss') +
+              '至' +
+              formatDate(row.endTime, 'YYYY-MM-DD HH:mm:ss')
+            )
+          }
         },
         {
-          prop: 'code2',
+          prop: 'activeOrderTotalMoney',
           label: '活动订单总金额（元）',
           minWidth: 120
         },
         {
-          prop: 'code14',
+          prop: 'paymentOrderCount',
           label: '付款订单数'
         },
         {
           prop: 'timeStatus',
           label: '活动状态',
-          formatter: row => this.actStatus[row.timeStatus]
+          formatter: row => actStatus[row.timeStatus]
         }
       ],
       extraButtons: [
@@ -182,7 +192,6 @@ export default {
   },
   created() {
     this.tabs = tabs
-    this.actStatus = actStatus
   }
 }
 </script>

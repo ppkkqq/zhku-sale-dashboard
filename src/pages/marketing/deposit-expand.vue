@@ -88,7 +88,7 @@ export default {
         {
           prop: 'timeStatus',
           label: '活动状态',
-          formatter: row => this.actStatus[row.timeStatus]
+          formatter: row => actStatus[row.timeStatus]
         }
       ],
       extraButtons: [
@@ -185,7 +185,6 @@ export default {
   },
   created() {
     this.tabs = tabs
-    this.actStatus = actStatus
   }
 }
 </script>
