@@ -225,3 +225,8 @@ export const mcMemberLevel = MEMBER_CENTER + `/mcMemberLevel`
 export const levelBenefit = MEMBER_CENTER + `/mcMemberLevel/levelBenefit`
 export const experienceStrategy =
   MEMBER_CENTER + `/mcMemberLevel/experienceStrategy`
+//限时抢购列表
+export const limitedTimePlatList =
+  MARKETING_CENTER + `/supplier/limitedtime/platlist`
+//定金膨胀列表
+export const earnestList = MARKETING_CENTER + `/earnest/list`

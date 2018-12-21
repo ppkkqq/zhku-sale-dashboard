@@ -18,7 +18,7 @@
       :customQuery="customQuery"
       :searchForm="searchForm"
       totalPath="payload.total"
-      data-path="limitedTimeList"
+      data-path="payload.list"
       @reset="handleReset"
     >
       <template slot="search">
@@ -42,7 +42,7 @@
 const tabs = Object2Options(status)
 // import {discountDetail} from '@/const/path'
 import {Object2Options} from '@/const/filter'
-import {goodsLists} from '@/const/api'
+import {goodsLists, limitedTimePlatList} from '@/const/api'
 import {status, actStatus} from '@/const/marketing'
 import {formatDate} from '@/const/filter'
 
@@ -52,9 +52,7 @@ export default {
   data() {
     return {
       pageName: 'discount-list',
-      // url: goodsLists,
-      url:
-        'http://yapi.deepexi.io:5002/mock/477/mall-deepexi-marking-center/api/v1//supplier/limitedtime/platlist',
+      url: limitedTimePlatList,
       activeName: '',
       // TODO: 对接
       customQuery: {

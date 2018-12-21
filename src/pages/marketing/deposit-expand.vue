@@ -42,7 +42,7 @@
 const tabs = Object2Options(status)
 // import {discountDetail} from '@/const/path'
 import {Object2Options} from '@/const/filter'
-import {goodsLists} from '@/const/api'
+import {earnestList} from '@/const/api'
 import {status, actStatus} from '@/const/marketing'
 
 export default {
@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       pageName: 'discount-list',
-      url: goodsLists,
+      url: earnestList,
       activeName: '',
       // TODO: 对接
       customQuery: {
@@ -67,10 +67,6 @@ export default {
         {
           prop: 'shopName',
           label: '所属商户'
-        },
-        {
-          prop: 'code3',
-          label: '商品'
         },
         {
           prop: 'totalEarnest',
