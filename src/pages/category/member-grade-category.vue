@@ -22,9 +22,8 @@
       <div slot="form"
            prop="levelIcon">
         <el-form-item prop="growth_range" label="*等级图标：">
-          <upload-to-ali @load="onUpLoadFile($event, 'extraParams.levelIcon')"
-                         protocol="https"
-                         :fileUrl="extraParams.levelIcon">
+          <upload-to-ali accept="image/png, image/jpeg, image/jpg"
+                         v-model="extraParams.levelIcon">
           </upload-to-ali>
         <span class="tip-text">建议80*80像素，支持.JPG\.JPEG\.PNG格式</span>
         </el-form-item>
@@ -127,7 +126,7 @@ export default {
           label: '成长值范围',
           width: '100px',
           formatter: row => {
-            if (row.lowerValue && !row.upperValue) {
+            if ((row.lowerValue || row.lowerValue == 0) && !row.upperValue) {
               return row.lowerValue + '以上'
             } else {
               return row.lowerValue + '-' + row.upperValue
@@ -259,9 +258,9 @@ export default {
       this.extraParams.regularDeduction = 0
       this.isAutomaticCalculate = false
     },
-    onUpLoadFile(levelIcon, type) {
-      this.extraParams.levelIcon = levelIcon
-    },
+    // onUpLoadFile(levelIcon, type) {
+    //   this.extraParams.levelIcon = levelIcon
+    // },
     getMemberBenefits(row) {
       // this.memberId = row.id
       this.memberBenefitsVisible = true
