@@ -229,3 +229,8 @@ export const mcMemberLevel = MEMBER_CENTER + `/mcMemberLevel`
 export const levelBenefit = MEMBER_CENTER + `/mcMemberLevel/levelBenefit`
 export const experienceStrategy =
   MEMBER_CENTER + `/mcMemberLevel/experienceStrategy`
+//搜索下拉获得会员等级
+export const levelItem = MEMBER_CENTER + '/mcMemberLevel/levelItem'
+//会员标签按钮
+export const updateMemberType =
+  MEMBER_CENTER + '/mcMemberAccounts/updateMemberType'

@@ -135,13 +135,15 @@
 
 <script>
 import {Upload} from 'element-ui'
-import {formatDate} from '@/const/filter'
+import {formatDate, source3Options} from '@/const/filter'
 import {
   mcMemberInfos,
   getShopUserInfo,
   currency,
   memberImportTem,
-  menberAccountsExport
+  menberAccountsExport,
+  levelItem,
+  updateMemberType
 } from '@/const/api'
 import {customerDetail} from '@/const/path'
 import uniq from 'lodash/uniq'
@@ -229,11 +231,12 @@ export default {
       ],
       pageName: 'customer-list',
       url: mcMemberInfos, //总部端分页查询
+      levelIdList: [],
       totalPath: 'payload.totalElements',
       dataPath: 'payload.content',
       columns: [
         {
-          //prop: 'nickName',
+          prop: 'id',
           label: '会员ID'
         },
         {
@@ -245,12 +248,14 @@ export default {
           label: '姓名'
         },
         {
-          // prop: 'nickName',
+          prop: 'levelName',
           label: '会员等级'
         },
         {
-          // prop: 'nickName',
-          label: '会员标签'
+          prop: 'memberType',
+          label: '会员标签',
+          formatter: row =>
+            row.memberType === 'NORMALACCOUNT' ? '普通会员' : '内部员工'
         },
         {
           prop: 'mobile',
@@ -344,16 +349,20 @@ export default {
         {
           text: '内部员工标签',
           show: row => {
-            return true
+            return this.isYYMember && row.memberType === 'NORMALACCOUNT'
           },
-          atClick: this.addLabel
+          atClick: row => {
+            this.addLabel(row)
+          }
         },
         {
           text: '取消内部标签',
           show: row => {
-            return true
+            return this.isYYMember && row.memberType === 'INTERNALSTAFF'
           },
-          atClick: this.cancelLabel
+          atClick: row => {
+            this.cancelLabel(row)
+          }
         }
       ],
       searchForm: [
@@ -372,6 +381,33 @@ export default {
           label: '手机号',
           $id: 'mobile',
           $type: 'input'
+        },
+        {
+          $el: {
+            placeholder: '请选择'
+          },
+          label: '会员等级',
+          $id: 'levelId',
+          $type: 'select',
+          $options: source3Options(this.levelIdList)
+        },
+        {
+          $el: {
+            placeholder: '请选择'
+          },
+          label: '会员标签',
+          $id: 'memberType',
+          $type: 'select',
+          $options: [
+            {
+              label: '内部员工',
+              value: 'INTERNALSTAFF'
+            },
+            {
+              label: '普通会员',
+              value: 'NORMALACCOUNT'
+            }
+          ]
         }
       ],
       single,
@@ -405,6 +441,10 @@ export default {
     'el-upload': Upload
   },
   computed: {
+    isYYMember() {
+      // 是否是运营人员
+      return this.user && this.user.roles[0].roleNum === 'YY'
+    },
     topUpDialogTitle() {
       return dialogTitle[this.currentDialog]
     },
@@ -447,10 +487,21 @@ export default {
           params.endLastLoginTime
         ])
     }
+    this.getLevelIdList()
+    this.showLabelBtn()
   },
   methods: {
     go2Detail(row) {
       this.$router.push(`${customerDetail}?memberId=${row.id}`)
+    },
+    getLevelIdList() {
+      this.$axios
+        .$get(levelItem)
+        .then(res => {
+          this.levelIdList = res.payload
+          this.searchForm[2].$options = source3Options(this.levelIdList)
+        })
+        .catch()
     },
     topUp() {
       this.$refs.topUpform.validate(valid => {
@@ -845,36 +896,58 @@ export default {
           }
         })
     },
-    addLabel() {
+    addLabel(row) {
       this.$confirm('是否将该会员标签为内部员工?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        //TODO：接口数据
-        this.$message({
-          type: 'success',
-          message: '标签成功!'
-        })
       })
+        .then(() => {
+          this.$axios
+            .$put(updateMemberType, {
+              id: row.id,
+              memberType: 'INTERNALSTAFF'
+            })
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: '标签成功!'
+              })
+              this.$refs.dataTable.getList()
+            })
+            .catch(() => {
+              this.$message.error('设置失败! 请稍后再试!')
+            })
+        })
+        .catch(error => {})
     },
-    cancelLabel() {
+    cancelLabel(row) {
       this.$confirm('是否取消该会员的内部员工标签?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          //TODO：接口数据
-          this.$message({
-            type: 'success',
-            message: '取消成功!'
-          })
+          this.$axios
+            .$put(updateMemberType, {
+              id: row.id,
+              memberType: 'NORMALACCOUNT'
+            })
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: '标签成功!'
+              })
+              this.$refs.dataTable.getList()
+            })
+            .catch(() => {
+              this.$message.error('设置失败! 请稍后再试!')
+            })
         })
         .catch(error => {})
-        .finally(() => {
-          this.uploading = false
-        })
+    },
+    showLabelBtn() {
+      console.log(1122, this.user.roles[0].roleNum)
     }
   }
 }

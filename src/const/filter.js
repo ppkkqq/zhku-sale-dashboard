@@ -64,6 +64,15 @@ export function source2Options(sources = []) {
     }
   })
 }
+// array [{id, levelName}] 转为 array [{label, value}]
+export function source3Options(sources = []) {
+  return sources.map(channel => {
+    return {
+      label: channel.levelName,
+      value: channel.id
+    }
+  })
+}
 // array[{id,name}] -> {id:name}
 export function source2Object(source = []) {
   let obj = {}
