@@ -362,7 +362,8 @@ export default {
       return (
         row.orderStatusName === '待收货' ||
         row.orderStatusName === '已完成' ||
-        row.orderStatusName === '已评价'
+        row.orderStatusName === '已评价' ||
+        row.orderStatusName === '待评价'
       )
     },
     go2Logistics(row) {

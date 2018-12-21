@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import cookie from 'js-cookie'
+// 为了finally的兼容性
+require('promise.prototype.finally').shim()
 
+const networkError = 'Network Error'
 export default function(context) {
   let {$axios, store, app, redirect} = context
 
@@ -21,6 +24,11 @@ export default function(context) {
   })
 
   $axios.onError(error => {
+    if (error.message === networkError || !error.response) {
+      Vue.$notify.error('网络请求失败，请检查您的网络')
+      return
+    }
+
     if (process.client) {
       // axios 数据结构
       let resp = error.response

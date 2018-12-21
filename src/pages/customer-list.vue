@@ -144,6 +144,7 @@ import {
   menberAccountsExport
 } from '@/const/api'
 import {customerDetail} from '@/const/path'
+import uniq from 'lodash/uniq'
 import {integer, positiveInteger, telPattern} from '@/const/pattern'
 import qs from 'qs'
 import cookie from 'js-cookie'
@@ -157,6 +158,13 @@ const dialogTitle = {
 }
 const single = 'single'
 const batch = 'batch'
+
+const equal = '='
+const valueSeparator = '~'
+const paramSeparator = ','
+const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
+const queryFlag = 'q='
+const queryPattern = new RegExp('q=.*' + paramSeparator)
 
 export default {
   name: 'customer-list',
@@ -368,6 +376,7 @@ export default {
       ],
       single,
       batch,
+      mobileList: [],
       topUpLoading: false,
       topUpform: {},
       topUpRules: {
@@ -388,7 +397,8 @@ export default {
           }
           return {color: typeToColor[e.column.property]}
         }
-      }
+      },
+      isRepeat: false
     }
   },
   components: {
@@ -417,6 +427,22 @@ export default {
 
         this.topUpform = {}
       }
+    }
+  },
+  mounted() {
+    let matches = location.href.match(queryPattern)
+    if (matches) {
+      let query = matches[0].substr(2).replace(valueSeparatorPattern, equal)
+      let params = qs.parse(query, {delimiter: paramSeparator})
+      params.startCreateTime &&
+        params.endCreateTime &&
+        (this.createDate = [params.startCreateTime, params.endCreateTime])
+      params.startLastLoginTime &&
+        params.endLastLoginTime &&
+        (this.lastLoginTime = [
+          params.startLastLoginTime,
+          params.endLastLoginTime
+        ])
     }
   },
   methods: {
@@ -449,11 +475,11 @@ export default {
             .$post(url, data)
             .then(resp => {
               this.$message.success('操作成功')
+              this.topUpDialogVisible = false
             })
             .catch(e => console.error(e))
             .finally(() => {
               this.topUpLoading = false
-              this.topUpDialogVisible = false
             })
         }
       })
@@ -580,7 +606,7 @@ export default {
           let resuleChange
           if (
             !wb.Sheets[wb.SheetNames[0]].A1 ||
-            wb.Sheets[wb.SheetNames[0]].A1.v !== '昵称(20字符以内)' ||
+            wb.Sheets[wb.SheetNames[0]].A1.v !== '昵称(2-16字符)' ||
             (!wb.Sheets[wb.SheetNames[0]].B1 ||
               wb.Sheets[wb.SheetNames[0]].B1.v !== '姓名(20字符以内)') ||
             (!wb.Sheets[wb.SheetNames[0]].C1 ||
@@ -606,12 +632,12 @@ export default {
                 sheet: XLSX.utils.sheet_to_json(wb.Sheets[sheetName])
               })
             })
-            console.log(result)
+
             result.forEach((value, index) => {
               if (result[index].sheet.length > 0) {
                 result[index].sheet.forEach((Ovalue, Oindex) => {
                   let mapKey = {
-                    '昵称(20字符以内)': 'nickName',
+                    '昵称(2-16字符)': 'nickName',
                     '姓名(20字符以内)': 'realName',
                     '手机号(不可为空)': 'mobile',
                     '性别(男/女)': 'gender',
@@ -636,21 +662,24 @@ export default {
             })
             this.totalLength = this.resultArray.length
 
-            console.log(this.totalLength)
+            this.mobileList = []
 
             if (this.totalLength < 1000) {
               if (this.totalLength !== 0) {
                 this.errorLength = 0
+                this.repeatTemp = true //能够进行重复校验
                 this.resultArray.forEach((value, index) => {
                   let temp = false
+
                   if (
                     value.nickName &&
-                    (value.nickName.length < 2 || value.nickName.length > 20)
+                    (value.nickName.length < 2 || value.nickName.length > 16)
                   ) {
                     this.tableData.push({
                       id: this.tableData.length + 1,
                       index: index + 1,
-                      content: '昵称格式不对，昵称长度为2-20个字符'
+
+                      content: '昵称格式不对，昵称长度为2-16个字符'
                     })
                     temp = true
                   }
@@ -669,17 +698,18 @@ export default {
                       content: '手机号码不能为空'
                     })
                     temp = true
+                    this.repeatTemp = false
                   } else {
-                    if (
-                      !/^1[3456789]\d{9}$/.test(value.mobile) ||
-                      !value.mobile
-                    ) {
+                    if (!/^1[3456789]\d{9}$/.test(value.mobile)) {
                       this.tableData.push({
                         id: this.tableData.length + 1,
                         index: index + 1,
                         content: '手机格式不对'
                       })
                       temp = true
+                      this.repeatTemp = false
+                    } else {
+                      this.mobileList.push(value.mobile)
                     }
                   }
 
@@ -715,6 +745,20 @@ export default {
                     this.errorLength += 1
                   }
                 })
+                if (
+                  this.repeatTemp &&
+                  this.errorLength == 0 &&
+                  this.mobileList.length !== uniq(this.mobileList).length
+                ) {
+                  this.$notify({
+                    title: '提示',
+                    message: `导入会员中存在重复的手机号码，请检查导入的数据！`,
+                    type: 'error'
+                  })
+                  this.isRepeat = true
+                } else {
+                  this.isRepeat = false
+                }
               } else {
                 this.$notify({
                   title: '提示',
@@ -732,13 +776,13 @@ export default {
     httpRequest() {
       //自定义上传的实现
       // console.log(this.errorLength,this.totalLength)
-
       if (
         this.uploading ||
         this.errorType ||
         this.errorLength > 0 ||
         this.totalLength > 1000 ||
-        this.totalLength == 0
+        this.totalLength == 0 ||
+        this.isRepeat
       ) {
         return
       }
@@ -824,6 +868,7 @@ export default {
             message: '取消成功!'
           })
         })
+        .catch(error => {})
         .finally(() => {
           this.uploading = false
         })
