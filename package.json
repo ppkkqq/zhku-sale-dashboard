@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@femessage/img-preview": "^1.1.1",
+    "@femessage/upload-to-ali": "^1.1.0",
     "@nuxtjs/axios": "^5.0.1",
     "crypto-js": "^3.1.9-1",
     "dayjs": "^1.7.4",
@@ -38,7 +39,7 @@
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.10",
     "nuxt-edge": "^2.0.0-25428457.c59acdd",
-    "power-quill-editor": "^0.1.1",
+    "power-quill-editor": "^0.2.0",
     "promise.prototype.finally": "^3.1.0",
     "qs": "^6.6.0",
     "stylus": "^0.54.5",
