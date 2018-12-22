@@ -276,8 +276,8 @@ export default {
           v-model={row[type]}
           active-color="#409eff"
           inactive-color="#dcdfe6"
-          active-value="open"
-          inactive-value="close"
+          active-value="OPEN"
+          inactive-value="CLOSE"
         />
       )
     },
