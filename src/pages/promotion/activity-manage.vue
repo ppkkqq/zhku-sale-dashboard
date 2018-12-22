@@ -22,6 +22,7 @@
       <template slot="search">
         <el-form-item label="活动时间">
           <el-date-picker
+            :clearable="false"
             @change="setTime"
             value-format="yyyy-MM-dd HH:mm"
             v-model="dateRange"

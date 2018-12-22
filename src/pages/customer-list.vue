@@ -24,6 +24,7 @@
       <template slot="search">
         <el-form-item label="创建时间">
           <el-date-picker
+            :clearable="false"
             @change="setCreateTime"
             value-format="yyyy-MM-dd"
             v-model="createDate"
@@ -35,6 +36,7 @@
         </el-form-item>
         <el-form-item label="最后登录时间">
           <el-date-picker
+            :clearable="false"
             @change="setLoginTime"
             value-format="yyyy-MM-dd"
             v-model="lastLoginTime"
@@ -563,6 +565,7 @@ export default {
       this.customQuery.endCreateTime = this.createDate[1]
     },
     setLoginTime() {
+      debugger
       this.customQuery.startLastLoginTime = this.lastLoginTime[0]
       this.customQuery.endLastLoginTime = this.lastLoginTime[1]
     },
