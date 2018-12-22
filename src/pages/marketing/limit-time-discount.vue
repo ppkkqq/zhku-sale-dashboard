@@ -43,7 +43,7 @@ const tabs = Object2Options(status)
 // import {discountDetail} from '@/const/path'
 import {Object2Options} from '@/const/filter'
 import {goodsLists, limitedTimePlatList} from '@/const/api'
-import {status, actStatus} from '@/const/marketing'
+import {status} from '@/const/marketing'
 import {formatDate} from '@/const/filter'
 
 export default {
@@ -56,8 +56,9 @@ export default {
       activeName: '',
       // TODO: 对接
       customQuery: {
-        startEffectTime: '',
-        endEffectTime: ''
+        startTime: '',
+        endTime: '',
+        timeStatus: ''
       },
       effectTime: [],
       columns: [
@@ -93,7 +94,7 @@ export default {
         {
           prop: 'timeStatus',
           label: '活动状态',
-          formatter: row => actStatus[row.timeStatus]
+          formatter: row => status[row.timeStatus]
         }
       ],
       extraButtons: [
@@ -105,9 +106,11 @@ export default {
         {
           text: '下架活动',
           type: 'danger',
-          // show: row => {
-          //   return row.status == ''
-          // },
+          show: row => {
+            return (
+              row.timeStatus == 'not_start' || row.timeStatus == 'processing'
+            )
+          },
           atClick: row => this.onCancel(row)
         }
       ],
@@ -121,7 +124,7 @@ export default {
             placeholder: '请输入活动名称'
           },
           label: '活动名称',
-          $id: 'code',
+          $id: 'title',
           $type: 'input'
         },
         {
@@ -129,12 +132,13 @@ export default {
             placeholder: '请选择'
           },
           label: '所属商户',
-          $id: 'mobile',
+          $id: 'shopId',
           $type: 'select',
+          //todo：对接口
           $options: [
             {
-              label: '国投自营',
-              value: 0
+              label: '自营',
+              value: '383f672aba6b43ec9dbe474dfcaf1702'
             },
             {
               label: '我买网',
@@ -152,7 +156,7 @@ export default {
 
   methods: {
     handleClick(val) {
-      this.customQuery.status = val
+      this.customQuery.timeStatus = val.name
       this.$refs.dataTable.getList()
     },
     go2Detail(row, isView) {
@@ -179,12 +183,12 @@ export default {
         .catch()
     },
     setEffectTime() {
-      this.customQuery.startEffectTime = this.effectTime[0]
-      this.customQuery.endEffectTime = this.effectTime[1]
+      this.customQuery.startTime = new Date(this.effectTime[0]).getTime()
+      this.customQuery.endTime = new Date(this.effectTime[1]).getTime()
     },
     handleReset() {
-      this.customQuery.startEffectTime = ''
-      this.customQuery.endEffectTime = ''
+      this.customQuery.startTime = ''
+      this.customQuery.endTime = ''
       this.effectTime = []
     }
   },

@@ -227,6 +227,6 @@ export const experienceStrategy =
   MEMBER_CENTER + `/mcMemberLevel/experienceStrategy`
 //限时抢购列表
 export const limitedTimePlatList =
-  MARKETING_CENTER + `/supplier/limitedtime/platlist`
+  MARKETING_CENTER + `/supplier/discount/platlist`
 //定金膨胀列表
-export const earnestList = MARKETING_CENTER + `/earnest/list`
+export const earnestList = MARKETING_CENTER + `/plat/earnest/list`
