@@ -138,7 +138,7 @@ export default {
       browserHistoryInfo: [],
       dialogVisible: false,
       integralList: [],
-      page: 0,
+      page: 1,
       numPage: 0,
       dataTableConfig: {
         hasNew: false,
