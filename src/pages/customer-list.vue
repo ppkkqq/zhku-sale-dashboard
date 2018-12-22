@@ -297,7 +297,7 @@ export default {
         endLastLoginTime: ''
       },
       operationAttrs: {
-        width: '200px',
+        width: '190px',
         fixed: 'right'
       },
       headerButtons: [
@@ -336,14 +336,15 @@ export default {
         }
       ],
       extraButtons: [
-        {
-          style: 'margin-left: 10px',
-          text: '国源通币充值',
-          type: 'primary',
-          atClick: this.showTopUp
-        },
+        // {
+        //   style: 'margin-left: 10px',
+        //   text: '国源通币充值',
+        //   type: 'primary',
+        //   atClick: this.showTopUp
+        // },
         {
           text: '查看',
+          type: 'primary',
           atClick: this.go2Detail
         },
         {
@@ -443,7 +444,7 @@ export default {
   computed: {
     isYYMember() {
       // 是否是运营人员
-      return this.user && this.user.roles[0].roleNum === 'YY'
+      return this.user && this.user.roles && this.user.roles[0].roleNum === 'YY'
     },
     topUpDialogTitle() {
       return dialogTitle[this.currentDialog]
