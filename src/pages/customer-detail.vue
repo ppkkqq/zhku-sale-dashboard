@@ -40,22 +40,34 @@
         v-bind="dataTableConfig"
       ></el-data-table>
     </card-table>
-    <el-dialog title="积分收支明细" :visible.sync="dialogVisible" width="70%">
+    <el-dialog title="积分收支明细" :visible.sync="dialogVisible" width="50%">
       <el-table :data="integralList" size="small">
         <el-table-column prop="createdAt" label="时间">
-        </el-table-column>
-        <el-table-column prop="batchAMT" label="收支明细">
           <template slot-scope="scope">
-            <span v-if="scope.row.types === 'USED'">-{{scope.row.batchAMT}}</span>
-            <span v-else>+{{scope.row.batchAMT}}</span>
+            <span>{{formatDate(scope.row.createdAt)}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="batchAmt" label="收支明细">
+          <template slot-scope="scope">
+            <span v-if="scope.row.types === 'USED' || scope.row.types === 'REFUND' || scope.row.types === 'WASTED'" class="c-b" style="font-weight: 600">-{{scope.row.batchAmt}}</span>
+            <span v-else class="c-r" style="font-weight: 600">+{{scope.row.batchAmt}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="types" label="详细说明">
           <template slot-scope="scope">
-            <span>{{scope.row.types === 'USED' ? '购买商品' : '购买商品'}}</span>
+            <span>{{integralType[scope.row.types]}}</span>
+            <span> (
+                    <span v-if="scope.row.types === 'REFUND'">售后单号</span>
+                    <span v-else>订单号</span>
+                    ：{{scope.row.mainOrderNum.slice(0,8)}} )
+                  </span>
           </template>
         </el-table-column>
       </el-table>
+      <div class="pagination">
+        <el-pagination background layout="prev, pager, next" :current-page.sync="page" :page-count="numPage" @prev-click="()=>{--page}" @next-click="()=>{++page}">
+        </el-pagination>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -350,6 +362,14 @@ export default {
   created() {
     this.assetsUrl = queryIntegralList(this.$route.query.memberId)
     this.getUserIconInfo()
+    this.integralType = {
+      USED: '购物扣积分',
+      REFUND: '退货扣积分',
+      WASTED: '过期扣积分',
+      SHOPPING_GENERATED: '购物送积分',
+      COMMENT_GENERATED: '评论送积分',
+      INPOUR: '充值得积分'
+    }
   },
   mounted() {}
 }
