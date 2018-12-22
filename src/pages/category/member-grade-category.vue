@@ -99,15 +99,16 @@ export default {
       if (!value) {
         callback('等级名称不能为空')
         return
-      } else if (value && value.length > 30) {
+      } else if (value.length > 30) {
         callback('字符超出30字符限制')
         return
       }
       callback()
     }
     const checkNum = (rule, value, callback) => {
-      if (!this.extraParams.lowerValue) {
+      if (!this.extraParams.lowerValue && this.extraParams.lowerValue !== 0) {
         callback('成长值下限不能为空')
+        return
       } else if (
         this.extraParams.lowerValue &&
         !positiveInteger.test(this.extraParams.lowerValue)
@@ -120,6 +121,7 @@ export default {
     const checkNum2 = (rule, value, callback) => {
       if (this.isAutomaticCalculate && !this.extraParams.regularDeduction) {
         callback('成长值不能为空')
+        return
       } else if (
         this.extraParams.regularDeduction &&
         !positiveInteger.test(this.extraParams.regularDeduction)
@@ -282,6 +284,7 @@ export default {
       )
     },
     extraEdit(row) {
+      this.$refs['allRules'] ? this.$refs['allRules'].resetFields() : ''
       this.extraParams.levelIcon = row.levelIcon
       this.extraParams.lowerValue = row.lowerValue
       this.extraParams.internalWelfare = row.internalWelfare
@@ -289,6 +292,7 @@ export default {
       this.isAutomaticCalculate = !!row.regularDeduction
     },
     clickNew() {
+      this.$refs['allRules'] ? this.$refs['allRules'].resetFields() : ''
       this.extraParams.levelIcon = ''
       this.extraParams.lowerValue = ''
       this.extraParams.internalWelfare = 'CLOSE'
@@ -328,7 +332,6 @@ export default {
         })
     },
     beforeConfirm() {
-      debugger
       if (!this.extraParams.levelIcon) {
         this.$message({
           type: 'warning',
@@ -337,11 +340,10 @@ export default {
         return false
       }
       this.$refs['allRules'].validate(valid => {
-        if (!valid) {
-          return false
-        }
+        console.log(valid)
+        this.valid = valid
       })
-      return true
+      return this.valid
     },
     getData(data) {
       this.memberData = data
