@@ -218,10 +218,22 @@ export const goodQuery = MARKETING_CENTER + '/presell/rule/goods/query'
 export const updateRule = MARKETING_CENTER + '/presell/rule/update'
 export const ruleDetail = MARKETING_CENTER + '/presell/rule/detail'
 
+//积分详细
+export const queryIntegralList = id =>
+  ACCOUNT_CENTER + `/point/member/${id}/list`
 // 楼层 获取单个一级前台类目 的前台类目详情
 export const frontCatalogSingle = MALL_CONFIG + `/floor/pcCategory`
+
 //会员等级
 export const mcMemberLevel = MEMBER_CENTER + `/mcMemberLevel`
 export const levelBenefit = MEMBER_CENTER + `/mcMemberLevel/levelBenefit`
 export const experienceStrategy =
   MEMBER_CENTER + `/mcMemberLevel/experienceStrategy`
+//搜索下拉获得会员等级
+export const levelItem = MEMBER_CENTER + '/mcMemberLevel/levelItem'
+//会员标签按钮
+export const updateMemberType =
+  MEMBER_CENTER + '/mcMemberAccounts/updateMemberType'
+//用户画像
+export const getUserIconInfo =
+  MEMBER_CENTER + '/mcMemberAccounts/getUserIconInfo'
