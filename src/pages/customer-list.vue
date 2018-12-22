@@ -255,7 +255,7 @@ export default {
           prop: 'memberType',
           label: '会员标签',
           formatter: row =>
-            row.memberType === 'NORMALACCOUNT' ? '普通会员' : '内部员工'
+            row.memberType === 'NORMALACCOUNT' ? '外部会员' : '内部员工'
         },
         {
           prop: 'mobile',
@@ -404,7 +404,7 @@ export default {
               value: 'INTERNALSTAFF'
             },
             {
-              label: '普通会员',
+              label: '外部会员',
               value: 'NORMALACCOUNT'
             }
           ]
@@ -488,7 +488,6 @@ export default {
         ])
     }
     this.getLevelIdList()
-    this.showLabelBtn()
   },
   methods: {
     go2Detail(row) {
@@ -945,9 +944,6 @@ export default {
             })
         })
         .catch(error => {})
-    },
-    showLabelBtn() {
-      console.log(1122, this.user.roles[0].roleNum)
     }
   }
 }

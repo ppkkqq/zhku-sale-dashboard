@@ -234,3 +234,6 @@ export const levelItem = MEMBER_CENTER + '/mcMemberLevel/levelItem'
 //会员标签按钮
 export const updateMemberType =
   MEMBER_CENTER + '/mcMemberAccounts/updateMemberType'
+//用户画像
+export const getUserIconInfo =
+  MEMBER_CENTER + '/mcMemberAccounts/getUserIconInfo'

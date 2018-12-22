@@ -70,7 +70,8 @@ import {
   address,
   browserHistory,
   collect,
-  memberBaseInfo
+  memberBaseInfo,
+  getUserIconInfo
 } from '@/const/api'
 import {
   orderStatusOptions,
@@ -236,7 +237,8 @@ export default {
           label: '详细说明',
           prop: 'deliveryName'
         }
-      ]
+      ],
+      userIconInfo: ''
     }
   },
   async asyncData({app, query}) {
@@ -269,7 +271,7 @@ export default {
       积分: `${payload.userPoint}分`
     }
     const statusInfo = {
-      基础属性: '内部员工'
+      基础属性: app.userIconInfo
     }
     return {
       baseInfo: Object2Options(baseInfo, ''),
@@ -335,10 +337,19 @@ export default {
         .finally(() => {
           this.dialogVisible = true
         })
+    },
+    getUserIconInfo() {
+      //todo:对接口
+      // this.$axios.$get(`${getUserIconInfo}?id=${this.$route.query.memberId}`)
+      //   .then(res => {
+      //     this.userIconInfo = res.payload.memberLaleb === 'INTERNALSTAFF' ? '内部员工' : '外部会员'
+      //   })
+      //   .catch()
     }
   },
   created() {
     this.assetsUrl = queryIntegralList(this.$route.query.memberId)
+    this.getUserIconInfo()
   },
   mounted() {}
 }
