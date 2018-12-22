@@ -208,7 +208,7 @@ export default {
         internalWelfare: 'CLOSE',
         regularDeduction: 0
       },
-      isAutomaticCalculate: false,
+      isAutomaticCalculate: true,
       benefitsColumns: [
         {
           prop: 'benefitName',
@@ -293,7 +293,7 @@ export default {
       this.extraParams.lowerValue = ''
       this.extraParams.internalWelfare = 'CLOSE'
       this.extraParams.regularDeduction = 0
-      this.isAutomaticCalculate = false
+      this.isAutomaticCalculate = true
     },
     // onUpLoadFile(levelIcon, type) {
     //   this.extraParams.levelIcon = levelIcon
