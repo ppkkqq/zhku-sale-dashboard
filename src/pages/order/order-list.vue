@@ -24,6 +24,7 @@
         <!--//下单时间-->
         <el-form-item label="下单时间">
           <el-date-picker
+            :clearable="false"
             @change="setTime('order')"
             value-format="yyyy-MM-dd"
             v-model="orderTime"
@@ -36,6 +37,7 @@
         <!--//支付时间-->
         <el-form-item label="支付时间">
           <el-date-picker
+            :clearable="false"
             @change="setTime('pay')"
             value-format="yyyy-MM-dd"
             v-model="payTime"

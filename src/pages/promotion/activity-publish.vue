@@ -27,8 +27,8 @@
           </el-form-item>
           <el-form-item label="活动有效时间" prop="tmaStmartTime">
             <el-date-picker
-              @change="setTime"
               :clearable="false"
+              @change="setTime"
               value-format="yyyy-MM-dd HH:mm"
               v-model="dateRange"
               type="datetimerange"
