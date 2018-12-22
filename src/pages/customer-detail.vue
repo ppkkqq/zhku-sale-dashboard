@@ -138,6 +138,8 @@ export default {
       browserHistoryInfo: [],
       dialogVisible: false,
       integralList: [],
+      page: 0,
+      numPage: 0,
       dataTableConfig: {
         hasNew: false,
         hasOperation: false,
@@ -344,6 +346,7 @@ export default {
           const payload = resp.payload
           const content = payload.content
           this.integralList = content
+          this.numPage = payload.totalPages
         })
         .catch(resp => {})
         .finally(() => {
