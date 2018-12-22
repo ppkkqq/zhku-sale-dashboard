@@ -400,7 +400,7 @@ export default {
 <style scoped>
 .tip-text {
   font-size: 12px;
-  color: #f56c6c;
+  color: #aaa;
 }
 .title {
   font-size: 20px;
