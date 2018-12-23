@@ -87,7 +87,6 @@ import {} from '@/const/api'
 import {} from '@/const/path'
 import {Collapse, CollapseItem} from 'element-ui'
 import Viewer from 'viewer'
-import UploadToAli from 'upload-to-ali'
 import GoBack from '@/components/GoBack'
 
 export default {
@@ -96,7 +95,6 @@ export default {
     'el-collapse': Collapse,
     'el-collapse-item': CollapseItem,
     Viewer,
-    UploadToAli,
     'go-back': GoBack
   },
   data() {

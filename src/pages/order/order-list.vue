@@ -133,7 +133,7 @@
 
 <script>
 import {mapGetters, mapState} from 'vuex'
-import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
+import {productType} from '@/const/config'
 import {orderList, logistics, exportExcel} from '@/const/api'
 import {source} from '@/const/config'
 import qs from 'qs'

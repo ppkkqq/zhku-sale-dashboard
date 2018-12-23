@@ -255,7 +255,6 @@ import BindAttributeFilter from '@/components/category/bind-attribute-filter'
 import BackendCategoryGoodsList from '@/components/category/backend-category-goods-list'
 import BindFrontendCategory from '@/components/category/bind-frontend-category'
 import ElCrudTree from '@/components/floor-tree/el-crud-tree'
-import UploadToAli from 'upload-to-ali'
 import {
   AllfilterCondition,
   backendCatalogBaseUrl,
@@ -272,7 +271,6 @@ export default {
   name: 'floor-management',
   components: {
     ElCrudTree,
-    UploadToAli,
     BindFrontendCategory, //   前台类目  用于楼层关联
     BindAttributeFilter,
     BackendCategoryGoodsList //后台商品  返回商品列表   用于一级楼层 推荐

@@ -85,13 +85,7 @@ import {
   memberBaseInfo,
   getUserIconInfo
 } from '@/const/api'
-import {
-  orderStatusOptions,
-  orderTypeOptions,
-  productType,
-  certificateType,
-  subscribeType
-} from '@/const/config'
+import {productType, certificateType, subscribeType} from '@/const/config'
 import {formatDate, price, toOptionsLabel, Object2Options} from '@/const/filter'
 import {onelineStatus} from '@/const/goods'
 

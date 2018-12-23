@@ -48,16 +48,13 @@
 <script>
 import {httpPattern, positiveInteger} from '@/const/pattern'
 import {bannerList, bannerEdit} from '@/const/api'
-import UploadToAli from 'upload-to-ali'
 
 const NORMAL = 'NORMAL'
 const FORBIDDEN = 'FORBIDDEN'
 
 export default {
   name: 'banner-list',
-  components: {
-    UploadToAli
-  },
+  components: {},
   data() {
     const checkUrl = (rule, value, callback) => {
       if (value && !httpPattern.test(value)) {

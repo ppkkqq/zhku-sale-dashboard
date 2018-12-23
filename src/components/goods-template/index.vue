@@ -171,10 +171,6 @@ export default {
     this.setData(this.content)
   },
   methods: {
-    handlePriceChange(val) {
-      this.$refs.infoManage && this.$refs.infoManage.setBundlePrice(val)
-    },
-
     handleSelect(val) {
       if (val && val.length) {
         this.catalogId = val[val.length - 1]

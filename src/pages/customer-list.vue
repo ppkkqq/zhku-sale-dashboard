@@ -140,7 +140,6 @@ import {Upload} from 'element-ui'
 import {formatDate, source3Options} from '@/const/filter'
 import {
   mcMemberInfos,
-  getShopUserInfo,
   currency,
   memberImportTem,
   menberAccountsExport,
