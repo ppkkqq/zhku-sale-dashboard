@@ -34,7 +34,7 @@
 
           <el-form-item label="门店图片" prop="shopUrl">
             <el-row :span="24" type="flex">
-              <simple-upload
+              <upload-to-ali
                 v-model="submitForm.shopUrl"
                 :compressOptions="{}"
                 :hidden="isView">
@@ -42,7 +42,7 @@
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
                 </span>
-              </simple-upload>
+              </upload-to-ali>
               <span class="upload-btn-wrap">
                 <viewer :src="submitForm.shopUrl"></viewer>
               </span>
@@ -72,7 +72,7 @@
           <el-form-item>
             <span slot="label"><span class="red">*</span> 营业执照</span>
             <el-row :span="24" type="flex">
-              <simple-upload
+              <upload-to-ali
                 v-model="submitForm.shopCompany.businessLicenseUrl"
                 :compressOptions="{}"
                 :hidden="isView">
@@ -80,7 +80,7 @@
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
                 </span>
-              </simple-upload>
+              </upload-to-ali>
               <span class="upload-btn-wrap">
                 <viewer :src="submitForm.shopCompany.businessLicenseUrl"></viewer>
               </span>
@@ -90,7 +90,7 @@
           <el-form-item>
             <span slot="label"><span class="red">*</span> 社会统一信用代码证</span>
             <el-row :span="24" type="flex">
-              <simple-upload
+              <upload-to-ali
                 v-model="submitForm.shopCompany.socialCreditCoUrl"
                 :hidden="isView"
                 :compressOptions="{}">
@@ -98,7 +98,7 @@
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
                 </span>
-              </simple-upload>
+              </upload-to-ali>
               <span class="upload-btn-wrap">
                 <viewer :src="submitForm.shopCompany.socialCreditCoUrl"></viewer>
               </span>
@@ -108,7 +108,7 @@
           <el-form-item label="企业法人身份证">
             <span slot="label"><span class="red">*</span> 企业法人身份证</span>
             <el-row :span="24" type="flex">
-              <simple-upload
+              <upload-to-ali
                 v-model="submitForm.shopCompany.legalPersonIDCardUrl"
                 :hidden="isView"
                 :compressOptions="{}">
@@ -116,7 +116,7 @@
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
                 </span>
-              </simple-upload>
+              </upload-to-ali>
               <span class="upload-btn-wrap">
                 <viewer :src="submitForm.shopCompany.legalPersonIDCardUrl"></viewer>
               </span>
@@ -126,7 +126,7 @@
           <el-form-item label="合同">
             <span slot="label"><span class="red">*</span> 合同</span>
             <el-row :span="24" type="flex">
-              <simple-upload
+              <upload-to-ali
                 v-model="submitForm.shopCompany.contractUrl"
                 :hidden="isView"
                 :compressOptions="{}">
@@ -134,7 +134,7 @@
                   <i class="el-icon-plus"></i>
                   <div>上传</div>
                 </span>
-              </simple-upload>
+              </upload-to-ali>
               <span class="upload-btn-wrap">
                 <viewer :src="submitForm.shopCompany.contractUrl"></viewer>
               </span>
@@ -163,8 +163,6 @@
 
 <script>
 import viewer from 'viewer'
-
-import SimpleUpload from 'upload-to-ali'
 import {AreaSelect} from 'el-area-select'
 import GoBack from '@/components/GoBack'
 import {shopList, pcBrands} from '@/const/api'
@@ -210,8 +208,7 @@ export default {
   components: {
     viewer,
     AreaSelect,
-    GoBack,
-    SimpleUpload
+    GoBack
   },
   data() {
     const initForm = {

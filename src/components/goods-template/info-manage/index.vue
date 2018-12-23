@@ -27,10 +27,8 @@ import {price} from '@/const/filter'
 import FormRenderer from '@/components/el-form-renderer/index.js'
 import InputPrice from '../props-manage/input-price'
 import BaseLayout from '../base-layout'
-import uploadToAli from 'upload-to-ali'
-
+import uploadToAli from '@femessage/upload-to-ali'
 import goodsInfos from './goods-info/index.js'
-
 import {goods, api} from './config.js'
 
 const RELATIVE_CAR_NAME = ['carBrandId', 'carSeriesId', 'carModelId']

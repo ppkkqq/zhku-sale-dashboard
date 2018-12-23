@@ -94,13 +94,11 @@
 </template>
 
 <script>
-import UploadToAli from 'upload-to-ali'
 import {mcMemberLevel, levelBenefit, experienceStrategy} from '@/const/api'
+
 export default {
   name: 'member-grade-category',
-  components: {
-    UploadToAli
-  },
+  components: {},
   data() {
     return {
       memberData: [],
