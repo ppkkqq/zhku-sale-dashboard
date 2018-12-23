@@ -38,7 +38,7 @@
     <el-card class="scene-card">
       <div slot="header" class="clearfix">
         <span class="card-title">积分场景配置</span>
-        <el-button style="float:right;" @click="sceneIsDisabled = false">编辑</el-button>
+        <el-button style="float:right;" @click="isEdit = !isEdit">{{isEdit?'取消':'编辑'}}</el-button>
       </div>
       <el-data-table
         ref="dataTable"
@@ -56,44 +56,41 @@
           label="操作"
           width="180">
           <template slot-scope="scope">
-            <el-switch v-model="value3"
-              active-text="按月付费"
-              inactive-text="按年付费"
-              :disabled=sceneIsDisabled></el-switch>
+            <el-switch
+              v-model="scope.row.status"
+              active-value="ACTIVE"
+              inactive-value="FORBID"
+              @change="switchConfig(scope.row)"
+              :disabled=!isEdit></el-switch>
           </template>
         </el-table-column>
         </el-data-table>
-      <div style="margin-top: 10px;" v-if="sceneIsDisabled===false">
-      <el-button type="primary"
-                 @click="updateScene">保存</el-button>
-      <el-button type="normal"
-                 @click="resetScene">取消</el-button>
-      </div>
     </el-card>
   </div>
 </template>
 
 <script>
-import {pointConfigRule} from '@/const/api'
+import {pointConfigRule, pointConfig, pointConfigList} from '@/const/api'
 export default {
   name: 'creditspolicy-configuration',
   data() {
     return {
-      url: '',
+      SWITCH: true,
+      url: pointConfigList,
       rules: {},
       ruleIsDisabled: true,
-      sceneIsDisabled: true,
+      isEdit: false,
       sceneColumns: [
         {
           prop: 'userAction',
           label: '用户行为'
         },
         {
-          prop: 'userAction',
+          prop: 'rewardRule',
           label: '积分奖励规则'
         },
         {
-          prop: 'userAction',
+          prop: 'depict',
           label: '说明'
         }
       ],
@@ -123,6 +120,11 @@ export default {
     }
   },
   methods: {
+    switchConfig(row) {
+      this.$axios.put(`${pointConfig}/${row.id}/scene`, {
+        status: row.status
+      })
+    },
     updateRules() {
       this.$axios.$post(pointConfigRule, this.rules).then(res => {
         this.$refs.dataTable.getList()
@@ -135,13 +137,6 @@ export default {
     },
     resetRules() {
       this.ruleIsDisabled = true
-    },
-    updateScene() {
-      this.$axios.$put().then(res => {})
-      this.sceneIsDisabled = true
-    },
-    resetScene() {
-      this.sceneIsDisabled = true
     },
     getRules() {
       this.$axios.$get(pointConfigRule).then(res => {
