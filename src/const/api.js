@@ -164,3 +164,9 @@ export const updateMemberType =
 //用户画像
 export const getUserIconInfo =
   MEMBER_CENTER + '/mcMemberAccounts/getUserIconInfo'
+
+//积分配置
+export const pointConfig = ACCOUNT_CENTER + '/pointConfig'
+
+//积分配置列表
+export const pointConfigList = pointConfig + '/scene'
