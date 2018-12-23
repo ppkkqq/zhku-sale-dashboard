@@ -24,6 +24,7 @@
       <template slot="search">
         <el-form-item label="申请时间">
           <el-date-picker
+            :clearable="false"
             @change="setTime"
             value-format="yyyy-MM-dd"
             v-model="dateRange"

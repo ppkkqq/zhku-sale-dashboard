@@ -10,54 +10,47 @@
       dataPath="payload"
       :form="form"
       :extraParams="extraParams"
+      :beforeConfirm="beforeConfirm"
       @edit="extraEdit"
       @new="clickNew"
       @canDelete="checkCanDelete"
     >
-      <el-form slot="form">
-        <el-form-item prop="growth_range" label="*成长值下限：">
+      <el-form slot="form" :rules="rulesNum" :model="extraParams" ref="allRules">
+        <el-form-item prop="growth_range" label="*成长值下限：" >
           <el-col :span="6"><el-input v-model="extraParams.lowerValue"></el-input></el-col>
         </el-form-item>
-      </el-form>
-      <div slot="form"
-           prop="levelIcon">
-        <el-form-item prop="growth_range" label="*等级图标：">
-          <upload-to-ali @load="onUpLoadFile($event, 'extraParams.levelIcon')"
-                         protocol="https"
-                         :fileUrl="extraParams.levelIcon">
+
+        <el-form-item prop="levelIcon" label="*等级图标：">
+          <upload-to-ali accept="image/png, image/jpeg, image/jpg"
+                         v-model="extraParams.levelIcon">
           </upload-to-ali>
         <span class="tip-text">建议80*80像素，支持.JPG\.JPEG\.PNG格式</span>
         </el-form-item>
-      </div>
-      <div slot="form" prop="regularDeduction">
-        <div>
+        <div style="margin-bottom: 10px;">
         <span>定期自动计算</span>
         <el-switch
           v-model="isAutomaticCalculate"
-          active-color="#13ce66"
-          inactive-color="#ff4949">
+          active-color="#409eff"
+          inactive-color="#dcdfe6">
         </el-switch>
         <span class="tip-text">开启后以注册日期为节点，满1年时，扣减后重新计算</span>
-        <el-form-item prop="growth_range">
-          <el-col :span="3">&nbsp;</el-col>
+        <el-form-item prop="regular_deduction"  v-show="isAutomaticCalculate">
+          <el-col :span="6">&nbsp;</el-col>
           <el-col :span="1.5">扣减</el-col>
-          <el-col :span="4"><el-input v-model="extraParams.regularDeduction" :disabled="!isAutomaticCalculate"></el-input></el-col>
+          <el-col :span="4"><el-input v-model="extraParams.regularDeduction"></el-input></el-col>
           <el-col :span="3">成长值</el-col>
         </el-form-item>
         </div>
-      </div>
-      <div  slot="form"
-           prop="internalWelfare">
         <span>内部员工专享</span>
         <el-switch
           v-model="extraParams.internalWelfare"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
+          active-color="#409eff"
+          inactive-color="#dcdfe6"
           active-value="OPEN"
           inactive-value="CLOSE">
         </el-switch>
         <span class="tip-text">开启后，内部员工注册后默认此等级</span>
-      </div>
+      </el-form>
     </el-data-table>
     <el-dialog title="会员权益配置" :visible.sync="memberBenefitsVisible" width="50%">
       <el-data-table
@@ -85,7 +78,6 @@
       :hasPagination="false"
       :hasNew="false"
       dataPath="payload"
-      :extraParams="extraParams"
       @update="getValueData"
     >
     </el-data-table>
@@ -96,11 +88,52 @@
 <script>
 import {mcMemberLevel, levelBenefit, experienceStrategy} from '@/const/api'
 
+import {positiveInteger} from '@/const/pattern'
 export default {
   name: 'member-grade-category',
   components: {},
   data() {
+    const checkLevelName = (rule, value, callback) => {
+      if (!value) {
+        callback('等级名称不能为空')
+        return
+      } else if (value.length > 30) {
+        callback('字符超出30字符限制')
+        return
+      }
+      callback()
+    }
+    const checkNum = (rule, value, callback) => {
+      if (!this.extraParams.lowerValue && this.extraParams.lowerValue !== 0) {
+        callback('成长值下限不能为空')
+        return
+      } else if (
+        this.extraParams.lowerValue &&
+        !positiveInteger.test(this.extraParams.lowerValue)
+      ) {
+        callback('请输入正整数')
+        return
+      }
+      callback()
+    }
+    const checkNum2 = (rule, value, callback) => {
+      if (this.isAutomaticCalculate && !this.extraParams.regularDeduction) {
+        callback('成长值不能为空')
+        return
+      } else if (
+        this.extraParams.regularDeduction &&
+        !positiveInteger.test(this.extraParams.regularDeduction)
+      ) {
+        callback('请输入正整数')
+        return
+      }
+      callback()
+    }
     return {
+      ruleForm: {
+        lowerValue: '',
+        regularDeduction: ''
+      },
       memberData: [],
       url: mcMemberLevel,
       memberBenefitsUrl: levelBenefit,
@@ -125,7 +158,7 @@ export default {
           label: '成长值范围',
           width: '100px',
           formatter: row => {
-            if (row.lowerValue && !row.upperValue) {
+            if ((row.lowerValue || row.lowerValue == 0) && !row.upperValue) {
               return row.lowerValue + '以上'
             } else {
               return row.lowerValue + '-' + row.upperValue
@@ -165,7 +198,8 @@ export default {
         {
           label: '*等级名称',
           $id: 'levelName',
-          $type: 'input'
+          $type: 'input',
+          rules: [{required: false, trigger: 'blur', validator: checkLevelName}]
         }
       ],
       extraParams: {
@@ -174,7 +208,7 @@ export default {
         internalWelfare: 'CLOSE',
         regularDeduction: 0
       },
-      isAutomaticCalculate: false,
+      isAutomaticCalculate: true,
       benefitsColumns: [
         {
           prop: 'benefitName',
@@ -182,7 +216,7 @@ export default {
         },
         {
           prop: 'normalAccount',
-          label: '普通会员',
+          label: '外部会员',
           formatter: row => this.switchFormatter(row, 'normalAccount')
         },
         {
@@ -209,7 +243,11 @@ export default {
           label: '操作',
           formatter: row => this.switchFormatter(row, 'status')
         }
-      ]
+      ],
+      rulesNum: {
+        growth_range: [{trigger: 'blur', validator: checkNum}],
+        regular_deduction: [{trigger: 'blur', validator: checkNum2}]
+      }
     }
   },
   watch: {
@@ -236,14 +274,15 @@ export default {
       return (
         <el-switch
           v-model={row[type]}
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="open"
-          inactive-value="close"
+          active-color="#409eff"
+          inactive-color="#dcdfe6"
+          active-value="OPEN"
+          inactive-value="CLOSE"
         />
       )
     },
     extraEdit(row) {
+      this.$refs['allRules'] ? this.$refs['allRules'].resetFields() : ''
       this.extraParams.levelIcon = row.levelIcon
       this.extraParams.lowerValue = row.lowerValue
       this.extraParams.internalWelfare = row.internalWelfare
@@ -251,15 +290,16 @@ export default {
       this.isAutomaticCalculate = !!row.regularDeduction
     },
     clickNew() {
+      this.$refs['allRules'] ? this.$refs['allRules'].resetFields() : ''
       this.extraParams.levelIcon = ''
       this.extraParams.lowerValue = ''
       this.extraParams.internalWelfare = 'CLOSE'
       this.extraParams.regularDeduction = 0
-      this.isAutomaticCalculate = false
+      this.isAutomaticCalculate = true
     },
-    onUpLoadFile(levelIcon, type) {
-      this.extraParams.levelIcon = levelIcon
-    },
+    // onUpLoadFile(levelIcon, type) {
+    //   this.extraParams.levelIcon = levelIcon
+    // },
     getMemberBenefits(row) {
       // this.memberId = row.id
       this.memberBenefitsVisible = true
@@ -288,6 +328,20 @@ export default {
         .finally(res => {
           this.memberBenefitsVisible = false
         })
+    },
+    beforeConfirm() {
+      if (!this.extraParams.levelIcon) {
+        this.$message({
+          type: 'warning',
+          message: '请上传图片'
+        })
+        return false
+      }
+      this.$refs['allRules'].validate(valid => {
+        console.log(valid)
+        this.valid = valid
+      })
+      return this.valid
     },
     getData(data) {
       this.memberData = data
@@ -346,7 +400,7 @@ export default {
 <style scoped>
 .tip-text {
   font-size: 12px;
-  color: #f56c6c;
+  color: #aaa;
 }
 .title {
   font-size: 20px;

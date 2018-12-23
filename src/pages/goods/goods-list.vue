@@ -21,7 +21,7 @@
     >
       <template slot="search">
         <el-form-item label="后台类目" prop="catalogId">
-          <back-end-category-select @change="handleSelect('catalogId', $event)"
+          <back-end-category-select :catalogId="customQuery.catalogId" @change="handleSelect('catalogId', $event)"
                                     ref="catalogId"></back-end-category-select>
         </el-form-item>
       </template>
