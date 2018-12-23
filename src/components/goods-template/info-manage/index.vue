@@ -29,12 +29,7 @@ import InputPrice from '../props-manage/input-price'
 import BaseLayout from '../base-layout'
 import uploadToAli from '@femessage/upload-to-ali'
 import goodsInfos from './goods-info/index.js'
-import {goods, api} from './config.js'
 
-const RELATIVE_CAR_NAME = ['carBrandId', 'carSeriesId', 'carModelId']
-const BRAND_STATUS = 'forbidden'
-const NEW_CARS = 'NEW_CARS'
-const bundlePrice = 'bundlePrice'
 const GOODS = 'GOODS'
 
 export default {
@@ -57,15 +52,10 @@ export default {
 
       type: this.tempType.toUpperCase(),
       productPhoto: [],
-      brandList: [],
       currentInfo: [],
 
       content: this.value || {},
-
-      brandsSeries: [],
-      brands: [],
-
-      isCheckedAllCars: false
+      brands: []
     }
   },
   components: {
@@ -87,9 +77,6 @@ export default {
     },
     isEdit() {
       return this.editStatus === 'isEdit'
-    },
-    templateType() {
-      return goods.type
     }
   },
   created() {
@@ -116,28 +103,6 @@ export default {
           value: values[key]
         })
       })
-    },
-    validate() {
-      return this.$refs.formRender
-        .validate()
-        .then(valid => {
-          if (this.type !== NEW_CARS && this.isCheckedAllCars) {
-            const value = this.$refs.formRender.getFormValue()
-            if (
-              value.RelativeCar &&
-              value.RelativeCar[0] &&
-              value.RelativeCar[0].length < 1
-            ) {
-              this.$message.info('适配车型品牌不能为空!')
-              return false
-            }
-          }
-          return true
-        })
-        .catch(e => {
-          this.$message.warning(this.prependName + '信息填写有误!')
-          return false
-        })
     },
     setValue({id, value}) {
       this.$refs.formRender && this.$refs.formRender.updateValue({id, value})
@@ -216,71 +181,14 @@ export default {
         this.initValue() // 更新form-renderer value
       })
     },
-    setBundlePrice(val) {
-      this.bundlePrice = val
-      this.setValue({
-        id: bundlePrice,
-        value: val && price(val)
-      })
-    },
-    getBrands() {
-      const type = this.type
 
-      if (this.brandCache[type]) {
-        this.brands = this.brandCache[type]
-        return
-      }
-
-      this.isLoading = true
-      this.$axios
-        .$get(`${api.pcBrands}?type=${type}&size=999`)
-        .then(resp => {
-          this.isLoading = false
-          const content =
-            resp.payload.content &&
-            Array.isArray(resp.payload.content) &&
-            resp.payload.content.map(item => ({
-              label: item.name,
-              value: item.id,
-              disabled: item.status === BRAND_STATUS
-            }))
-          this.brandCache[type] = content
-          this.brands = content
-        })
-        .catch(e => (this.isLoading = false))
-    },
-    getCarBrandsSeries() {
-      // 获取适配车型
-      if (this.hasRequestBrandsSeries) {
-        return
-      }
-      this.hasRequestBrandsSeries = true
-      this.isLoading = true
-      this.$axios
-        .$get(api.carBrandsSeries)
-        .then(resp => {
-          this.isLoading = false
-          this.brandsSeries = resp.payload || []
-        })
-        .catch(e => (this.isLoading = false))
-    },
     emitModelChange(carModel) {
       this.$emit('modelChange', carModel)
     },
 
     handleBeforeRender(h, data, value) {
-      if (data.$id === 'brandId') {
-        this.getBrands()
-        return this.renderCarBrand(h, data, value)
-      }
-
       if (data.$type === 'UploadToQiniuGroup') {
         return this.renderUploadToAliGroup(h, data, value)
-      }
-
-      if (data.$type === 'RelativeCar') {
-        this.getCarBrandsSeries()
-        return this.renderRelativeCar(h, data, value)
       }
 
       if (data.$type === 'InputPrice') {
@@ -302,77 +210,7 @@ export default {
         }
       })
     },
-    renderCarBrand(h, data, value) {
-      return h(
-        'el-select',
-        {
-          props: {
-            value: value,
-            placeholder: '请选择',
-            options: this.brands
-          },
-          on: {
-            input: val => {
-              if (value === val) {
-                return
-              }
-              this.setValue({
-                id: 'brandId',
-                value: val
-              })
-              if (this.type === NEW_CARS) {
-                this.setValue({
-                  id: 'RelativeCar',
-                  value: [val, '', '']
-                })
-              }
-            }
-          }
-        },
-        this.brands.map(item =>
-          h('el-option', {
-            props: {
-              key: item.value,
-              ...item
-            }
-          })
-        )
-      )
-    },
-    renderRelativeCar(h, data, value) {
-      return h(RelativeCar, {
-        props: Object.assign({}, data.$el, {
-          disabled: this.isView,
-          value: value,
-          type: this.type,
-          options: this.brandsSeries
-        }),
-        on: {
-          input: value => {
-            this.setValue({
-              id: 'RelativeCar',
-              value: value
-            })
-          },
-          brandChange: value => {
-            if (this.type === NEW_CARS) {
-              this.setValue({
-                id: 'brandId',
-                value: value
-              })
-            }
-          },
-          checkChange: val => {
-            this.isCheckedAllCars = val
-          },
-          modelChange: val => {
-            if (this.type === NEW_CARS) {
-              this.emitModelChange(model)
-            }
-          }
-        }
-      })
-    },
+
     renderUploadToAliGroup(h, data, value) {
       return h(
         'div',
