@@ -87,13 +87,20 @@ export const getNeedCheckPcById =
 // 源通币
 export const currency = ACCOUNT_CENTER + '/admin/currency'
 export const records = ACCOUNT_CENTER + '/admin/currency/records'
+//批量充值列表
+export const inpourList = ACCOUNT_CENTER + '/admin/shoppingCard/inpourList'
+//下载充值明细
+export const downloadDetail =
+  ACCOUNT_CENTER + '/admin/shoppingCard/downloadDetail'
+//平台端批量充值审批
+export const review = ACCOUNT_CENTER + '/admin/shoppingCard/review'
 
 //积分规则配置
 export const pointConfigRule = ACCOUNT_CENTER + '/pointConfig/rule'
 //批量充值模板下载
 export const template = ACCOUNT_CENTER + '/shoppingCard/template'
 //批量充值
-export const batchInpour = ACCOUNT_CENTER + '/shoppingCard/batchInpour'
+export const batchInpour = ACCOUNT_CENTER + '/admin/shoppingCard/batchInpour'
 
 //获取前台类目集合
 export const catalog = PRODUCT_CENTER + '/pcPrecategorys/tree'
