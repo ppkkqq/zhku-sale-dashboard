@@ -173,3 +173,6 @@ export const pointConfigList = pointConfig + '/scene'
 export const queryIntegralCount = id => ACCOUNT_CENTER + `/point/${id}/count`
 export const queryCurrencyDetail = ACCOUNT_CENTER + '/admin/shoppingCard/detail'
 export const queryCurrencyList = ACCOUNT_CENTER + '/admin/shoppingCard/query'
+
+//源通币统计查询
+export const queryCurrencyCount = ACCOUNT_CENTER + '/admin/shoppingCard/count'

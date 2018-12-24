@@ -134,7 +134,8 @@ import {
   queryIntegralList,
   queryIntegralCount,
   queryCurrencyDetail,
-  queryCurrencyList
+  queryCurrencyList,
+  queryCurrencyCount
 } from '@/const/api'
 import {productType, certificateType, subscribeType} from '@/const/config'
 import {formatDate, price, toOptionsLabel, Object2Options} from '@/const/filter'
@@ -267,7 +268,6 @@ export default {
           prop: 'address'
         }
       ],
-      //todo:对接口
       assetsTableData: [
         {
           type: '积分',
@@ -276,8 +276,8 @@ export default {
         },
         {
           type: '国源通币',
-          currentNum: 100,
-          usedNum: 200
+          currentNum: 0,
+          usedNum: 0
         }
       ],
       integralColumns: [
@@ -296,6 +296,15 @@ export default {
       ],
       currencyData: [],
       userIconInfo: ''
+    }
+  },
+  watch: {
+    page: function() {},
+    listPage: function() {
+      this.getQueryCurrencyList()
+    },
+    detailPage: function() {
+      this.getQueryCurrencyDetail()
     }
   },
   async asyncData({app, query}) {
@@ -381,64 +390,65 @@ export default {
     getBrowserHistory() {},
     showIntegralDetail(value) {
       if (value.type === '积分') {
-        this.$axios
-          .$get(
-            `${queryIntegralList(this.$route.query.memberId)}?page=${this.page}`
-          )
-          .then(resp => {
-            const payload = resp.payload
-            const content = payload.content
-            this.integralList = content
-            this.numPage = payload.totalPages
-          })
-          .catch(resp => {})
-          .finally(() => {
-            this.dialogVisible = true
-          })
+        this.getQueryIntegralList()
       } else {
         //获取圆通币明细
-        this.$axios
-          .$get(
-            `${queryCurrencyDetail}?memberId=${
-              this.$route.query.memberId
-            }&page=${this.detailPage}`
-          )
-          .then(resp => {
-            const payload = resp.payload
-            const content = payload.content
-            this.integralList = content
-            this.numDetailPage = payload.totalPages
-          })
-          .catch(resp => {})
-          .finally(() => {
-            this.currencyVisible = true
-          })
+        this.getQueryCurrencyDetail()
         //获取列表
-        this.$axios
-          .$get(
-            `${queryCurrencyList}?memberId=${this.$route.query.memberId}&page=${
-              this.listPage
-            }`
-          )
-          .then(resp => {
-            const payload = resp.payload
-            const content = payload.content
-            this.currencyList = content
-            this.numListPage = payload.totalPages
-          })
-          .catch(resp => {})
-          .finally(() => {
-            this.currencyVisible = true
-          })
+        this.getQueryCurrencyList()
       }
     },
-    getUserIconInfo() {
-      //todo:对接口
-      // this.$axios.$get(`${getUserIconInfo}?id=${this.$route.query.memberId}`)
-      //   .then(res => {
-      //     this.userIconInfo = res.payload.memberLaleb === 'INTERNALSTAFF' ? '内部员工' : '外部会员'
-      //   })
-      //   .catch()
+    getQueryIntegralList() {
+      this.$axios
+        .$get(
+          `${queryIntegralList(this.$route.query.memberId)}?page=${this.page}`
+        )
+        .then(resp => {
+          const payload = resp.payload
+          const content = payload.content
+          this.integralList = content
+          this.numPage = payload.totalPages
+        })
+        .catch(resp => {})
+        .finally(() => {
+          this.dialogVisible = true
+        })
+    },
+    getQueryCurrencyDetail() {
+      this.$axios
+        .$get(
+          `${queryCurrencyDetail}?memberId=${this.$route.query.memberId}&page=${
+            this.detailPage
+          }`
+        )
+        .then(resp => {
+          const payload = resp.payload
+          const content = payload.content
+          this.integralList = content
+          this.numDetailPage = payload.totalPages
+        })
+        .catch(resp => {})
+        .finally(() => {
+          this.currencyVisible = true
+        })
+    },
+    getQueryCurrencyList() {
+      this.$axios
+        .$get(
+          `${queryCurrencyList}?memberId=${this.$route.query.memberId}&page=${
+            this.listPage
+          }`
+        )
+        .then(resp => {
+          const payload = resp.payload
+          const content = payload.content
+          this.currencyList = content
+          this.numListPage = payload.totalPages
+        })
+        .catch(resp => {})
+        .finally(() => {
+          this.currencyVisible = true
+        })
     },
     getIntegralCount() {
       this.$axios
@@ -459,14 +469,14 @@ export default {
     },
     getCurrencyData() {
       this.$axios
-        .$get(queryCurrencyDetail)
+        .$get(`${queryCurrencyCount}?memberId=${this.$route.query.memberId}`)
         .then(resp => {
           const content = resp.payload
-          this.assetsTableData[0].currentNum = content.balance
+          this.assetsTableData[1].currentNum = content.balance
             ? content.balance
             : 0
-          this.assetsTableData[0].usedNum = content.expendPoint
-            ? content.expendPoint
+          this.assetsTableData[1].usedNum = content.trimestralNum
+            ? content.trimestralNum
             : 0
         })
         .catch(resp => {})
@@ -480,9 +490,9 @@ export default {
   },
   created() {
     this.assetsUrl = queryIntegralList(this.$route.query.memberId)
-    this.getUserIconInfo()
+    // this.getUserIconInfo()
     this.getIntegralCount()
-    // this.getCurrencyData()
+    this.getCurrencyData()
     this.integralType = {
       USED: '购物扣积分',
       REFUND: '退货扣积分',
