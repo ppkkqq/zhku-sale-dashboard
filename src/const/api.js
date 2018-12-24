@@ -153,8 +153,7 @@ export const updateRule = MARKETING_CENTER + '/presell/rule/update'
 export const ruleDetail = MARKETING_CENTER + '/presell/rule/detail'
 
 //积分详细
-export const queryIntegralList = id =>
-  ACCOUNT_CENTER + `/point/member/${id}/list`
+export const queryIntegralList = id => ACCOUNT_CENTER + `/point/${id}/list`
 // 楼层 获取单个一级前台类目 的前台类目详情
 export const frontCatalogSingle = MALL_CONFIG + `/floor/pcCategory`
 
@@ -184,3 +183,10 @@ export const pointConfig = ACCOUNT_CENTER + '/pointConfig'
 
 //积分配置列表
 export const pointConfigList = pointConfig + '/scene'
+//最近三个月积分统计查询
+export const queryIntegralCount = id => ACCOUNT_CENTER + `/point/${id}/count`
+export const queryCurrencyDetail = ACCOUNT_CENTER + '/admin/shoppingCard/detail'
+export const queryCurrencyList = ACCOUNT_CENTER + '/admin/shoppingCard/query'
+
+//源通币统计查询
+export const queryCurrencyCount = ACCOUNT_CENTER + '/admin/shoppingCard/count'

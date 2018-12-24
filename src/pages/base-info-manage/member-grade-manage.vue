@@ -14,6 +14,7 @@
       @edit="extraEdit"
       @new="clickNew"
       @canDelete="checkCanDelete"
+      style="margin-bottom: 30px"
     >
       <el-form slot="form" :rules="rulesNum" :model="extraParams" ref="allRules">
         <el-form-item prop="growth_range" label="*成长值下限：" >
@@ -70,18 +71,51 @@
       <el-button type="primary" @click="confirmEdit" class="btn-mg">确定</el-button>
       <el-button @click="()=>{this.memberBenefitsVisible = false}" class="btn-mg">取消</el-button>
     </el-dialog>
-    <div class="title" style="margin-top: 20px;">成长值计算策略</div>
-    <el-data-table
-      :url="growthValueUrl"
-      :columns="growthValueColumns"
-      :hasOperation="false"
-      :hasPagination="false"
-      :hasNew="false"
-      dataPath="payload"
-      @update="getValueData"
-    >
-    </el-data-table>
-    <el-button type="primary" @click="growthValueConfirm" class="btn-mg">确定</el-button>
+    <!--<div class="title" style="margin-top: 20px;">成长值计算策略</div>-->
+    <!--<el-data-table-->
+      <!--:url="growthValueUrl"-->
+      <!--:columns="growthValueColumns"-->
+      <!--:hasOperation="false"-->
+      <!--:hasPagination="false"-->
+      <!--:hasNew="false"-->
+      <!--dataPath="payload"-->
+      <!--@update="getValueData"-->
+    <!--&gt;-->
+    <!--</el-data-table>-->
+    <!--<el-button type="primary" @click="growthValueConfirm" class="btn-mg">确定</el-button>-->
+    <el-card>
+      <div slot="header">
+        <span class="title">成长值计算策略</span>
+        <el-button style="float:right;" @click="isEdit = !isEdit">{{isEdit?'取消':'编辑'}}</el-button>
+      </div>
+      <el-data-table
+        ref="dataTable"
+        :url="growthValueUrl"
+        :columns="growthValueColumns"
+        :extraButtons="extraButtons"
+        :hasNew="false"
+        :hasEdit="false"
+        :hasDelete="false"
+        :hasOperation="false"
+        :hasPagination="false"
+      >
+        <el-table-column
+          label="操作"
+          width="180">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.status"
+              active-color="#409eff"
+              inactive-color="#dcdfe6"
+              active-value="OPEN"
+              inactive-value="CLOSE"
+              @change="growthValueConfirm(scope.row)"
+              :disabled=!isEdit>
+            </el-switch>
+          </template>
+        </el-table-column>
+      </el-data-table>
+    </el-card>
   </div>
 </template>
 
@@ -108,7 +142,7 @@ export default {
         callback('成长值下限不能为空')
         return
       } else if (
-        this.extraParams.lowerValue &&
+        this.extraParams.lowerValue != 0 &&
         !positiveInteger.test(this.extraParams.lowerValue)
       ) {
         callback('请输入正整数')
@@ -118,7 +152,7 @@ export default {
     }
     const checkNum2 = (rule, value, callback) => {
       if (this.isAutomaticCalculate && !this.extraParams.regularDeduction) {
-        callback('成长值不能为空')
+        callback('自动计算开启后成长值不能为空')
         return
       } else if (
         this.extraParams.regularDeduction &&
@@ -134,6 +168,7 @@ export default {
         lowerValue: '',
         regularDeduction: ''
       },
+      isEdit: false,
       memberData: [],
       url: mcMemberLevel,
       memberBenefitsUrl: levelBenefit,
@@ -237,11 +272,6 @@ export default {
         {
           prop: 'rewardContent',
           label: '说明'
-        },
-        {
-          prop: 'status',
-          label: '操作',
-          formatter: row => this.switchFormatter(row, 'status')
         }
       ],
       rulesNum: {
@@ -354,13 +384,13 @@ export default {
         })
         .catch()
     },
-    growthValueConfirm() {
-      let newArr = this.growthValueData.map(item => {
-        return {
-          id: item.id,
-          status: item.status
+    growthValueConfirm(row) {
+      let newArr = [
+        {
+          id: row.id,
+          status: row.status
         }
-      })
+      ]
       this.$axios
         .$put(experienceStrategy, newArr)
         .then(result => {
