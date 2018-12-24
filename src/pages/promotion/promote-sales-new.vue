@@ -51,6 +51,7 @@
         </el-form-item>
         <el-form-item label="*支付定金时间：">
           <el-date-picker
+            :clearable="false"
             v-model="tmarDepositStmartTime"
             type="datetime"
             placeholder="选择日期时间"
@@ -59,6 +60,7 @@
           </el-date-picker>
           <span>至</span>
           <el-date-picker
+            :clearable="false"
             v-model="tmarDepositEndTime"
             type="datetime"
             placeholder="选择日期时间"
@@ -68,6 +70,7 @@
         </el-form-item>
         <el-form-item label="*支付尾款时间：">
           <el-date-picker
+            :clearable="false"
             v-model="tmarFinalpayStmartTime"
             type="datetime"
             placeholder="选择日期时间"
@@ -76,6 +79,7 @@
           </el-date-picker>
           <span>至</span>
           <el-date-picker
+            :clearable="false"
             v-model="tmarFinalpayEndTime"
             type="datetime"
             placeholder="选择日期时间"

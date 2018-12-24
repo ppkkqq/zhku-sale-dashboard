@@ -110,7 +110,6 @@
 </template>
 
 <script>
-import {orderStatusOptions, orderTypeOptions} from '@/const/config'
 import {refundList, refundAudit, findLogisticsInfo} from '@/const/api'
 import {
   statusOpts,

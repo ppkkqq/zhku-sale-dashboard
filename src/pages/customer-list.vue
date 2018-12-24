@@ -24,6 +24,7 @@
       <template slot="search">
         <el-form-item label="创建时间">
           <el-date-picker
+            :clearable="false"
             @change="setCreateTime"
             value-format="yyyy-MM-dd"
             v-model="createDate"
@@ -35,6 +36,7 @@
         </el-form-item>
         <el-form-item label="最后登录时间">
           <el-date-picker
+            :clearable="false"
             @change="setLoginTime"
             value-format="yyyy-MM-dd"
             v-model="lastLoginTime"
@@ -135,13 +137,14 @@
 
 <script>
 import {Upload} from 'element-ui'
-import {formatDate} from '@/const/filter'
+import {formatDate, source3Options} from '@/const/filter'
 import {
   mcMemberInfos,
-  getShopUserInfo,
   currency,
   memberImportTem,
-  menberAccountsExport
+  menberAccountsExport,
+  levelItem,
+  updateMemberType
 } from '@/const/api'
 import {customerDetail} from '@/const/path'
 import uniq from 'lodash/uniq'
@@ -158,6 +161,13 @@ const dialogTitle = {
 }
 const single = 'single'
 const batch = 'batch'
+
+const equal = '='
+const valueSeparator = '~'
+const paramSeparator = ','
+const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
+const queryFlag = 'q='
+const queryPattern = new RegExp('q=.*' + paramSeparator)
 
 export default {
   name: 'customer-list',
@@ -222,9 +232,14 @@ export default {
       ],
       pageName: 'customer-list',
       url: mcMemberInfos, //总部端分页查询
+      levelIdList: [],
       totalPath: 'payload.totalElements',
       dataPath: 'payload.content',
       columns: [
+        {
+          prop: 'id',
+          label: '会员ID'
+        },
         {
           prop: 'nickName',
           label: '昵称'
@@ -232,6 +247,16 @@ export default {
         {
           prop: 'realName',
           label: '姓名'
+        },
+        {
+          prop: 'levelName',
+          label: '会员等级'
+        },
+        {
+          prop: 'memberType',
+          label: '会员标签',
+          formatter: row =>
+            row.memberType === 'NORMALACCOUNT' ? '外部会员' : '内部员工'
         },
         {
           prop: 'mobile',
@@ -273,7 +298,7 @@ export default {
         endLastLoginTime: ''
       },
       operationAttrs: {
-        width: '200px',
+        width: '190px',
         fixed: 'right'
       },
       headerButtons: [
@@ -312,14 +337,34 @@ export default {
         }
       ],
       extraButtons: [
-        {
-          text: '国源通币充值',
-          type: 'primary',
-          atClick: this.showTopUp
-        },
+        // {
+        //   style: 'margin-left: 10px',
+        //   text: '国源通币充值',
+        //   type: 'primary',
+        //   atClick: this.showTopUp
+        // },
         {
           text: '查看',
+          type: 'primary',
           atClick: this.go2Detail
+        },
+        {
+          text: '内部员工标签',
+          show: row => {
+            return this.isYYMember && row.memberType === 'NORMALACCOUNT'
+          },
+          atClick: row => {
+            this.addLabel(row)
+          }
+        },
+        {
+          text: '取消内部标签',
+          show: row => {
+            return this.isYYMember && row.memberType === 'INTERNALSTAFF'
+          },
+          atClick: row => {
+            this.cancelLabel(row)
+          }
         }
       ],
       searchForm: [
@@ -338,6 +383,33 @@ export default {
           label: '手机号',
           $id: 'mobile',
           $type: 'input'
+        },
+        {
+          $el: {
+            placeholder: '请选择'
+          },
+          label: '会员等级',
+          $id: 'levelId',
+          $type: 'select',
+          $options: source3Options(this.levelIdList)
+        },
+        {
+          $el: {
+            placeholder: '请选择'
+          },
+          label: '会员标签',
+          $id: 'memberType',
+          $type: 'select',
+          $options: [
+            {
+              label: '内部员工',
+              value: 'INTERNALSTAFF'
+            },
+            {
+              label: '外部会员',
+              value: 'NORMALACCOUNT'
+            }
+          ]
         }
       ],
       single,
@@ -371,6 +443,10 @@ export default {
     'el-upload': Upload
   },
   computed: {
+    isYYMember() {
+      // 是否是运营人员
+      return this.user && this.user.roles && this.user.roles[0].roleNum === 'YY'
+    },
     topUpDialogTitle() {
       return dialogTitle[this.currentDialog]
     },
@@ -380,6 +456,9 @@ export default {
       },
       token: function(state) {
         return state.token
+      },
+      user: function(state) {
+        return state.user
       }
     }),
     importUrl() {
@@ -395,9 +474,35 @@ export default {
       }
     }
   },
+  mounted() {
+    let matches = location.href.match(queryPattern)
+    if (matches) {
+      let query = matches[0].substr(2).replace(valueSeparatorPattern, equal)
+      let params = qs.parse(query, {delimiter: paramSeparator})
+      params.startCreateTime &&
+        params.endCreateTime &&
+        (this.createDate = [params.startCreateTime, params.endCreateTime])
+      params.startLastLoginTime &&
+        params.endLastLoginTime &&
+        (this.lastLoginTime = [
+          params.startLastLoginTime,
+          params.endLastLoginTime
+        ])
+    }
+    this.getLevelIdList()
+  },
   methods: {
     go2Detail(row) {
       this.$router.push(`${customerDetail}?memberId=${row.id}`)
+    },
+    getLevelIdList() {
+      this.$axios
+        .$get(levelItem)
+        .then(res => {
+          this.levelIdList = res.payload
+          this.searchForm[2].$options = source3Options(this.levelIdList)
+        })
+        .catch()
     },
     topUp() {
       this.$refs.topUpform.validate(valid => {
@@ -459,6 +564,7 @@ export default {
       this.customQuery.endCreateTime = this.createDate[1]
     },
     setLoginTime() {
+      debugger
       this.customQuery.startLastLoginTime = this.lastLoginTime[0]
       this.customQuery.endLastLoginTime = this.lastLoginTime[1]
     },
@@ -767,10 +873,80 @@ export default {
           //   this.openSuccess()
           // }
         })
-        .catch(error => {})
-        .finally(() => {
-          this.uploading = false
+        .catch(error => {
+          if (error.response) {
+            if (error.response.status == 400) {
+              // this.$notify({
+              //   title: '提示',
+              //   message: `单次导入只支持1000条（含）以内记录！`,
+              //   type: 'error'
+              // })
+            }
+            // if (error.response.status == 406) {
+            //   let str = error.response.data.payload
+            //   let temp = JSON.parse(str)
+            //   // console.log(temp)
+            //   temp.result.forEach((item, index) => {
+            //     item.id = index + 1
+            //   })
+            //   this.$refs.upload.clearFiles()
+            //   this.tableData = temp.result
+            //   this.resultArray = []
+            //   this.dialogVisible = true
+            //   this.importLoading = false
+            // }
+          }
         })
+    },
+    addLabel(row) {
+      this.$confirm('是否将该会员标签为内部员工?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.$axios
+            .$put(updateMemberType, {
+              id: row.id,
+              memberType: 'INTERNALSTAFF'
+            })
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: '标签成功!'
+              })
+              this.$refs.dataTable.getList()
+            })
+            .catch(() => {
+              this.$message.error('设置失败! 请稍后再试!')
+            })
+        })
+        .catch(error => {})
+    },
+    cancelLabel(row) {
+      this.$confirm('是否取消该会员的内部员工标签?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.$axios
+            .$put(updateMemberType, {
+              id: row.id,
+              memberType: 'NORMALACCOUNT'
+            })
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: '标签成功!'
+              })
+              this.$refs.dataTable.getList()
+            })
+            .catch(() => {
+              this.$message.error('设置失败! 请稍后再试!')
+            })
+        })
+        .catch(error => {})
     }
   }
 }

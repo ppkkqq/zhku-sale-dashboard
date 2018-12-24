@@ -48,6 +48,7 @@ import {
 } from 'element-ui'
 import ElFormRenderer from 'el-form-renderer'
 import ElDataTable from 'el-data-table'
+import UploadToAli from '@femessage/upload-to-ali'
 
 Vue.prototype.$ELEMENT = {size: 'medium'}
 
@@ -97,6 +98,7 @@ Vue.use(Step)
 
 Vue.component('el-form-renderer', ElFormRenderer)
 Vue.component('el-data-table', ElDataTable)
+Vue.component('upload-to-ali', UploadToAli)
 
 Vue.prototype.$notify = Notification
 Vue.$notify = Notification

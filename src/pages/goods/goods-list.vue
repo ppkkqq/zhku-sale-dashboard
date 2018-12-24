@@ -21,7 +21,7 @@
     >
       <template slot="search">
         <el-form-item label="后台类目" prop="catalogId">
-          <back-end-category-select @change="handleSelect('catalogId', $event)"
+          <back-end-category-select :catalogId="customQuery.catalogId" @change="handleSelect('catalogId', $event)"
                                     ref="catalogId"></back-end-category-select>
         </el-form-item>
       </template>
@@ -31,8 +31,6 @@
 
 <script>
 import {goodsLists, goodsCancelApply} from '@/const/api'
-import {goodsListColumns} from '@/const/goods'
-import {listSearchForm} from '@/const/goods'
 import {getGoodsOnOffStatus, formatDate} from '@/const/filter'
 import {goodsDetail, goodsPublish, goodsUseTplPublish} from '@/const/path'
 import BackEndCategorySelect from '@/container/back-end-category-select/'

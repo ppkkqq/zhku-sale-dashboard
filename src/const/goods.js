@@ -15,77 +15,6 @@ export const onelineStatus = {
   readyOn: '待上架'
 }
 
-export const goodsListColumns = [
-  {
-    prop: 'name',
-    label: '商品名称',
-    minWidth: 150,
-    'show-overflow-tooltip': true
-  },
-  {
-    prop: 'shopName',
-    label: '门店',
-    minWidth: 180
-  },
-  {
-    prop: 'prdCatalog.name',
-    label: '后台类目'
-  },
-  {
-    prop: 'type',
-    label: '商品类型',
-    formatter: ({type}) => goodsType[type]
-  },
-  {
-    prop: 'source',
-    label: '商品来源',
-    minWidth: 100,
-    formatter: ({source}) => goodsSource[source]
-  },
-  {
-    prop: 'status',
-    label: '状态',
-    formatter: ({status}) => goodsStatus[status]
-  }
-  // {
-  //   prop: 'update',
-  //   label: '更新提示',
-  //   //TODO:后端还没有数据  还没有提供字段  此处formatter 供于测试颜色
-  //   formatter: () => '测试字体颜色'
-  // }
-]
-
-export const searchForm = [
-  {
-    $el: {
-      placeholder: '请输入'
-    },
-    label: '商品名称',
-    $id: 'name',
-    $type: 'input'
-  },
-  {
-    $el: {
-      placeholder: '请选择'
-    },
-    label: '商品类型',
-    $id: 'type',
-    $type: 'select',
-    $options: Object2Options(goodsType)
-  }
-  // { // 不支持多个status查询，写在slot中了
-  //   $el: {
-  //     placeholder: '请选择'
-  //   },
-  //   label: '状态',
-  //   $id: 'status',
-  //   $type: 'select',
-  //   $options: Object2Options(goodsStatus).filter(
-  //     it => it.value !== 'draft' && it.value !== 'canceled'
-  //   )
-  // }
-]
-
 export const getOnelineStatus = ({
   allSkuCount,
   offStatusSkuCount,
@@ -129,15 +58,6 @@ export const goodsManageColumns = [
   }
 ]
 
-export const templateType = {
-  NEW_CARS: '新车',
-  UNKEEP: '保养',
-  BOUTIQUE: '精品',
-  SERVICE: '服务',
-  INSURANCE: '保险',
-  FINANCE: '金融',
-  MANHOUR: '工时'
-}
 export const tplStatus = {
   ENABLE: '启用',
   DISABLE: '禁用'

@@ -127,7 +127,7 @@
 
 <script>
 import ElCrudTree from '@/container/el-crud-tree'
-import UploadToAli from 'upload-to-ali'
+
 import {
   frontendCatalogBaseUrl,
   backendCatalogBaseUrl,
@@ -142,7 +142,6 @@ export default {
   name: 'front-end-category',
   components: {
     ElCrudTree,
-    UploadToAli,
     BindBackendCategory,
     BindAttributeFilter
   },
