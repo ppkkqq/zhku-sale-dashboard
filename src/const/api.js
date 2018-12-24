@@ -156,6 +156,13 @@ export const mcMemberLevel = MEMBER_CENTER + `/mcMemberLevel`
 export const levelBenefit = MEMBER_CENTER + `/mcMemberLevel/levelBenefit`
 export const experienceStrategy =
   MEMBER_CENTER + `/mcMemberLevel/experienceStrategy`
+//限时抢购列表
+export const limitedTimePlatList =
+  MARKETING_CENTER + `/supplier/discount/platlist`
+//定金膨胀列表
+export const earnestList = MARKETING_CENTER + `/plat/earnest/list`
+//定金活动下架
+export const activityCancel = MARKETING_CENTER + `/supplier/discount/obtained`
 //搜索下拉获得会员等级
 export const levelItem = MEMBER_CENTER + '/mcMemberLevel/levelItem'
 //会员标签按钮
