@@ -42,7 +42,7 @@
 const tabs = Object2Options(status)
 // import {discountDetail} from '@/const/path'
 import {Object2Options} from '@/const/filter'
-import {goodsLists, limitedTimePlatList} from '@/const/api'
+import {goodsLists, limitedTimePlatList, activityCancel} from '@/const/api'
 import {status} from '@/const/marketing'
 import {formatDate} from '@/const/filter'
 
@@ -174,17 +174,27 @@ export default {
         cancelButtonText: '取消'
       })
         .then(({value}) => {
-          //TODO: 接口对value
-          this.$message({
-            type: 'success',
-            message: '成功下架活动!'
-          })
+          this.$axios
+            .$put(activityCancel, {
+              activityId: row.id,
+              obtainedReason: value
+            })
+            .then(res => {
+              if (res.payload.code === '0') {
+                this.$message({
+                  type: 'success',
+                  message: '成功下架活动!'
+                })
+              } else {
+                this.$message.error('操作失败')
+              }
+            })
         })
         .catch()
     },
     setEffectTime() {
-      this.customQuery.startTime = new Date(this.effectTime[0]).getTime()
-      this.customQuery.endTime = new Date(this.effectTime[1]).getTime()
+      this.customQuery.startTime = `${this.effectTime[0]} 00:00:00`
+      this.customQuery.endTime = `${this.effectTime[1]} 23:59:59`
     },
     handleReset() {
       this.customQuery.startTime = ''

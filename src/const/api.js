@@ -230,3 +230,5 @@ export const limitedTimePlatList =
   MARKETING_CENTER + `/supplier/discount/platlist`
 //定金膨胀列表
 export const earnestList = MARKETING_CENTER + `/plat/earnest/list`
+//定金活动下架
+export const activityCancel = MARKETING_CENTER + `/supplier/discount/obtained`
