@@ -319,16 +319,15 @@ export default {
       邮箱: data.email,
       注册时间: formatDate(data.createdAt),
       最后登录时间: formatDate(data.lastLoginTime),
-      会员等级: '注册会员'
+      会员等级: data.levelName
     }
-    //TODO： 会员等级接口数据
 
     const assetsInfo = {
       国源通币: payload.userBalance,
       积分: `${payload.userPoint}分`
     }
     const statusInfo = {
-      基础属性: app.userIconInfo
+      基础属性: data.memberType === 'NORMALACCOUNT' ? '外部会员' : '内部员工'
     }
     return {
       baseInfo: Object2Options(baseInfo, ''),
