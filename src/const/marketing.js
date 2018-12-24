@@ -118,7 +118,6 @@ export const columns = [
 ]
 
 export const status = {
-  // TODO: 对接字段
   '': '全部',
   not_start: '未开始',
   processing: '进行中',
