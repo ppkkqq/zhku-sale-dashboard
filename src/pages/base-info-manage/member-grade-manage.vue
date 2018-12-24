@@ -108,7 +108,7 @@ export default {
         callback('成长值下限不能为空')
         return
       } else if (
-        this.extraParams.lowerValue &&
+        this.extraParams.lowerValue != 0 &&
         !positiveInteger.test(this.extraParams.lowerValue)
       ) {
         callback('请输入正整数')
@@ -118,7 +118,7 @@ export default {
     }
     const checkNum2 = (rule, value, callback) => {
       if (this.isAutomaticCalculate && !this.extraParams.regularDeduction) {
-        callback('成长值不能为空')
+        callback('自动计算开启后成长值不能为空')
         return
       } else if (
         this.extraParams.regularDeduction &&
