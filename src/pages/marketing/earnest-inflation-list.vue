@@ -42,9 +42,8 @@
 const tabs = Object2Options(status)
 // import {discountDetail} from '@/const/path'
 import {Object2Options} from '@/const/filter'
-import {goodsLists, limitedTimePlatList, activityCancel} from '@/const/api'
+import {earnestList} from '@/const/api'
 import {status} from '@/const/marketing'
-import {formatDate} from '@/const/filter'
 
 export default {
   name: 'discount-list',
@@ -52,13 +51,12 @@ export default {
   data() {
     return {
       pageName: 'discount-list',
-      url: limitedTimePlatList,
+      url: earnestList,
       activeName: '',
       // TODO: 对接
       customQuery: {
         startTime: '',
-        endTime: '',
-        timeStatus: ''
+        endTime: ''
       },
       effectTime: [],
       columns: [
@@ -71,25 +69,17 @@ export default {
           label: '所属商户'
         },
         {
-          prop: 'effectTime',
-          label: '有效时间',
-          width: '168px',
-          formatter: row => {
-            return (
-              formatDate(row.startTime, 'YYYY-MM-DD HH:mm:ss') +
-              '至' +
-              formatDate(row.endTime, 'YYYY-MM-DD HH:mm:ss')
-            )
-          }
-        },
-        {
-          prop: 'activeOrderTotalMoney',
-          label: '活动订单总金额（元）',
+          prop: 'totalEarnest',
+          label: '定金金额（元）',
           minWidth: 120
         },
         {
-          prop: 'paymentOrderCount',
-          label: '付款订单数'
+          prop: 'earnestPayCount',
+          label: '定金支付人数'
+        },
+        {
+          prop: 'finalPayCount',
+          label: '尾款支付人数'
         },
         {
           prop: 'timeStatus',
@@ -137,8 +127,8 @@ export default {
           //todo：对接口
           $options: [
             {
-              label: '自营',
-              value: '383f672aba6b43ec9dbe474dfcaf1702'
+              label: '国投自营',
+              value: 0
             },
             {
               label: '我买网',
@@ -156,7 +146,7 @@ export default {
 
   methods: {
     handleClick(val) {
-      this.customQuery.timeStatus = val.name
+      this.customQuery.status = val.name
       this.$refs.dataTable.getList()
     },
     go2Detail(row, isView) {
@@ -174,27 +164,17 @@ export default {
         cancelButtonText: '取消'
       })
         .then(({value}) => {
-          this.$axios
-            .$put(activityCancel, {
-              activityId: row.id,
-              obtainedReason: value
-            })
-            .then(res => {
-              if (res.payload.code === '0') {
-                this.$message({
-                  type: 'success',
-                  message: '成功下架活动!'
-                })
-              } else {
-                this.$message.error('操作失败')
-              }
-            })
+          //TODO: 接口对value
+          this.$message({
+            type: 'success',
+            message: '成功下架活动!'
+          })
         })
         .catch()
     },
     setEffectTime() {
-      this.customQuery.startTime = `${this.effectTime[0]} 00:00:00`
-      this.customQuery.endTime = `${this.effectTime[1]} 23:59:59`
+      this.customQuery.startTime = new Date(this.effectTime[0]).getTime()
+      this.customQuery.endTime = new Date(this.effectTime[1]).getTime()
     },
     handleReset() {
       this.customQuery.startTime = ''
