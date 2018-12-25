@@ -40,7 +40,7 @@
 
 <script>
 const tabs = Object2Options(status)
-// import {discountDetail} from '@/const/path'
+import {discountDetail} from '@/const/path'
 import {Object2Options} from '@/const/filter'
 import {goodsLists, limitedTimePlatList, activityCancel} from '@/const/api'
 import {status} from '@/const/marketing'
@@ -101,7 +101,7 @@ export default {
         {
           text: '查看',
           type: 'primary',
-          atClick: row => this.go2Detail(row, 1)
+          atClick: row => this.goDetail(row)
         },
         {
           text: '下架活动',
@@ -159,12 +159,11 @@ export default {
       this.customQuery.timeStatus = val.name
       this.$refs.dataTable.getList()
     },
-    go2Detail(row, isView) {
+    goDetail(row) {
       this.$router.push({
-        // path: discountDetail,
+        path: discountDetail,
         query: {
-          refundId: row ? row.id : undefined,
-          isView: isView
+          activityId: row.id
         }
       })
     },

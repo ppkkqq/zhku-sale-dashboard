@@ -102,7 +102,7 @@
     <el-card>
       <div slot="header">
         <span class="title">成长值计算策略</span>
-        <el-button style="float:right;" @click="isEdit = !isEdit">{{isEdit?'取消':'编辑'}}</el-button>
+        <el-button style="float:right;" v-if="!isEdit" @click="isEdit = !isEdit">编辑</el-button>
       </div>
       <el-data-table
         ref="dataTable"
