@@ -181,7 +181,6 @@ export default {
     }
   },
   created() {
-    this.discountStatus = discountStatus
     if (this.query.activityId) {
       this.$axios
         .$get(discountDetail, {
