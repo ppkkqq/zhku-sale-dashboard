@@ -165,6 +165,7 @@ export const experienceStrategy =
 //限时抢购列表
 export const limitedTimePlatList =
   MARKETING_CENTER + `/supplier/discount/platlist`
+export const discountDetail = MARKETING_CENTER + `/supplier/discount/detail`
 //定金膨胀列表
 export const earnestList = MARKETING_CENTER + `/plat/earnest/list`
 //定金活动下架
