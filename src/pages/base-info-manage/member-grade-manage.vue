@@ -24,7 +24,8 @@
 
         <el-form-item prop="levelIcon" label="*等级图标：">
           <upload-to-ali accept="image/png, image/jpeg, image/jpg"
-                         v-model="extraParams.levelIcon">
+                         v-model="extraParams.levelIcon"
+                         :size="Number.MAX_SAFE_INTEGER">
           </upload-to-ali>
         <span class="tip-text">建议80*80像素，支持.JPG\.JPEG\.PNG格式</span>
         </el-form-item>
