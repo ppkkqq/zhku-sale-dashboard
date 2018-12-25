@@ -38,7 +38,7 @@
     <el-card class="scene-card">
       <div slot="header" class="clearfix">
         <span class="card-title">积分场景配置</span>
-        <el-button style="float:right;" @click="isEdit = !isEdit">{{isEdit?'取消':'编辑'}}</el-button>
+        <el-button style="float:right;" v-if="!isEdit" @click="isEdit = !isEdit">编辑</el-button>
       </div>
       <el-data-table
         ref="dataTable"
@@ -121,9 +121,16 @@ export default {
   },
   methods: {
     switchConfig(row) {
-      this.$axios.put(`${pointConfig}/${row.id}/scene`, {
-        status: row.status
-      })
+      this.$axios
+        .put(`${pointConfig}/${row.id}/scene`, {
+          status: row.status
+        })
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+        })
     },
     updateRules() {
       this.$axios.$post(pointConfigRule, this.rules).then(res => {
