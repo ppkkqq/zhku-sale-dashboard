@@ -142,11 +142,11 @@ export default {
             },
             {
               label: '我买网',
-              value: 1
+              value: '67783a1d-1743-495f-a6e9-7a31a450ce47'
             },
             {
-              label: '京东',
-              value: 3
+              label: '云投',
+              value: '4e5817f5e5d64c4e98c7e14955fce0cd'
             }
           ]
         }
@@ -175,10 +175,9 @@ export default {
       })
         .then(({value}) => {
           this.$axios
-            .$put(activityCancel, {
-              activityId: row.id,
-              obtainedReason: value
-            })
+            .$put(
+              `${activityCancel}?activityId=${row.id}&obtainedReason=${value}`
+            )
             .then(res => {
               if (res.payload.code === '0') {
                 this.$message({

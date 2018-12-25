@@ -166,7 +166,9 @@ export const experienceStrategy =
 export const limitedTimePlatList =
   MARKETING_CENTER + `/supplier/discount/platlist`
 //定金膨胀列表
-export const earnestList = MARKETING_CENTER + `/supplier/discount/platlist`
+export const earnestList = MARKETING_CENTER + `/plat/earnest/list`
+//定金活动下架
+export const earnestCancel = MARKETING_CENTER + `/plat/earnest/obtained`
 //定金活动下架
 export const activityCancel = MARKETING_CENTER + `/supplier/discount/obtained`
 //搜索下拉获得会员等级
