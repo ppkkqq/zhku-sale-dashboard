@@ -160,7 +160,6 @@ export default {
       this.$refs.dataTable.getList()
     },
     goDetail(row) {
-      console.log(1122)
       this.$router.push({
         path: discountDetail,
         query: {

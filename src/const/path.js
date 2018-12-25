@@ -27,6 +27,7 @@ export const aftDetail = '/aft/aft-detail'
 
 // 营销
 export const discountDetail = '/marketing/discount-detail'
+export const earnestInflationDetail = '/marketing/earnest-inflation-detail'
 // 促销活动
 export const activityDetail = '/promotion/activity-detail'
 export const activityPublish = '/promotion/activity-publish'
