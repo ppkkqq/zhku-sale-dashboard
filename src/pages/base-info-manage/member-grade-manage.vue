@@ -2,18 +2,19 @@
   <div>
     <div class="title">新增会员等级</div>
     <el-data-table
+      ref="dataTableList"
       :url="url"
       :columns="dialogColumns"
       :hasOperation="true"
       :hasPagination="false"
       :extraButtons="extraButtons"
+      :hasDelete="false"
       dataPath="payload"
       :form="form"
       :extraParams="extraParams"
       :beforeConfirm="beforeConfirm"
       @edit="extraEdit"
       @new="clickNew"
-      @canDelete="checkCanDelete"
       style="margin-bottom: 30px"
     >
       <el-form slot="form" :rules="rulesNum" :model="extraParams" ref="allRules">
@@ -241,6 +242,11 @@ export default {
           type: 'primary',
           text: '配置权益',
           atClick: this.getMemberBenefits
+        },
+        {
+          type: 'danger',
+          text: '删除',
+          atClick: this.checkCanDelete
         }
       ],
       form: [
@@ -396,26 +402,42 @@ export default {
           this.$message.error('操作失败! 请稍后再试!')
         })
     },
-    getValueData(data) {
-      this.growthValueData = data
-    },
-    checkCanDelete(result) {
-      if (!result) {
-        this.$confirm('无法删除该会员等级', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        return
-      }
-      this.$message({
-        type: 'success',
-        message: '操作成功'
+    // getValueData(data) {
+    //   this.growthValueData = data
+    // },
+    checkCanDelete(row) {
+      this.$confirm('是否删除该会员等级', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
+        .then(res => {
+          this.$axios
+            .$delete(`${mcMemberLevel}/${row.id}`)
+            .then(result => {
+              this.$message({
+                type: 'success',
+                message: '操作成功'
+              })
+              this.$refs.dataTableList.getList()
+            })
+            .catch(error => {
+              if (error.response) {
+                if (error.response.status == 408) {
+                  this.$confirm('无法删除该会员等级', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                  })
+                }
+              }
+            })
+        })
+        .catch()
     }
   },
   created() {
-    this.getGrowthValueData
+    this.getGrowthValueData()
   }
 }
 </script>
