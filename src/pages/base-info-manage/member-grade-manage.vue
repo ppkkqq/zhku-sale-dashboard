@@ -67,22 +67,36 @@
         :hasPagination="false"
         data-path="payload"
         @update="getData"
-      ></el-data-table>
+      >
+        <el-table-column
+          label="外部会员">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row['normalAccount']"
+              active-color="#409eff"
+              inactive-color="#dcdfe6"
+              active-value="OPEN"
+              inactive-value="CLOSE"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="内部员工">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row['internalStaff']"
+              active-color="#409eff"
+              inactive-color="#dcdfe6"
+              active-value="OPEN"
+              inactive-value="CLOSE"
+            />
+          </template>
+        </el-table-column>
+      </el-data-table>
       <el-button type="primary" @click="confirmEdit" class="btn-mg">确定</el-button>
       <el-button @click="()=>{this.memberBenefitsVisible = false}" class="btn-mg">取消</el-button>
     </el-dialog>
-    <!--<div class="title" style="margin-top: 20px;">成长值计算策略</div>-->
-    <!--<el-data-table-->
-      <!--:url="growthValueUrl"-->
-      <!--:columns="growthValueColumns"-->
-      <!--:hasOperation="false"-->
-      <!--:hasPagination="false"-->
-      <!--:hasNew="false"-->
-      <!--dataPath="payload"-->
-      <!--@update="getValueData"-->
-    <!--&gt;-->
-    <!--</el-data-table>-->
-    <!--<el-button type="primary" @click="growthValueConfirm" class="btn-mg">确定</el-button>-->
+
     <el-card>
       <div slot="header">
         <span class="title">成长值计算策略</span>
@@ -248,16 +262,6 @@ export default {
         {
           prop: 'benefitName',
           label: '用户权益'
-        },
-        {
-          prop: 'normalAccount',
-          label: '外部会员',
-          formatter: row => this.switchFormatter(row, 'normalAccount')
-        },
-        {
-          prop: 'internalStaff',
-          label: '内部员工',
-          formatter: row => this.switchFormatter(row, 'internalStaff')
         }
       ],
       growthValueColumns: [
@@ -297,17 +301,6 @@ export default {
             background: 'transparent',
             padding: '0'
           }}
-        />
-      )
-    },
-    switchFormatter(row, type) {
-      return (
-        <el-switch
-          v-model={row[type]}
-          active-color="#409eff"
-          inactive-color="#dcdfe6"
-          active-value="OPEN"
-          inactive-value="CLOSE"
         />
       )
     },
