@@ -94,6 +94,8 @@ export const downloadDetail =
   ACCOUNT_CENTER + '/admin/shoppingCard/downloadDetail'
 //平台端批量充值审批
 export const review = ACCOUNT_CENTER + '/admin/shoppingCard/review'
+//平台端取消充值
+export const cancelInpour = ACCOUNT_CENTER + '/admin/shoppingCard/cancelInpour'
 
 //积分规则配置
 export const pointConfigRule = ACCOUNT_CENTER + '/pointConfig/rule'
