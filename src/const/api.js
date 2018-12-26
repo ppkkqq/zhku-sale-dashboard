@@ -194,3 +194,5 @@ export const queryCurrencyList = ACCOUNT_CENTER + '/admin/shoppingCard/query'
 
 //源通币统计查询
 export const queryCurrencyCount = ACCOUNT_CENTER + '/admin/shoppingCard/count'
+//所属商户
+export const shopName = MARKETING_CENTER + '/supplier/activity/shop'
