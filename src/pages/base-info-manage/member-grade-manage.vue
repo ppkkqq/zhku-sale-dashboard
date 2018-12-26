@@ -416,23 +416,21 @@ export default {
           this.$axios
             .$delete(`${mcMemberLevel}/${row.id}`)
             .then(result => {
-              this.$message({
-                type: 'success',
-                message: '操作成功'
-              })
-              this.$refs.dataTableList.getList()
-            })
-            .catch(error => {
-              if (error.response) {
-                if (error.response.status == 408) {
-                  this.$confirm('无法删除该会员等级', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                  })
-                }
+              if (result.payload === 'true') {
+                this.$message({
+                  type: 'success',
+                  message: '操作成功'
+                })
+                this.$refs.dataTableList.getList()
+              } else {
+                this.$confirm('无法删除该会员等级', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                })
               }
             })
+            .catch()
         })
         .catch()
     }
