@@ -451,23 +451,23 @@ export default {
           this.currencyVisible = true
         })
     },
-    // getIntegralCount() {
-    //   this.$axios
-    //     .$get(`${queryIntegralCount(this.$route.query.memberId)}`)
-    //     .then(resp => {
-    //       const content = resp.payload
-    //       this.assetsTableData[0].currentNum = content.balance
-    //         ? content.balance
-    //         : 0
-    //       this.assetsTableData[0].usedNum = content.expendPoint
-    //         ? content.expendPoint
-    //         : 0
-    //     })
-    //     .catch(resp => {})
-    //     .finally(() => {
-    //       this.loading = false
-    //     })
-    // },
+    getIntegralCount() {
+      this.$axios
+        .$get(`${queryIntegralCount(this.$route.query.memberId)}`)
+        .then(resp => {
+          const content = resp.payload
+          this.assetsTableData[0].currentNum = content.balance
+            ? content.balance
+            : 0
+          this.assetsTableData[0].usedNum = content.expendPoint
+            ? content.expendPoint
+            : 0
+        })
+        .catch(resp => {})
+        .finally(() => {
+          this.loading = false
+        })
+    },
     // getCurrencyData() {
     //   this.$axios
     //     .$get(`${queryCurrencyCount}?memberId=${this.$route.query.memberId}`)
@@ -493,7 +493,7 @@ export default {
     this.assetsUrl = queryIntegralList(this.$route.query.memberId)
     // this.getUserIconInfo()
     this.formatDate = formatDate
-    //this.getIntegralCount()
+    this.getIntegralCount()
     //this.getCurrencyData()
     this.integralType = {
       USED: '购物扣积分',
