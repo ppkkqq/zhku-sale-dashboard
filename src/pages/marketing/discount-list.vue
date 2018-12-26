@@ -41,11 +41,15 @@
 <script>
 const tabs = Object2Options(status)
 import {discountDetail} from '@/const/path'
-import {Object2Options} from '@/const/filter'
-import {goodsLists, limitedTimePlatList, activityCancel} from '@/const/api'
+import {Object2Options, source4Options} from '@/const/filter'
+import {
+  goodsLists,
+  limitedTimePlatList,
+  activityCancel,
+  shopName
+} from '@/const/api'
 import {status} from '@/const/marketing'
 import {formatDate} from '@/const/filter'
-
 export default {
   name: 'discount-list',
   components: {},
@@ -54,7 +58,6 @@ export default {
       pageName: 'discount-list',
       url: limitedTimePlatList,
       activeName: '',
-      // TODO: 对接
       customQuery: {
         startTime: '',
         endTime: '',
@@ -134,21 +137,7 @@ export default {
           label: '所属商户',
           $id: 'shopId',
           $type: 'select',
-          //todo：对接口
-          $options: [
-            {
-              label: '自营',
-              value: '383f672aba6b43ec9dbe474dfcaf1702'
-            },
-            {
-              label: '我买网',
-              value: '67783a1d-1743-495f-a6e9-7a31a450ce47'
-            },
-            {
-              label: '云投',
-              value: '4e5817f5e5d64c4e98c7e14955fce0cd'
-            }
-          ]
+          $options: []
         }
       ]
     }
@@ -192,17 +181,25 @@ export default {
         .catch()
     },
     setEffectTime() {
-      this.customQuery.startTime = `${this.effectTime[0]} 00:00:00`
-      this.customQuery.endTime = `${this.effectTime[1]} 23:59:59`
+      this.customQuery.startTime = this.effectTime[0]
+      this.customQuery.endTime = this.effectTime[1]
     },
     handleReset() {
       this.customQuery.startTime = ''
       this.customQuery.endTime = ''
       this.effectTime = []
+    },
+    getShopName() {
+      this.$axios.$get(shopName).then(res => {
+        this.searchForm[1].$options = source4Options(res.payload)
+      })
     }
   },
   created() {
     this.tabs = tabs
+  },
+  mounted() {
+    this.getShopName()
   }
 }
 </script>
