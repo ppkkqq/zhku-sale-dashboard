@@ -160,7 +160,7 @@ export default {
     logoFormatter(row) {
       if (!row || !row.productPhoto) return
       let imgUrl = row.productPhoto.split(',')[0]
-      let sellPrice = price(row.highSellPrice)
+      let sellPrice = price(row.goodsPrice)
       return (
         <div style="display:flex;align-items:center">
           <img
@@ -173,7 +173,7 @@ export default {
             }}
           />
           <div>
-            <div>{row.name}</div>
+            <div>{row.goodsName}</div>
             <div>￥{sellPrice}</div>
           </div>
         </div>

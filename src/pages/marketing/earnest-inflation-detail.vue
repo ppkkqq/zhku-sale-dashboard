@@ -245,6 +245,7 @@ export default {
         .then(res => {
           this.submitForm.title = res.payload.title
           this.submitForm.despositRatio = res.payload.despositRatio
+          this.submitForm.isRange = res.payload.isRange
           this.submitForm.isExpansion = res.payload.isExpansion
           this.submitForm.expansionRatio = res.payload.expansionRatio
           this.submitForm.deliveryTime = formatDate(
