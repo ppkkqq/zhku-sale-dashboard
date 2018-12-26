@@ -298,7 +298,7 @@ export default {
         endLastLoginTime: ''
       },
       operationAttrs: {
-        width: '190px',
+        width: '220px',
         fixed: 'right'
       },
       headerButtons: [
