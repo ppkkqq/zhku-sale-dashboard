@@ -58,7 +58,7 @@
         v-bind="dataTableConfig"
       ></el-data-table>
     </card-table>
-    <el-dialog title="积分收支明细" :visible.sync="dialogVisible" width="50%">
+    <el-dialog title="积分收支明细" :visible.sync="dialogVisible" width="60%">
       <el-table :data="integralList" size="small">
         <el-table-column prop="createdAt" label="时间">
           <template slot-scope="scope">
@@ -87,36 +87,36 @@
         </el-pagination>
       </div>
     </el-dialog>
-    <el-dialog title="国源通币明细" :visible.sync="currencyVisible" width="50%">
-      <el-tabs v-model="activeTabName" @tab-click="handleClick">
-        <el-tab-pane label="国源通币使用明细" name="detail">
-            <el-table :data="currencyData">
-              <el-table-column prop="batchNum" label="国源通币编号"></el-table-column>
-              <el-table-column prop="useTime" label="使用时间"></el-table-column>
-              <el-table-column prop="orderId" label="订单"></el-table-column>
-              <el-table-column prop="useMoney" label="使用币数"></el-table-column>
-              <el-table-column prop="balance" label="剩余币数"></el-table-column>
-            </el-table>
-              <div class="pagination" style="text-align: right;">
-                <el-pagination background layout="prev, pager, next" :current-page.sync="detailPage" :page-count="numDetailPage" @prev-click="()=>{--detailPage}" @next-click="()=>{++detailPage}">
-                </el-pagination>
-              </div>
-        </el-tab-pane>
-        <el-tab-pane label="国源通币列表" name="list">
-          <el-table :data="currencyList">
-            <el-table-column prop="batchNum" label="国源通币编号"></el-table-column>
-            <el-table-column prop="activityDate" label="有效期"></el-table-column>
-            <el-table-column prop="usableScope" label="适用范围"></el-table-column>
-            <el-table-column prop="balance" label="剩余币数"></el-table-column>
-            <el-table-column prop="startDate" label="发放时间"></el-table-column>
-          </el-table>
-            <div class="pagination" style="text-align: right;">
-              <el-pagination background layout="prev, pager, next" :current-page.sync="listPage" :page-count="numListPage" @prev-click="()=>{--listPage}" @next-click="()=>{++listPage}">
-              </el-pagination>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
-    </el-dialog>
+    <!--<el-dialog title="国源通币明细" :visible.sync="currencyVisible" width="50%">-->
+      <!--<el-tabs v-model="activeTabName" @tab-click="handleClick">-->
+        <!--<el-tab-pane label="国源通币使用明细" name="detail">-->
+            <!--<el-table :data="currencyData">-->
+              <!--<el-table-column prop="batchNum" label="国源通币编号"></el-table-column>-->
+              <!--<el-table-column prop="useTime" label="使用时间"></el-table-column>-->
+              <!--<el-table-column prop="orderId" label="订单"></el-table-column>-->
+              <!--<el-table-column prop="useMoney" label="使用币数"></el-table-column>-->
+              <!--<el-table-column prop="balance" label="剩余币数"></el-table-column>-->
+            <!--</el-table>-->
+              <!--<div class="pagination" style="text-align: right;">-->
+                <!--<el-pagination background layout="prev, pager, next" :current-page.sync="detailPage" :page-count="numDetailPage" @prev-click="()=>{&#45;&#45;detailPage}" @next-click="()=>{++detailPage}">-->
+                <!--</el-pagination>-->
+              <!--</div>-->
+        <!--</el-tab-pane>-->
+        <!--<el-tab-pane label="国源通币列表" name="list">-->
+          <!--<el-table :data="currencyList">-->
+            <!--<el-table-column prop="batchNum" label="国源通币编号"></el-table-column>-->
+            <!--<el-table-column prop="activityDate" label="有效期"></el-table-column>-->
+            <!--<el-table-column prop="usableScope" label="适用范围"></el-table-column>-->
+            <!--<el-table-column prop="balance" label="剩余币数"></el-table-column>-->
+            <!--<el-table-column prop="startDate" label="发放时间"></el-table-column>-->
+          <!--</el-table>-->
+            <!--<div class="pagination" style="text-align: right;">-->
+              <!--<el-pagination background layout="prev, pager, next" :current-page.sync="listPage" :page-count="numListPage" @prev-click="()=>{&#45;&#45;listPage}" @next-click="()=>{++listPage}">-->
+              <!--</el-pagination>-->
+          <!--</div>-->
+        <!--</el-tab-pane>-->
+      <!--</el-tabs>-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -273,12 +273,12 @@ export default {
           type: '积分',
           currentNum: 0,
           usedNum: 0
-        },
-        {
-          type: '国源通币',
-          currentNum: 0,
-          usedNum: 0
         }
+        // {
+        //   type: '国源通币',
+        //   currentNum: 0,
+        //   usedNum: 0
+        // }
       ],
       integralColumns: [
         {
@@ -468,23 +468,23 @@ export default {
           this.loading = false
         })
     },
-    getCurrencyData() {
-      this.$axios
-        .$get(`${queryCurrencyCount}?memberId=${this.$route.query.memberId}`)
-        .then(resp => {
-          const content = resp.payload
-          this.assetsTableData[1].currentNum = content.balance
-            ? content.balance
-            : 0
-          this.assetsTableData[1].usedNum = content.trimestralNum
-            ? content.trimestralNum
-            : 0
-        })
-        .catch(resp => {})
-        .finally(() => {
-          this.loading = false
-        })
-    },
+    // getCurrencyData() {
+    //   this.$axios
+    //     .$get(`${queryCurrencyCount}?memberId=${this.$route.query.memberId}`)
+    //     .then(resp => {
+    //       const content = resp.payload
+    //       this.assetsTableData[1].currentNum = content.balance
+    //         ? content.balance
+    //         : 0
+    //       this.assetsTableData[1].usedNum = content.trimestralNum
+    //         ? content.trimestralNum
+    //         : 0
+    //     })
+    //     .catch(resp => {})
+    //     .finally(() => {
+    //       this.loading = false
+    //     })
+    // },
     handleClick(tab, event) {
       console.log(tab, event)
     }
@@ -492,8 +492,9 @@ export default {
   created() {
     this.assetsUrl = queryIntegralList(this.$route.query.memberId)
     // this.getUserIconInfo()
+    this.formatDate = formatDate
     this.getIntegralCount()
-    this.getCurrencyData()
+    //this.getCurrencyData()
     this.integralType = {
       USED: '购物扣积分',
       REFUND: '退货扣积分',
