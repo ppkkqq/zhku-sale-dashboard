@@ -181,8 +181,8 @@ export default {
         .catch()
     },
     setEffectTime() {
-      this.customQuery.startTime = `${this.effectTime[0]} 00:00:00`
-      this.customQuery.endTime = `${this.effectTime[1]} 23:59:59`
+      this.customQuery.startTime = this.effectTime[0]
+      this.customQuery.endTime = this.effectTime[1]
     },
     handleReset() {
       this.customQuery.startTime = ''
