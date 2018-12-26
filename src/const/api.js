@@ -94,6 +94,8 @@ export const downloadDetail =
   ACCOUNT_CENTER + '/admin/shoppingCard/downloadDetail'
 //平台端批量充值审批
 export const review = ACCOUNT_CENTER + '/admin/shoppingCard/review'
+//平台端取消充值
+export const cancelInpour = ACCOUNT_CENTER + '/admin/shoppingCard/cancelInpour'
 
 //积分规则配置
 export const pointConfigRule = ACCOUNT_CENTER + '/pointConfig/rule'
@@ -153,8 +155,7 @@ export const updateRule = MARKETING_CENTER + '/presell/rule/update'
 export const ruleDetail = MARKETING_CENTER + '/presell/rule/detail'
 
 //积分详细
-export const queryIntegralList = id =>
-  ACCOUNT_CENTER + `/point/member/${id}/list`
+export const queryIntegralList = id => ACCOUNT_CENTER + `/point/${id}/list`
 // 楼层 获取单个一级前台类目 的前台类目详情
 export const frontCatalogSingle = MALL_CONFIG + `/floor/pcCategory`
 
@@ -163,6 +164,17 @@ export const mcMemberLevel = MEMBER_CENTER + `/mcMemberLevel`
 export const levelBenefit = MEMBER_CENTER + `/mcMemberLevel/levelBenefit`
 export const experienceStrategy =
   MEMBER_CENTER + `/mcMemberLevel/experienceStrategy`
+//限时抢购列表
+export const limitedTimePlatList =
+  MARKETING_CENTER + `/supplier/discount/platlist`
+export const discountDetail = MARKETING_CENTER + `/supplier/discount/detail`
+//定金膨胀列表
+export const earnestList = MARKETING_CENTER + `/plat/earnest/list`
+export const earnestDetail = MARKETING_CENTER + `/merchant/earnest/detail`
+//定金活动下架
+export const earnestCancel = MARKETING_CENTER + `/plat/earnest/obtained`
+//定金活动下架
+export const activityCancel = MARKETING_CENTER + `/supplier/discount/obtained`
 //搜索下拉获得会员等级
 export const levelItem = MEMBER_CENTER + '/mcMemberLevel/levelItem'
 //会员标签按钮
@@ -177,3 +189,12 @@ export const pointConfig = ACCOUNT_CENTER + '/pointConfig'
 
 //积分配置列表
 export const pointConfigList = pointConfig + '/scene'
+//最近三个月积分统计查询
+export const queryIntegralCount = id => ACCOUNT_CENTER + `/point/${id}/count`
+export const queryCurrencyDetail = ACCOUNT_CENTER + '/admin/shoppingCard/detail'
+export const queryCurrencyList = ACCOUNT_CENTER + '/admin/shoppingCard/query'
+
+//源通币统计查询
+export const queryCurrencyCount = ACCOUNT_CENTER + '/admin/shoppingCard/count'
+//所属商户
+export const shopName = MARKETING_CENTER + '/supplier/activity/shop'

@@ -2,18 +2,20 @@
   <div>
     <div class="title">新增会员等级</div>
     <el-data-table
+      ref="dataTableList"
       :url="url"
       :columns="dialogColumns"
       :hasOperation="true"
       :hasPagination="false"
       :extraButtons="extraButtons"
+      :hasDelete="false"
       dataPath="payload"
       :form="form"
       :extraParams="extraParams"
       :beforeConfirm="beforeConfirm"
       @edit="extraEdit"
       @new="clickNew"
-      @canDelete="checkCanDelete"
+      style="margin-bottom: 30px"
     >
       <el-form slot="form" :rules="rulesNum" :model="extraParams" ref="allRules">
         <el-form-item prop="growth_range" label="*成长值下限：" >
@@ -22,7 +24,8 @@
 
         <el-form-item prop="levelIcon" label="*等级图标：">
           <upload-to-ali accept="image/png, image/jpeg, image/jpg"
-                         v-model="extraParams.levelIcon">
+                         v-model="extraParams.levelIcon"
+                         :size="Number.MAX_SAFE_INTEGER">
           </upload-to-ali>
         <span class="tip-text">建议80*80像素，支持.JPG\.JPEG\.PNG格式</span>
         </el-form-item>
@@ -66,22 +69,69 @@
         :hasPagination="false"
         data-path="payload"
         @update="getData"
-      ></el-data-table>
+      >
+        <el-table-column
+          label="外部会员">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row['normalAccount']"
+              active-color="#409eff"
+              inactive-color="#dcdfe6"
+              active-value="OPEN"
+              inactive-value="CLOSE"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="内部员工">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row['internalStaff']"
+              active-color="#409eff"
+              inactive-color="#dcdfe6"
+              active-value="OPEN"
+              inactive-value="CLOSE"
+            />
+          </template>
+        </el-table-column>
+      </el-data-table>
       <el-button type="primary" @click="confirmEdit" class="btn-mg">确定</el-button>
       <el-button @click="()=>{this.memberBenefitsVisible = false}" class="btn-mg">取消</el-button>
     </el-dialog>
-    <div class="title" style="margin-top: 20px;">成长值计算策略</div>
-    <el-data-table
-      :url="growthValueUrl"
-      :columns="growthValueColumns"
-      :hasOperation="false"
-      :hasPagination="false"
-      :hasNew="false"
-      dataPath="payload"
-      @update="getValueData"
-    >
-    </el-data-table>
-    <el-button type="primary" @click="growthValueConfirm" class="btn-mg">确定</el-button>
+
+    <el-card>
+      <div slot="header">
+        <span class="title">成长值计算策略</span>
+        <el-button style="float:right;" v-if="!isEdit" @click="isEdit = !isEdit">编辑</el-button>
+      </div>
+      <el-data-table
+        ref="dataTable"
+        :url="growthValueUrl"
+        :columns="growthValueColumns"
+        :extraButtons="extraButtons"
+        :hasNew="false"
+        :hasEdit="false"
+        :hasDelete="false"
+        :hasOperation="false"
+        :hasPagination="false"
+      >
+        <el-table-column
+          label="操作"
+          width="180">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.status"
+              active-color="#409eff"
+              inactive-color="#dcdfe6"
+              active-value="OPEN"
+              inactive-value="CLOSE"
+              @change="growthValueConfirm(scope.row)"
+              :disabled=!isEdit>
+            </el-switch>
+          </template>
+        </el-table-column>
+      </el-data-table>
+    </el-card>
   </div>
 </template>
 
@@ -108,7 +158,7 @@ export default {
         callback('成长值下限不能为空')
         return
       } else if (
-        this.extraParams.lowerValue &&
+        this.extraParams.lowerValue != 0 &&
         !positiveInteger.test(this.extraParams.lowerValue)
       ) {
         callback('请输入正整数')
@@ -118,7 +168,7 @@ export default {
     }
     const checkNum2 = (rule, value, callback) => {
       if (this.isAutomaticCalculate && !this.extraParams.regularDeduction) {
-        callback('成长值不能为空')
+        callback('自动计算开启后成长值不能为空')
         return
       } else if (
         this.extraParams.regularDeduction &&
@@ -134,6 +184,7 @@ export default {
         lowerValue: '',
         regularDeduction: ''
       },
+      isEdit: false,
       memberData: [],
       url: mcMemberLevel,
       memberBenefitsUrl: levelBenefit,
@@ -192,6 +243,11 @@ export default {
           type: 'primary',
           text: '配置权益',
           atClick: this.getMemberBenefits
+        },
+        {
+          type: 'danger',
+          text: '删除',
+          atClick: this.checkCanDelete
         }
       ],
       form: [
@@ -213,16 +269,6 @@ export default {
         {
           prop: 'benefitName',
           label: '用户权益'
-        },
-        {
-          prop: 'normalAccount',
-          label: '外部会员',
-          formatter: row => this.switchFormatter(row, 'normalAccount')
-        },
-        {
-          prop: 'internalStaff',
-          label: '内部员工',
-          formatter: row => this.switchFormatter(row, 'internalStaff')
         }
       ],
       growthValueColumns: [
@@ -237,11 +283,6 @@ export default {
         {
           prop: 'rewardContent',
           label: '说明'
-        },
-        {
-          prop: 'status',
-          label: '操作',
-          formatter: row => this.switchFormatter(row, 'status')
         }
       ],
       rulesNum: {
@@ -267,17 +308,6 @@ export default {
             background: 'transparent',
             padding: '0'
           }}
-        />
-      )
-    },
-    switchFormatter(row, type) {
-      return (
-        <el-switch
-          v-model={row[type]}
-          active-color="#409eff"
-          inactive-color="#dcdfe6"
-          active-value="OPEN"
-          inactive-value="CLOSE"
         />
       )
     },
@@ -354,13 +384,13 @@ export default {
         })
         .catch()
     },
-    growthValueConfirm() {
-      let newArr = this.growthValueData.map(item => {
-        return {
-          id: item.id,
-          status: item.status
+    growthValueConfirm(row) {
+      let newArr = [
+        {
+          id: row.id,
+          status: row.status
         }
-      })
+      ]
       this.$axios
         .$put(experienceStrategy, newArr)
         .then(result => {
@@ -373,26 +403,40 @@ export default {
           this.$message.error('操作失败! 请稍后再试!')
         })
     },
-    getValueData(data) {
-      this.growthValueData = data
-    },
-    checkCanDelete(result) {
-      if (!result) {
-        this.$confirm('无法删除该会员等级', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        return
-      }
-      this.$message({
-        type: 'success',
-        message: '操作成功'
+    // getValueData(data) {
+    //   this.growthValueData = data
+    // },
+    checkCanDelete(row) {
+      this.$confirm('是否删除该会员等级', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
+        .then(res => {
+          this.$axios
+            .$delete(`${mcMemberLevel}/${row.id}`)
+            .then(result => {
+              if (result.payload === 'true') {
+                this.$message({
+                  type: 'success',
+                  message: '操作成功'
+                })
+                this.$refs.dataTableList.getList()
+              } else {
+                this.$confirm('无法删除该会员等级', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                })
+              }
+            })
+            .catch()
+        })
+        .catch()
     }
   },
   created() {
-    this.getGrowthValueData
+    this.getGrowthValueData()
   }
 }
 </script>

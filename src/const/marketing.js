@@ -116,3 +116,12 @@ export const columns = [
     formatter: row => activityStatus[row.tmaStatus]
   }
 ]
+
+export const status = {
+  '': '全部',
+  not_start: '未开始',
+  processing: '进行中',
+  over: '已结束',
+  expired: '已失效',
+  cancelled: '已取消'
+}
