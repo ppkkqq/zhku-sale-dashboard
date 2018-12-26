@@ -26,7 +26,6 @@
         </el-form-item>
         <el-form-item label="定金支付时间" prop="earnestPayStartTime">
           <el-date-picker
-            @change="setEarnestPayTime"
             value-format="yyyy-MM-dd HH:mm:ss"
             v-model="earnestPayTime"
             type="datetimerange"
@@ -75,7 +74,6 @@
 
         <el-form-item label="尾款支付时间"  prop="tailPayStartTime">
           <el-date-picker
-            @change="setTailPayTime"
             value-format="yyyy-MM-dd HH:mm:ss"
             v-model="tailPayTime"
             type="datetimerange"
@@ -90,7 +88,7 @@
           <template slot="label">
             <span class="star">*</span><span>发货时间</span>
           </template>
-          <el-radio-group v-model="submitForm.isRange" @change="setDeliverTime">
+          <el-radio-group v-model="submitForm.isRange">
             <el-form  :model="submitForm" ref="form2" :disabled="true">
 
               <el-radio :label="1" style="margin-bottom: 20px;">
@@ -188,77 +186,7 @@ export default {
       }
     }
   },
-  methods: {
-    addCommodity() {
-      this.outerVisible = true
-    },
-    setEarnestPayTime() {
-      this.submitForm.earnestPayStartTime = this.earnestPayTime[0]
-      this.submitForm.earnestPayEndTime = this.earnestPayTime[1]
-    },
-    setTailPayTime() {
-      this.submitForm.tailPayStartTime = this.tailPayTime[0]
-      this.submitForm.tailPayEndTime = this.tailPayTime[1]
-    },
-    setDeliverTime() {
-      if (this.submitForm.isRange === 1) {
-        this.submitForm.finalpayDeliveryTime = ''
-      } else {
-        this.submitForm.deliveryTime = ''
-      }
-    },
-    onSubmit(formName) {
-      this.$refs[formName].validate(valid1 => {
-        this.$refs['form2'].validate(valid2 => {
-          this.$refs['form3'].validate(valid3 => {
-            if (!valid1 || !valid2 || !valid3) {
-              return
-            }
-
-            delete this.submitForm.isRange
-
-            if (this.selectGoods.length === 0) {
-              this.$message({
-                type: 'error',
-                message: '必须选择商品'
-              })
-
-              return
-            }
-
-            this.submitForm.activeGoodDtoList = this.selectGoods.map(
-              selectGoodsItem => {
-                return {
-                  inGoodSkuJsonDto: {
-                    goodId: selectGoodsItem.shopId,
-                    goodName: selectGoodsItem.name,
-                    goodImgUrl: selectGoodsItem.productPhoto.split(',')[0],
-                    goodSkuId: selectGoodsItem.skuId,
-                    originalMoney: selectGoodsItem.sellPrice,
-                    stockCount: selectGoodsItem.stockCount
-                  },
-                  goodPrediscountMoney: selectGoodsItem.goodPrediscountMoney, //定金膨胀可抵
-                  goodPresaleMoney: selectGoodsItem.goodPresaleMoney //预售定金
-                }
-              }
-            )
-            console.log(this.$route.query.id, !this.isView)
-            if (this.$route.query.id && !this.isView) {
-              this.$axios
-                .$put(`${editEarnest}?id=${this.$route.query.id}`)
-                .then(res => {
-                  this.$router.push(earnestInflationList)
-                })
-            } else {
-              this.$axios.$post(`${addEarnest}`, this.submitForm).then(res => {
-                this.$router.push(earnestInflationList)
-              })
-            }
-          })
-        })
-      })
-    }
-  },
+  methods: {},
   computed: {},
 
   watch: {
