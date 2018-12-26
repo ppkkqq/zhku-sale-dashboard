@@ -337,12 +337,12 @@ export default {
         }
       ],
       extraButtons: [
-        // {
-        //   style: 'margin-left: 10px',
-        //   text: '国源通币充值',
-        //   type: 'primary',
-        //   atClick: this.showTopUp
-        // },
+        {
+          style: 'margin-left: 10px',
+          text: '国源通币充值',
+          type: 'primary',
+          atClick: this.showTopUp
+        },
         {
           text: '查看',
           type: 'primary',
