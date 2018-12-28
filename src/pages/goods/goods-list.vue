@@ -31,8 +31,6 @@
 
 <script>
 import {goodsLists, goodsCancelApply} from '@/const/api'
-import {goodsListColumns} from '@/const/goods'
-import {listSearchForm} from '@/const/goods'
 import {getGoodsOnOffStatus, formatDate} from '@/const/filter'
 import {goodsDetail, goodsPublish, goodsUseTplPublish} from '@/const/path'
 import BackEndCategorySelect from '@/container/back-end-category-select/'

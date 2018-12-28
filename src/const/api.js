@@ -1,14 +1,7 @@
 const prefix = '/mock'
 
-// const MALL_CONFIG = '/car-deepexi-mall-config-api/api/v1'
-// const PRODUCT_CENTER = '/car-deepexi-product-center/api/v1'
-// const MEMBER_CENTER = '/car-deepexi-member-center/api/v1'
 const shopCenter = '/mall-deepexi-shop-center/api/v1'
-// const TRADE_CENTER = '/car-deepexi-trade-center/api/v1'
-// const APPLICATION = '/moby-application-api/api/v1' //应用中心
-// const EVALUATE_CENTER = '/car-deepexi-evaluate-center/api/v1' //评价中心
 const fakeProductCenter = prefix + '/deepexi-product-center/api/v1'
-
 export const PRODUCT_CENTER = '/mall-deepexi-product-center/api/v1'
 export const MEMBER_CENTER = '/mall-deepexi-member-center/api/v1'
 export const TRADE_CENTER = '/mall-deepexi-trade-center/api/v1'
@@ -17,30 +10,6 @@ export const APPLICATION = '/mall-application-api/api/v1'
 export const EVALUATE_CENTER = '/mall-deepexi-evaluate-center/api/v1'
 export const ACCOUNT_CENTER = '/mall-deepexi-account-center/api/v1'
 export const MARKETING_CENTER = '/mall-deepexi-marking-center/api/v1'
-
-// 品牌管理
-// 根据id 修改品牌信息
-export const productBrandEdit = id => PRODUCT_CENTER + `/pcBrands/${id}`
-// 获取所有品牌列表
-// export const productBrandList = deepexiProductCenter + '/pcBrands/list'
-export const pcBrands = PRODUCT_CENTER + `/pcBrands`
-
-// 商品上下架管理
-export const skusStocklist = fakeProductCenter + '/admin/items/skus/stocklist'
-// 获取商品sku上下架列表
-export const skusList = id => {
-  return fakeProductCenter + `/admin/items/${id}/skus`
-}
-// 上下架-商品详情
-export const sellerItems = id => fakeProductCenter + `/admin/items/${id}`
-// 批量上架
-export const skusOn = id => {
-  return fakeProductCenter + `/seller/items/${id}/skus/on`
-}
-// 批量下架
-export const skusOff = id => {
-  return fakeProductCenter + `/seller/items/${id}/skus/off`
-}
 
 // 会员信息
 export const mcMemberInfos = MEMBER_CENTER + '/mcMemberAccounts'
@@ -59,66 +28,15 @@ export const attributeGroups = PRODUCT_CENTER + '/attributeGroups'
 
 // 商品模板管理
 // 列表
-export const templateList = PRODUCT_CENTER + '/templates' // 原接口
-// export const shopTemplateList = PRODUCT_CENTER + '/shop/templates' // 门店模板
 export const adminTemplateList = PRODUCT_CENTER + '/admin/templates'
-// 启用禁用
-export const templateStatus = id =>
-  PRODUCT_CENTER + `/shop/templates/${id}/status`
-// 授权
-export const grantShop = id =>
-  PRODUCT_CENTER + `/shop/templates/${id}/grantShop`
-export const grantList = id =>
-  PRODUCT_CENTER + `/shop/templates/${id}/grant/list`
-
-// 套餐模板管理
-// 列表
-export const pcBundleTempaltes = PRODUCT_CENTER + '/pcBundleTempaltes' // 原接口
-// export const shopPcBundleTempaltes = PRODUCT_CENTER + '/pcBundleTempaltes' // 门店模板
-export const adminPcBundleTempaltes =
-  PRODUCT_CENTER + '/admin/pcBundleTempaltes'
-// 授权
-export const bundleGrantShop = id =>
-  PRODUCT_CENTER + `/admin/pcBundleTempaltes/${id}/grantShop` // 单个
-export const bundleGrantList = id =>
-  PRODUCT_CENTER + `/admin/pcBundleTempaltes/${id}/grant/list` // 单个 店铺列表
-
-// 启用禁用
-export const bundleStatus = id =>
-  PRODUCT_CENTER + `/admin/pcBundleTempaltes/${id}/status`
 
 // 反馈 crud
 export const feedback = MALL_CONFIG + '/feedbacks'
 
-//车型基础数据管理
-export const carBrandsSeries = PRODUCT_CENTER + '/pcCarBrandSeries'
-export const carModels = PRODUCT_CENTER + '/pcCarModels'
 //商品管理
 export const shopItems = `${PRODUCT_CENTER}/shop/items`
-export const productDetail = id => `${PRODUCT_CENTER}/shop/items/${id}`
-
-//套餐管理
-//TODO:  后端接口还没有给我。。。。
-export const pcBundles = PRODUCT_CENTER + '/admin/pcBundles'
-export const comboLists = PRODUCT_CENTER + '/pcBundleTempaltes'
-export const bundlesAudit = id =>
-  PRODUCT_CENTER + `/admin/pcBundles/${id}/status`
-
-//客户
-//客户列表
-export const getShopUserInfo = `${MEMBER_CENTER}/mcMemberAccounts/getShopUserInfo`
 
 //客户详情
-
-//subscribes/list
-//我的预约
-export const customerSubscribes = `${TRADE_CENTER}/subscribes/list`
-//我的关注
-export const customerFocus = `${APPLICATION}/goodsAttentions/headquarters/personalCollectsDetails`
-//我的评价
-export const customerEvaluate = `${EVALUATE_CENTER}/ecEvaluations/tree`
-//我的证件
-export const customerCertificatess = `${MEMBER_CENTER}/mcCertificatess/list`
 // 售后
 export const refundList = TRADE_CENTER + '/refund/supplier/platlist'
 export const refundAudit = TRADE_CENTER + '/refund/supplier/audit'
@@ -133,7 +51,6 @@ export const selectedFilterCondition =
 export const AllfilterCondition =
   PRODUCT_CENTER + '/item/conditions/findAllAttribute'
 
-//--------------------此线上面接口会被删除，所需接口放到此线下面--------------------
 // 首页广告页面
 export const bannerList = MALL_CONFIG + '/advertisements'
 export const bannerEdit = id => MALL_CONFIG + `/advertisements/${id}`
@@ -170,6 +87,25 @@ export const getNeedCheckPcById =
 // 源通币
 export const currency = ACCOUNT_CENTER + '/admin/currency'
 export const records = ACCOUNT_CENTER + '/admin/currency/records'
+//批量充值列表
+export const inpourList = ACCOUNT_CENTER + '/admin/shoppingCard/inpourList'
+//下载充值明细
+export const downloadDetail =
+  ACCOUNT_CENTER + '/admin/shoppingCard/downloadDetail'
+//平台端批量充值审批
+export const review = ACCOUNT_CENTER + '/admin/shoppingCard/review'
+//平台端取消充值
+export const cancelInpour = ACCOUNT_CENTER + '/admin/shoppingCard/cancelInpour'
+
+//积分规则配置
+export const pointConfigRule = ACCOUNT_CENTER + '/pointConfig/rule'
+//批量充值模板下载
+export const template = ACCOUNT_CENTER + '/shoppingCard/template'
+//批量充值
+export const batchInpour = ACCOUNT_CENTER + '/admin/shoppingCard/batchInpour'
+
+//获取前台类目集合
+export const catalog = PRODUCT_CENTER + '/pcPrecategorys/tree'
 
 // 会员
 export const address =
@@ -218,10 +154,47 @@ export const goodQuery = MARKETING_CENTER + '/presell/rule/goods/query'
 export const updateRule = MARKETING_CENTER + '/presell/rule/update'
 export const ruleDetail = MARKETING_CENTER + '/presell/rule/detail'
 
+//积分详细
+export const queryIntegralList = id => ACCOUNT_CENTER + `/point/${id}/list`
 // 楼层 获取单个一级前台类目 的前台类目详情
 export const frontCatalogSingle = MALL_CONFIG + `/floor/pcCategory`
+
 //会员等级
 export const mcMemberLevel = MEMBER_CENTER + `/mcMemberLevel`
 export const levelBenefit = MEMBER_CENTER + `/mcMemberLevel/levelBenefit`
 export const experienceStrategy =
   MEMBER_CENTER + `/mcMemberLevel/experienceStrategy`
+//限时抢购列表
+export const limitedTimePlatList =
+  MARKETING_CENTER + `/supplier/discount/platlist`
+export const discountDetail = MARKETING_CENTER + `/supplier/discount/detail`
+//定金膨胀列表
+export const earnestList = MARKETING_CENTER + `/plat/earnest/list`
+export const earnestDetail = MARKETING_CENTER + `/merchant/earnest/detail`
+//定金活动下架
+export const earnestCancel = MARKETING_CENTER + `/plat/earnest/obtained`
+//定金活动下架
+export const activityCancel = MARKETING_CENTER + `/supplier/discount/obtained`
+//搜索下拉获得会员等级
+export const levelItem = MEMBER_CENTER + '/mcMemberLevel/levelItem'
+//会员标签按钮
+export const updateMemberType =
+  MEMBER_CENTER + '/mcMemberAccounts/updateMemberType'
+//用户画像
+export const getUserIconInfo =
+  MEMBER_CENTER + '/mcMemberAccounts/getUserIconInfo'
+
+//积分配置
+export const pointConfig = ACCOUNT_CENTER + '/pointConfig'
+
+//积分配置列表
+export const pointConfigList = pointConfig + '/scene'
+//最近三个月积分统计查询
+export const queryIntegralCount = id => ACCOUNT_CENTER + `/point/${id}/count`
+export const queryCurrencyDetail = ACCOUNT_CENTER + '/admin/shoppingCard/detail'
+export const queryCurrencyList = ACCOUNT_CENTER + '/admin/shoppingCard/query'
+
+//源通币统计查询
+export const queryCurrencyCount = ACCOUNT_CENTER + '/admin/shoppingCard/count'
+//所属商户
+export const shopName = MARKETING_CENTER + '/supplier/activity/shop'

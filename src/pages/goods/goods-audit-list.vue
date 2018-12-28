@@ -24,6 +24,7 @@
       <template slot="search">
         <el-form-item label="申请时间">
           <el-date-picker
+            :clearable="false"
             @change="setTime"
             value-format="yyyy-MM-dd"
             v-model="dateRange"
@@ -71,8 +72,6 @@
 
 <script>
 import {goodsLists, getNeedCheckPcItem, goodsCancelApply} from '@/const/api'
-import {goodsListColumns} from '@/const/goods'
-import {listSearchForm} from '@/const/goods'
 import {getGoodsOnOffStatus, formatDate} from '@/const/filter'
 import {goodsDetail, goodsPublish, goodsUseTplPublish} from '@/const/path'
 import BackEndCategorySelect from '@/container/back-end-category-select/'

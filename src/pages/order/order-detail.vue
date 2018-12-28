@@ -128,7 +128,7 @@ import {
 import {mapGetters} from 'vuex'
 
 export default {
-  name: 'order-detail-car',
+  name: 'order-detail',
   components: {
     CardTable,
     TableInfo,

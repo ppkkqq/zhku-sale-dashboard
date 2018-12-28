@@ -129,7 +129,7 @@ import CardTable from '@/components/card-table'
 import TableInfo from '@/components/table-info'
 import {refundDetail} from '@/const/api'
 import {formatDate, Object2Options, toOptionsLabel, price} from '@/const/filter'
-import {orderStatusOptions, orderTypeOptions, productType} from '@/const/config'
+import {productType} from '@/const/config'
 import {
   statusOpts,
   REFUND,
@@ -166,27 +166,25 @@ export default {
       extraParams: {},
       detail: {},
       statusOpts,
-      orderStatusOptions,
-      paymentTable: [
-        {prop: 'tradeOrderId', label: '支付流水号'},
-        {
-          prop: 'payMoney',
-          label: '支付金额',
-          formatter: row => price(row.payMoney)
-        },
-        {prop: 'payChannel', label: '支付通道'},
-        {
-          prop: 'payStatus',
-          label: '支付状态',
-          formatter: row => toOptionsLabel(row.payStatus, orderStatusOptions)
-        },
-        {
-          prop: 'paidAt',
-          label: '支付时间',
-          formatter: row => formatDate(row.paidAt),
-          width: '180'
-        }
-      ],
+      // paymentTable: [
+      //   {prop: 'tradeOrderId', label: '支付流水号'},
+      //   {
+      //     prop: 'payMoney',
+      //     label: '支付金额',
+      //     formatter: row => price(row.payMoney)
+      //   },
+      //   {prop: 'payChannel', label: '支付通道'},
+      //   {
+      //     prop: 'payStatus',
+      //     label: '支付状态'
+      //   },
+      //   {
+      //     prop: 'paidAt',
+      //     label: '支付时间',
+      //     formatter: row => formatDate(row.paidAt),
+      //     width: '180'
+      //   }
+      // ],
       aftTable: [
         {
           prop: 'createdAt',

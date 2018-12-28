@@ -56,8 +56,6 @@
 </template>
 
 <script>
-import UploadToAli from 'upload-to-ali'
-
 export default {
   name: 'update-backend-category',
   props: ['form'],
