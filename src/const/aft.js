@@ -110,11 +110,11 @@ export const searchForm = [
     $options: [
       {
         label: '退货退款',
-        value: 2
+        value: '2'
       },
       {
         label: '退款',
-        value: 1
+        value: '1'
       }
     ]
   },
