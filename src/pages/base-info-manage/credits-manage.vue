@@ -10,8 +10,8 @@
         <el-form ref="form" :model="rules" label-width="100px" :disabled=ruleIsDisabled>
           <el-form-item label="积分换算规则">
             <div class="conversion-content"><span>每消费</span>
-              <el-col :span="3"><el-input v-model="rules.spendMoney"></el-input></el-col> <span>元得到</span>
-              <el-col :span="3"><el-input v-model="rules.point"></el-input></el-col><span>积分</span>
+              <el-col :span="3"><el-input  v-model="rules.spendMoney"></el-input></el-col> <span>元得到</span>
+              <el-col :span="3"><el-input  v-model="rules.point"></el-input></el-col><span>积分</span>
             </div>
           </el-form-item>
 
@@ -77,8 +77,8 @@ export default {
     return {
       SWITCH: true,
       addQuery: {
-        spendMoney: '',
-        point: ''
+        spendMoney: 0,
+        point: 0
       },
       url: pointConfigList,
       rules: {},
@@ -137,8 +137,8 @@ export default {
         })
     },
     updateRules() {
-      this.addQuery.spendMoney = this.rules.spendMoney
-      this.addQuery.point = this.rules.point
+      this.addQuery.spendMoney = Number(this.rules.spendMoney)
+      this.addQuery.point = Number(this.rules.point)
       this.$axios.$post(pointConfigRule, this.addQuery).then(res => {
         this.$refs.dataTable.getList()
         this.$message({
