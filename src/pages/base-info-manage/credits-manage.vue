@@ -76,6 +76,10 @@ export default {
   data() {
     return {
       SWITCH: true,
+      addQuery: {
+        spendMoney: '',
+        point: ''
+      },
       url: pointConfigList,
       rules: {},
       ruleIsDisabled: true,
@@ -133,7 +137,9 @@ export default {
         })
     },
     updateRules() {
-      this.$axios.$post(pointConfigRule, this.rules).then(res => {
+      this.addQuery.spendMoney = this.rules.spendMoney
+      this.addQuery.point = this.rules.point
+      this.$axios.$post(pointConfigRule, this.addQuery).then(res => {
         this.$refs.dataTable.getList()
         this.$message({
           type: 'success',
