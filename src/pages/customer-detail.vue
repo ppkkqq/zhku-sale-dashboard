@@ -58,16 +58,16 @@
         v-bind="dataTableConfig"
       ></el-data-table>
     </card-table>
-    <el-dialog title="积分收支明细" :visible.sync="dialogVisible" width="60%">
+    <el-dialog title="积分收支明细" :visible.sync="dialogVisible" width="70%">
       <el-table :data="integralList" size="small">
-        <el-table-column prop="createdAt" label="时间">
+        <el-table-column prop="createdAt" label="时间" width="250">
           <template slot-scope="scope">
             <span>{{formatDate(scope.row.createdAt)}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="batchAmt" label="收支明细">
+        <el-table-column prop="batchAmt" label="收支明细" width="250">
           <template slot-scope="scope">
-            <span v-if="scope.row.types === 'USED' || scope.row.types === 'REFUND' || scope.row.types === 'WASTED'" class="c-b" style="font-weight: 600">-{{scope.row.batchAmt}}</span>
+            <span v-if="scope.row.types === 'USED' || scope.row.types === 'LOCK' || scope.row.types === 'WASTED'" class="c-b" style="font-weight: 600">-{{scope.row.batchAmt}}</span>
             <span v-else class="c-r" style="font-weight: 600">+{{scope.row.batchAmt}}</span>
           </template>
         </el-table-column>
@@ -77,7 +77,7 @@
             <span> (
                     <span v-if="scope.row.types === 'REFUND'">售后单号</span>
                     <span v-else>订单号</span>
-                    ：{{scope.row.mainOrderNum.slice(0,8)}} )
+                    ：{{scope.row.mainOrderNum}} )
                   </span>
           </template>
         </el-table-column>
@@ -497,11 +497,12 @@ export default {
     //this.getCurrencyData()
     this.integralType = {
       USED: '购物扣积分',
-      REFUND: '退货扣积分',
+      REFUND: '退货返积分',
       WASTED: '过期扣积分',
       SHOPPING_GENERATED: '购物送积分',
       COMMENT_GENERATED: '评论送积分',
-      INPOUR: '充值得积分'
+      INPOUR: '充值得积分',
+      LOCK: '购物扣积分'
     }
   },
   mounted() {}
