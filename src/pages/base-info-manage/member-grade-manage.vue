@@ -55,49 +55,49 @@
         <span class="tip-text">开启后，内部员工注册后默认此等级</span>
       </el-form>
     </el-data-table>
-    <el-dialog title="会员权益配置" :visible.sync="memberBenefitsVisible" width="50%">
-      <el-data-table
-        ref="dataTable"
-        :url="memberBenefitsUrl"
-        :customQuery="memberBenefitsQuery"
-        :columns="benefitsColumns"
-        :hasNew="false"
-        :hasEdit="false"
-        :hasDelete="false"
-        :hasOperation="false"
-        :isTree="false"
-        :hasPagination="false"
-        data-path="payload"
-        @update="getData"
-      >
-        <el-table-column
-          label="外部会员">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row['normalAccount']"
-              active-color="#409eff"
-              inactive-color="#dcdfe6"
-              active-value="OPEN"
-              inactive-value="CLOSE"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="内部员工">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row['internalStaff']"
-              active-color="#409eff"
-              inactive-color="#dcdfe6"
-              active-value="OPEN"
-              inactive-value="CLOSE"
-            />
-          </template>
-        </el-table-column>
-      </el-data-table>
-      <el-button type="primary" @click="confirmEdit" class="btn-mg">确定</el-button>
-      <el-button @click="()=>{this.memberBenefitsVisible = false}" class="btn-mg">取消</el-button>
-    </el-dialog>
+    <!--<el-dialog title="会员权益配置" :visible.sync="memberBenefitsVisible" width="50%">-->
+      <!--<el-data-table-->
+        <!--ref="dataTable"-->
+        <!--:url="memberBenefitsUrl"-->
+        <!--:customQuery="memberBenefitsQuery"-->
+        <!--:columns="benefitsColumns"-->
+        <!--:hasNew="false"-->
+        <!--:hasEdit="false"-->
+        <!--:hasDelete="false"-->
+        <!--:hasOperation="false"-->
+        <!--:isTree="false"-->
+        <!--:hasPagination="false"-->
+        <!--data-path="payload"-->
+        <!--@update="getData"-->
+      <!--&gt;-->
+        <!--<el-table-column-->
+          <!--label="外部会员">-->
+          <!--<template slot-scope="scope">-->
+            <!--<el-switch-->
+              <!--v-model="scope.row['normalAccount']"-->
+              <!--active-color="#409eff"-->
+              <!--inactive-color="#dcdfe6"-->
+              <!--active-value="OPEN"-->
+              <!--inactive-value="CLOSE"-->
+            <!--/>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
+        <!--<el-table-column-->
+          <!--label="内部员工">-->
+          <!--<template slot-scope="scope">-->
+            <!--<el-switch-->
+              <!--v-model="scope.row['internalStaff']"-->
+              <!--active-color="#409eff"-->
+              <!--inactive-color="#dcdfe6"-->
+              <!--active-value="OPEN"-->
+              <!--inactive-value="CLOSE"-->
+            <!--/>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
+      <!--</el-data-table>-->
+      <!--<el-button type="primary" @click="confirmEdit" class="btn-mg">确定</el-button>-->
+      <!--<el-button @click="()=>{this.memberBenefitsVisible = false}" class="btn-mg">取消</el-button>-->
+    <!--</el-dialog>-->
 
     <el-card>
       <div slot="header">
@@ -239,11 +239,11 @@ export default {
         }
       ],
       extraButtons: [
-        {
-          type: 'primary',
-          text: '配置权益',
-          atClick: this.getMemberBenefits
-        },
+        // {
+        //   type: 'primary',
+        //   text: '配置权益',
+        //   atClick: this.getMemberBenefits
+        // },
         {
           type: 'danger',
           text: '删除',
@@ -330,12 +330,12 @@ export default {
     // onUpLoadFile(levelIcon, type) {
     //   this.extraParams.levelIcon = levelIcon
     // },
-    getMemberBenefits(row) {
-      // this.memberId = row.id
-      this.memberBenefitsVisible = true
-      this.memberBenefitsQuery = {id: row.id}
-      this.memberBenefitsUrl = levelBenefit + '?currentTime=' + Date.now()
-    },
+    // getMemberBenefits(row) {
+    //   // this.memberId = row.id
+    //   this.memberBenefitsVisible = true
+    //   this.memberBenefitsQuery = {id: row.id}
+    //   this.memberBenefitsUrl = levelBenefit + '?currentTime=' + Date.now()
+    // },
     confirmEdit() {
       let newArr = this.memberData.map(item => {
         return {
