@@ -299,7 +299,9 @@ export default {
     }
   },
   watch: {
-    page: function() {},
+    page: function() {
+      this.getQueryIntegralList()
+    },
     listPage: function() {
       this.getQueryCurrencyList()
     },
