@@ -499,7 +499,7 @@ export default {
     //this.getCurrencyData()
     this.integralType = {
       USED: '购物扣积分',
-      REFUND: '退货返积分',
+      REFUND: '返回积分',
       WASTED: '过期扣积分',
       SHOPPING_GENERATED: '购物送积分',
       COMMENT_GENERATED: '评论送积分',
