@@ -334,7 +334,7 @@ export default {
       // this.memberId = row.id
       this.memberBenefitsVisible = true
       this.memberBenefitsQuery = {id: row.id}
-      this.memberBenefitsUrl = levelBenefit + '?id=' + row.id
+      this.memberBenefitsUrl = levelBenefit + '?currentTime=' + Date.now()
     },
     confirmEdit() {
       let newArr = this.memberData.map(item => {
