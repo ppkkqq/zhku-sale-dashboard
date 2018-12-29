@@ -77,8 +77,8 @@ export default {
     return {
       SWITCH: true,
       addQuery: {
-        spendMoney: '',
-        point: ''
+        spendMoney: 0,
+        point: 0
       },
       url: pointConfigList,
       rules: {},
