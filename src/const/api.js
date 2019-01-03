@@ -100,7 +100,7 @@ export const cancelInpour = ACCOUNT_CENTER + '/admin/shoppingCard/cancelInpour'
 //积分规则配置
 export const pointConfigRule = ACCOUNT_CENTER + '/pointConfig/rule'
 //批量充值模板下载
-export const template = ACCOUNT_CENTER + '/shoppingCard/template'
+export const template = ACCOUNT_CENTER + '/shoppingcard/template'
 //批量充值
 export const batchInpour = ACCOUNT_CENTER + '/admin/shoppingCard/batchInpour'
 
