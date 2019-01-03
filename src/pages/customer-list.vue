@@ -445,7 +445,12 @@ export default {
   computed: {
     isYYMember() {
       // 是否是运营人员
-      return this.user && this.user.roles && this.user.roles[0] && this.user.roles[0].roleNum === 'YY'
+      return (
+        this.user &&
+        this.user.roles &&
+        this.user.roles[0] &&
+        this.user.roles[0].roleNum === 'YY'
+      )
     },
     topUpDialogTitle() {
       return dialogTitle[this.currentDialog]
@@ -672,11 +677,13 @@ export default {
             (!wb.Sheets[wb.SheetNames[0]].E1 ||
               wb.Sheets[wb.SheetNames[0]].E1.v !== '生日(yyyy-MM-dd,选填)') ||
             (!wb.Sheets[wb.SheetNames[0]].F1 ||
-              wb.Sheets[wb.SheetNames[0]].F1.v !== '邮箱(选填)')
-            (!wb.Sheets[wb.SheetNames[0]].F1 ||
-              wb.Sheets[wb.SheetNames[0]].F1.v !== '邮箱(选填)')
-            (!wb.Sheets[wb.SheetNames[0]].F1 ||
-              wb.Sheets[wb.SheetNames[0]].F1.v !== '邮箱(选填)')
+              wb.Sheets[wb.SheetNames[0]].F1.v !== '邮箱(选填)')(
+              !wb.Sheets[wb.SheetNames[0]].G1 ||
+                wb.Sheets[wb.SheetNames[0]].G1.v !== '会员标签(内部/外部,选填)'
+            )(
+              !wb.Sheets[wb.SheetNames[0]].H1 ||
+                wb.Sheets[wb.SheetNames[0]].H1.v !== '所属公司(选填)'
+            )
           ) {
             this.errorType = true
             this.$notify({
@@ -703,8 +710,8 @@ export default {
                     '性别(男/女,选填)': 'gender',
                     '生日(yyyy-MM-dd,选填)': 'birthday',
                     '邮箱(选填)': 'email',
-                    '会员标签(内部/外部,选填)':'memberType',//
-                    '所属公司(选填)': 'mechanismName'//
+                    '会员标签(内部/外部,选填)': 'memberType',
+                    '所属公司(选填)': 'mechanismName'
                   }
                   resuleChange = Object.keys(Ovalue).reduce((result, key) => {
                     result[mapKey[key]] = Ovalue[key].toString()
