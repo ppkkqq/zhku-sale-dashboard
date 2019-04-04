@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import {goodsLists, goodsCancelApply} from '@/const/api'
+import {usersLists, goodsCancelApply} from '@/const/api'
 import {getGoodsOnOffStatus, formatDate} from '@/const/filter'
 import {goodsDetail, goodsPublish, goodsUseTplPublish} from '@/const/path'
 import BackEndCategorySelect from '@/container/back-end-category-select/'
@@ -40,7 +40,7 @@ const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
 const queryFlag = 'q='
 const queryPattern = new RegExp('q=.*' + paramSeparator)
 export default {
-  name: 'goods-list',
+  name: 'users',
   components: {
     BackEndCategorySelect
   },
@@ -49,41 +49,46 @@ export default {
     let extraParams = {}
     return {
       pageName: 'goods-list',
-      url: goodsLists,
+      url: usersLists,
       columns: [
         {
-          prop: 'name',
-          label: '商品名称',
-          minWidth: '200',
+          prop: 'user',
+          label: '用户名',
+          minWidth: '120',
           'show-overflow-tooltip': true
         },
         {
-          prop: 'type',
-          label: '所属类目',
-          minWidth: '100',
-          'show-overflow-tooltip': true
+          prop: 'sex',
+          label: '性别',
+          formatter: row => {
+            return row.sex ? '女' : '男'
+          }
         },
         {
-          prop: 'price',
-          label: '价格'
-        },
-        {
-          prop: 'starttime',
-          label: '起始时间',
+          prop: 'tel',
+          label: '手机号',
           minWidth: '150'
         },
         {
-          prop: 'lasttime',
-          label: '结束时间',
+          prop: 'email',
+          label: '邮箱',
           minWidth: '150'
+        },
+        {
+          prop: 'sell',
+          label: '是否为卖家',
+          minWidth: '150',
+          formatter: row => {
+            return row.sell ? '是' : '否'
+          }
         }
       ],
       dialogVisible: false,
       form: [],
       extraButtons: [
         {
-          text: '查看',
-          type: 'primary',
+          text: '删除',
+          type: 'danger',
           atClick: row => {
             this.$router.push({
               path: '/goods/goods-detail',
@@ -97,8 +102,8 @@ export default {
       ],
       searchForm: [
         {
-          $el: {placeholder: '请输入商品名称'},
-          label: '商品名称',
+          $el: {placeholder: '请输入用户名'},
+          label: '用户名',
           $id: 'name',
           $type: 'input'
         }

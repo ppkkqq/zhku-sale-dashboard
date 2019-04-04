@@ -1,18 +1,5 @@
 <template>
   <div class="info-manage">
-    <!--<div class="el-form-item el-form-item&#45;&#45;medium">-->
-      <!--<label class="el-form-item__label" style="width: 150px">{{ prependName }}类型</label>-->
-      <!--<div class="el-form-item__content" style="margin-left: 150px">-->
-        <!--<el-select v-model="type" placeholder="请选择" @change="handleChange" :disabled="isView || isEdit">-->
-          <!--<el-option-->
-            <!--v-for="(value, key) in templateType"-->
-            <!--:key="key"-->
-            <!--:label="value"-->
-            <!--:value="key">-->
-          <!--</el-option>-->
-        <!--</el-select>-->
-      <!--</div>-->
-    <!--</div>-->
     <form-renderer
       :content="currentInfo"
       :beforeRenderItem="handleBeforeRender"

@@ -13,7 +13,7 @@ export default {
 
     // 未登录
     if (!userId || !token) {
-      this.$router.replace('/login')
+      // this.$router.replace('/login')
     }
     // 已登录但因为刷新, 状态丢失
     else if (!this.$store.state.userId) {
@@ -35,7 +35,7 @@ export default {
         cookie.remove('userId', {path})
 
         console.error('auth error: ', e)
-        this.$router.replace('/login')
+        // this.$router.replace('/login')
       }
     }
   }

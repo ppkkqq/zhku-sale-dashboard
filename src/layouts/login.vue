@@ -1,8 +1,7 @@
 <template>
   <div class="layout-login" :style="{backgroundImage: 'url(' + $store.state.meta.loginBgImg +')'}" >
-    <h1 class="title">{{$store.state.meta.appName}}</h1>
+    <h1 class="title">仲恺线上拍卖系统管理端</h1>
     <nuxt></nuxt>
-    <copyright></copyright>
   </div>
 </template>
 

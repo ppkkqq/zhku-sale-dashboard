@@ -7,32 +7,43 @@
     >
       <div class="logo">
         <nuxt-link to="/">
-          <img class="logo-img" :src="$store.state.meta.logo" alt="logo">
-          <h1 class="logo-text">{{$store.state.meta.appName}}</h1>
+          <img class="logo-img" :src="require('@/assets/image/logo.gif')" alt="logo">
+          <h1 class="logo-text">仲园拍卖平台管理端</h1>
         </nuxt-link>
       </div>
-      <!-- handleItem 为自定义事件，监听外链点击事件 -->
-      <!-- link-style 为外链样式-->
-      <menu-item @handleItem="handleItem" :link-style="{color: textColor, backgroundColor: bgColor}" :collapse="collapse" :menuList="menuList"></menu-item>
+      <el-row>
+          <el-col>
+          <el-menu
+            default-active="2"
+            class="el-menu-vertical-demo"
+            text-color="#fff"
+            background-color="rgb(34, 46, 60)">
+            <el-submenu index="1">
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>所有用户</span>
+              </template>
+              <el-menu-item-group>
+                <el-menu-item index="1-1"><nuxt-link to="/users" style="color: #fff">买家信息库</nuxt-link></el-menu-item>
+                <el-menu-item index="1-2"><nuxt-link to="/sellers" style="color: #fff">卖家信息库</nuxt-link></el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+            <el-menu-item index="3">
+              <i class="el-icon-document"></i>
+              <span slot="title"><nuxt-link to="/goods/goods-list" style="color: #fff">商品管理</nuxt-link></span>
+            </el-menu-item>
+            <el-menu-item index="4">
+              <i class="el-icon-setting"></i>
+              <span slot="title"><nuxt-link to="/orders" style="color: #fff">在线订单</nuxt-link></span>
+            </el-menu-item>
+          </el-menu>
+        </el-col>
+      </el-row>
     </el-menu>
 
     <el-container>
       <el-header>
         <el-row type="flex" justify="space-between" align="middle">
-          <el-col>
-            <el-button @click="collapse = !collapse"><i class="el-icon-sort"></i></el-button>
-          </el-col>
-          <el-col style="text-align: right">
-            <el-dropdown @command="handleDropdown">
-            <span class="el-dropdown-link">
-              {{$store.state.user.fullname}}
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-              <el-dropdown-menu slot="dropdown" >
-                <el-dropdown-item command="logout">退出</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-col>
         </el-row>
       </el-header>
 
@@ -64,27 +75,28 @@ export default {
     return {
       collapse: false,
       textColor: 'hsla(0,0%,100%,.67)',
-      bgColor: '#222e3c'
+      bgColor: '#222e3c',
+      menuList: ['广告位', '用户信息', '商品管理', '在线订单']
     }
   },
   methods: {
-    handleDropdown(action) {
-      this.$store.commit(action)
-      this.$router.replace('/login')
-    },
-
-    handleItem(url) {
-      let {token, userId, user} = this.$store.state
-      let prefix = url.slice(-1) === '?' ? '&' : '?'
-      let query = `${prefix}token=${token}&projectNo=${
-        user.projectNo
-      }&userId=${userId}`
-
-      window.open(`${url}${query}`, '_blank')
-    }
+    // handleDropdown(action) {
+    //   this.$store.commit(action)
+    //   this.$router.replace('/login')
+    // },
+    //
+    // handleItem(url) {
+    //   let {token, userId, user} = this.$store.state
+    //   let prefix = url.slice(-1) === '?' ? '&' : '?'
+    //   let query = `${prefix}token=${token}&projectNo=${
+    //     user.projectNo
+    //   }&userId=${userId}`
+    //
+    //   window.open(`${url}${query}`, '_blank')
+    // }
   },
   computed: {
-    ...mapState(['menuList'])
+    // ...mapState(['menuList'])
   }
 }
 </script>
@@ -106,8 +118,8 @@ export default {
   overflow: hidden;
 
   .logo-img {
-    width: 32px;
-    height: 32px;
+    width: 42px;
+    height: 42px;
     vertical-align: middle;
   }
 
@@ -116,7 +128,7 @@ export default {
     display: inline-block;
     vertical-align: middle;
     font-size: 20px;
-    margin: 0 0 0 12px;
+    margin: 0 0 0 4px;
     font-weight: 400;
     opacity: 1;
   }

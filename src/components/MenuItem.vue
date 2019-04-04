@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     isFullUrl(url) {
-      return url.indexOf('http') > -1
+      // return url.indexOf('http') > -1
     },
     handleItem(url) {
       this.$emit('handleItem', url)

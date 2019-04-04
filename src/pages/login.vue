@@ -13,15 +13,11 @@
           <el-button type="primary" @click="login" :loading="loading" size="medium">登录</el-button>
         </el-form-item>
       </el-form>
-      <!--<div style="text-align: right">-->
-        <!--<nuxt-link to="/register">未有账号，直接注册</nuxt-link>-->
-      <!--</div>-->
     </div>
   </div>
 </template>
 
 <script>
-import {domain} from '@/const/domain'
 export default {
   layout: 'login',
   name: 'login',
@@ -31,8 +27,7 @@ export default {
       loading: false,
       form: {
         username: '',
-        password: '',
-        domain: domain
+        password: ''
       },
       rules: {
         username: [{required: true, message: '请输入账号', trigger: 'blur'}],
@@ -42,25 +37,17 @@ export default {
   },
   methods: {
     login() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-
-          this.$store
-            .dispatch('login', this.form)
-            .then(() => {
-              this.loading = false
-              this.$router.replace('/')
-            })
-            .catch(e => {
-              // TODO 异常处理
-              this.loading = false
-              console.log(e)
-            })
-        } else {
-          return false
-        }
-      })
+      if (this.form.username === 'admin' && this.form.password === '123') {
+        this.loading = false
+        this.$router.replace('/')
+      } else {
+        this.$notify({
+          title: '提示',
+          message: '用户名密码错误',
+          type: 'error'
+        })
+        return false
+      }
     }
   }
 }

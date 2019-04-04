@@ -1,61 +1,68 @@
 <template>
   <div class="goods-template">
-    <h1>{{ title }}</h1>
-
-    <template v-if="useTpl">
-      <h3 v-if="editStatus==='isEdit'" class="padding-tb">第二步 查看并调整商品信息</h3>
-    </template>
-    <template v-else>
-      <div class="el-form-item el-form-item--medium">
-        <label class="el-form-item__label" style="width: 110px">后台类目</label>
-        <div class="el-form-item__content" style="margin-left: 110px">
-          <back-end-category
-            @change="handleSelect"
-            :catalogId="catalogId"
-            :disabled="isView"
-          />
-        </div>
-      </div>
-    </template>
-
     <base-layout :title="prependName + '信息'">
-      <info-manage
-        ref="infoManage"
-        :prependName="prependName"
-        :value="infoData"
-        :tempType="currentTempType"
-        :editStatus="editStatus"
-        @typeChange="onTypeChange"
-        :isCombo="false"
-      />
+      <el-form ref="form" :model="content" label-width="80px" size="mini">
+        <el-form-item label="商品名称">
+          <el-col :span="16">
+            <el-input v-model="content.name" disabled></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="商品类目">
+          <el-col :span="11">
+            <el-input v-model="content.type" disabled></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="开始时间">
+          <el-col :span="11">
+            <el-date-picker disabled type="date" placeholder="选择日期" v-model="content.starttime" style="width: 100%;"></el-date-picker>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="结束时间">
+          <el-col :span="11">
+            <el-date-picker disabled type="date" placeholder="选择日期" v-model="content.lasttime" style="width: 100%;"></el-date-picker>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="起拍价格">
+        <el-col :span="8">
+          <el-input v-model="content.price" disabled></el-input>
+        </el-col>
+      </el-form-item>
+        <el-form-item label="卖家id">
+          <el-col :span="8">
+            <el-input v-model="content.user" disabled></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="商品地址">
+          <el-col :span="16">
+            <el-input v-model="content.address" disabled></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="主图">
+          <div style="width: 300px;display: flex;">
+            <viewer height="80px" width="80px" :src="getPicture+content.pic1"
+            />
+            <viewer height="80px" width="80px" :src="getPicture+content.pic2"
+            />
+            <viewer height="80px" width="80px" :src="getPicture+content.pic3"
+            />
+          </div>
+        </el-form-item>
+        <el-form-item label="详情图">
+          <viewer height="80px" width="80px" :src="getPicture+content.picture"
+          />
+        </el-form-item>
+        <el-form-item label="商品介绍">
+          <el-col :span="16">
+            <el-input
+              type="textarea"
+              :rows="6"
+              disabled
+              v-model="content.content">
+            </el-input>
+          </el-col>
+        </el-form-item>
+      </el-form>
     </base-layout>
-
-    <props-manage
-      v-if="!noPropsManage"
-      :title="prependName + '属性'"
-      :propsData="propsData"
-      :skusData="skusData || []"
-      :type="currentTempType"
-      :isView="isView"
-      class="margin-top"
-      ref="PropsManage"
-    />
-
-    <base-layout
-      v-if="hasRichText"
-      :title="name.goods + '介绍'"
-    >
-      <product-description
-        ref="richText"
-        :content="description"
-        :editorDisabled="editorDisabled"
-      />
-    </base-layout>
-
-    <div class="text-right margin-top" v-if="!isView">
-      <el-button @click="$router.back()">取消</el-button>
-      <el-button type="primary" @click="onSubmit" v-loading="isLoading">提交</el-button>
-    </div>
   </div>
 </template>
 <script>
@@ -63,8 +70,8 @@ import InfoManage from './info-manage/index.vue'
 import PropsManage from './props-manage/index.vue'
 import ProductDescription from './product-description'
 import BaseLayout from './base-layout'
-
-import {backendCatalogTree, backendCatalogDetail} from '@/const/api'
+import Viewer from 'viewer'
+import {backendCatalogTree, backendCatalogDetail, getPicture} from '@/const/api'
 
 import BackEndCategory from '@/container/back-end-category-select'
 
@@ -132,7 +139,8 @@ export default {
     PropsManage,
     ProductDescription,
     BackEndCategory,
-    BaseLayout
+    BaseLayout,
+    Viewer
   },
   computed: {
     isView() {
@@ -161,6 +169,7 @@ export default {
     }
   },
   created() {
+    this.getPicture = getPicture
     this.cache = {}
 
     this.name = {

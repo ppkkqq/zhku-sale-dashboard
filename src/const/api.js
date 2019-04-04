@@ -74,7 +74,7 @@ export const exportExcel = TRADE_CENTER + '/order/exportExcel'
 
 //商品
 // export const goodsLists = PRODUCT_CENTER + '/manager/pcItems'
-export const goodsLists = PRODUCT_CENTER + '/manager/pcItems/plat'
+// export const goodsLists = PRODUCT_CENTER + '/manager/pcItems/plat'
 export const goodsListsFromSkuId = PRODUCT_CENTER + '/pcItemSkus/get/item'
 
 // 商品审核
@@ -198,3 +198,14 @@ export const queryCurrencyList = ACCOUNT_CENTER + '/admin/shoppingCard/query'
 export const queryCurrencyCount = ACCOUNT_CENTER + '/admin/shoppingCard/count'
 //所属商户
 export const shopName = MARKETING_CENTER + '/supplier/activity/shop'
+
+// ------------------------------------------------------------------my
+export const localhost = 'http://localhost/web_ks'
+
+export const goodsLists = localhost + '/getGoodsList.php'
+export const getDetailById = localhost + '/getproduct.php'
+//图片链接加载
+export const getPicture = localhost + '/picture/'
+export const ordersLists = localhost + '/getOrdersList.php'
+export const usersLists = localhost + '/getUserList.php'
+export const sellersLists = localhost + '/getSellerList.php'

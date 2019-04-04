@@ -9,7 +9,7 @@
       :hasNew="false"
       :hasEdit="false"
       :hasDelete="false"
-      :hasOperation="true"
+      :hasOperation="false"
       :isTree="false"
       :hasPagination="true"
       :extraButtons="extraButtons"
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import {goodsLists, goodsCancelApply} from '@/const/api'
+import {ordersLists, goodsCancelApply} from '@/const/api'
 import {getGoodsOnOffStatus, formatDate} from '@/const/filter'
 import {goodsDetail, goodsPublish, goodsUseTplPublish} from '@/const/path'
 import BackEndCategorySelect from '@/container/back-end-category-select/'
@@ -40,7 +40,7 @@ const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
 const queryFlag = 'q='
 const queryPattern = new RegExp('q=.*' + paramSeparator)
 export default {
-  name: 'goods-list',
+  name: 'orders',
   components: {
     BackEndCategorySelect
   },
@@ -49,7 +49,7 @@ export default {
     let extraParams = {}
     return {
       pageName: 'goods-list',
-      url: goodsLists,
+      url: ordersLists,
       columns: [
         {
           prop: 'name',
@@ -58,23 +58,23 @@ export default {
           'show-overflow-tooltip': true
         },
         {
-          prop: 'type',
-          label: '所属类目',
+          prop: 'myPrice',
+          label: '价格'
+        },
+        {
+          prop: 'shoujianren',
+          label: '收货人',
           minWidth: '100',
           'show-overflow-tooltip': true
         },
         {
-          prop: 'price',
-          label: '价格'
-        },
-        {
-          prop: 'starttime',
-          label: '起始时间',
+          prop: 'tel',
+          label: '手机号',
           minWidth: '150'
         },
         {
-          prop: 'lasttime',
-          label: '结束时间',
+          prop: 'date',
+          label: '下单时间',
           minWidth: '150'
         }
       ],

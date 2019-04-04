@@ -24,11 +24,11 @@
 </template>
 
 <script>
-import {goodsLists, goodsCancelApply} from '@/const/api'
+import {sellersLists, goodsCancelApply, getPicture} from '@/const/api'
 import {getGoodsOnOffStatus, formatDate} from '@/const/filter'
 import {goodsDetail, goodsPublish, goodsUseTplPublish} from '@/const/path'
 import BackEndCategorySelect from '@/container/back-end-category-select/'
-
+import Viewer from 'viewer'
 // searchForm中slot（门店和后台类目）查询取值和重置都在mixIn中
 import searchFormMixin from '@/mixins/search-form-slot'
 import qs from 'qs'
@@ -40,41 +40,69 @@ const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
 const queryFlag = 'q='
 const queryPattern = new RegExp('q=.*' + paramSeparator)
 export default {
-  name: 'goods-list',
+  name: 'sellers',
   components: {
-    BackEndCategorySelect
+    BackEndCategorySelect,
+    Viewer
   },
   mixins: [searchFormMixin],
   data() {
     let extraParams = {}
     return {
       pageName: 'goods-list',
-      url: goodsLists,
+      url: sellersLists,
       columns: [
         {
-          prop: 'name',
-          label: '商品名称',
-          minWidth: '200',
+          prop: 'user',
+          label: '用户名',
+          minWidth: '120',
           'show-overflow-tooltip': true
         },
         {
-          prop: 'type',
-          label: '所属类目',
-          minWidth: '100',
-          'show-overflow-tooltip': true
-        },
-        {
-          prop: 'price',
-          label: '价格'
-        },
-        {
-          prop: 'starttime',
-          label: '起始时间',
+          prop: 'storename',
+          label: '店铺名',
           minWidth: '150'
         },
         {
-          prop: 'lasttime',
-          label: '结束时间',
+          prop: 'idcard',
+          label: '身份证',
+          minWidth: '150'
+        },
+        {
+          prop: 'pic1',
+          label: '身份证正面',
+          minWidth: '120',
+          formatter: row => {
+            if (row) {
+              return (
+                <viewer
+                  height="40px"
+                  width="40px"
+                  src={getPicture + row.pic1}
+                />
+              )
+            }
+          }
+        },
+        {
+          prop: 'pic2',
+          label: '身份证正面',
+          minWidth: '120',
+          formatter: row => {
+            if (row) {
+              return (
+                <viewer
+                  height="40px"
+                  width="40px"
+                  src={getPicture + row.pic2}
+                />
+              )
+            }
+          }
+        },
+        {
+          prop: 'starttime',
+          label: '申请时间',
           minWidth: '150'
         }
       ],
@@ -82,8 +110,8 @@ export default {
       form: [],
       extraButtons: [
         {
-          text: '查看',
-          type: 'primary',
+          text: '删除',
+          type: 'danger',
           atClick: row => {
             this.$router.push({
               path: '/goods/goods-detail',
@@ -97,8 +125,8 @@ export default {
       ],
       searchForm: [
         {
-          $el: {placeholder: '请输入商品名称'},
-          label: '商品名称',
+          $el: {placeholder: '请输入用户名'},
+          label: '用户名',
           $id: 'name',
           $type: 'input'
         }
@@ -135,6 +163,9 @@ export default {
         this.customQuery.catalogId = params.catalogId
       }
     }
+  },
+  created() {
+    this.getPicture = getPicture
   }
 }
 </script>
