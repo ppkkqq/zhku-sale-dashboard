@@ -1,6 +1,6 @@
-# yuding-platform-dashboard
+# zhku-sale-dashboard
 
-> 云鼎商城 PC 平台管理端
+> 仲恺线上拍卖系统管理端
 
 ## upload-to-ali 安装
 
