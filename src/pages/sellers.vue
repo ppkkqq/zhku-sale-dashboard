@@ -24,7 +24,12 @@
 </template>
 
 <script>
-import {sellersLists, goodsCancelApply, getPicture} from '@/const/api'
+import {
+  sellersLists,
+  goodsCancelApply,
+  getPicture,
+  delSellerCol
+} from '@/const/api'
 import {getGoodsOnOffStatus, formatDate} from '@/const/filter'
 import {goodsDetail, goodsPublish, goodsUseTplPublish} from '@/const/path'
 import BackEndCategorySelect from '@/container/back-end-category-select/'
@@ -113,12 +118,31 @@ export default {
           text: '删除',
           type: 'danger',
           atClick: row => {
-            this.$router.push({
-              path: '/goods/goods-detail',
-              query: {
-                // isView: 1,
-                goodid: row.goodid
-              }
+            this.$confirm('确定删除该卖家吗?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$axios
+                .$post(delSellerCol, {
+                  user: row.user,
+                  storeName: row.storename,
+                  state: row.state
+                })
+                .then(res => {
+                  if (res == 'success') {
+                    this.$message({
+                      type: 'success',
+                      message: '删除成功!'
+                    })
+                    this.$refs.dataTable.getList()
+                  } else {
+                    this.$message({
+                      type: 'error',
+                      message: '删除失败!'
+                    })
+                  }
+                })
             })
           }
         }
@@ -128,6 +152,12 @@ export default {
           $el: {placeholder: '请输入用户名'},
           label: '用户名',
           $id: 'name',
+          $type: 'input'
+        },
+        {
+          $el: {placeholder: '请输入店铺名'},
+          label: '店铺名',
+          $id: 'storeName',
           $type: 'input'
         }
       ],

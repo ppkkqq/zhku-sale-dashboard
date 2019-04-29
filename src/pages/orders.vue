@@ -19,6 +19,20 @@
       :customQuery.sync="customQuery"
       @reset="handleReset"
     >
+      <template slot="search">
+        <el-form-item label="创建时间">
+          <el-date-picker
+            :clearable="false"
+            value-format="yyyy-MM-dd"
+            @change="setCreatTime"
+            v-model="createDate"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="请选择开始时间"
+            end-placeholder="请选择结束时间"
+          ></el-date-picker>
+        </el-form-item>
+      </template>
     </el-data-table>
   </div>
 </template>
@@ -50,6 +64,7 @@ export default {
     return {
       pageName: 'goods-list',
       url: ordersLists,
+      createDate: [],
       columns: [
         {
           prop: 'name',
@@ -95,24 +110,30 @@ export default {
           }
         }
       ],
-      searchForm: [
-        {
-          $el: {placeholder: '请输入商品名称'},
-          label: '商品名称',
-          $id: 'name',
-          $type: 'input'
-        }
-      ],
+      // searchForm: [
+      //   {
+      //     $el: {placeholder: '请输入商品名称'},
+      //     label: '商品名称',
+      //     $id: 'name',
+      //     $type: 'input'
+      //   }
+      // ],
       operationAttrs: {
         fixed: 'right'
       },
       customQuery: {
-        catalogId: ''
+        catalogId: '',
+        startCreateTime: '',
+        endCreateTime: ''
       },
       extraParams
     }
   },
   methods: {
+    setCreatTime() {
+      this.customQuery.startCreateTime = this.createDate[0]
+      this.customQuery.endCreateTime = this.createDate[1]
+    },
     handleSelect(type, ids) {
       // if(!ids){
       //   return
@@ -124,6 +145,9 @@ export default {
     },
     handleReset() {
       this.customQuery.catalogId = ''
+      this.customQuery.startCreateTime = ''
+      this.customQuery.endCreateTime = ''
+      this.createDate = []
     }
   },
   mounted() {
