@@ -28,7 +28,8 @@ import {
   sellersLists,
   goodsCancelApply,
   getPicture,
-  delSellerCol
+  delSellerCol,
+  agreeSellerCol
 } from '@/const/api'
 import {getGoodsOnOffStatus, formatDate} from '@/const/filter'
 import {goodsDetail, goodsPublish, goodsUseTplPublish} from '@/const/path'
@@ -60,23 +61,23 @@ export default {
         {
           prop: 'user',
           label: '用户名',
-          minWidth: '120',
+          minWidth: '80',
           'show-overflow-tooltip': true
         },
         {
           prop: 'storename',
           label: '店铺名',
-          minWidth: '150'
+          minWidth: '100'
         },
         {
           prop: 'idcard',
           label: '身份证',
-          minWidth: '150'
+          minWidth: '110'
         },
         {
           prop: 'pic1',
           label: '身份证正面',
-          minWidth: '120',
+          minWidth: '100',
           formatter: row => {
             if (row) {
               return (
@@ -92,7 +93,7 @@ export default {
         {
           prop: 'pic2',
           label: '身份证正面',
-          minWidth: '120',
+          minWidth: '100',
           formatter: row => {
             if (row) {
               return (
@@ -108,12 +109,48 @@ export default {
         {
           prop: 'starttime',
           label: '申请时间',
-          minWidth: '150'
+          minWidth: '120'
         }
       ],
       dialogVisible: false,
       form: [],
+      operationAttrs: {
+        width: 160,
+        fixed: 'right'
+      },
       extraButtons: [
+        {
+          text: '审核',
+          type: 'primary',
+          show: row => row.state == 0,
+          atClick: row => {
+            this.$confirm('确定审核通过该卖家吗?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$axios
+                .$post(agreeSellerCol, {
+                  user: row.user,
+                  storeName: row.storename
+                })
+                .then(res => {
+                  if (res == 'success') {
+                    this.$message({
+                      type: 'success',
+                      message: '审核成功!'
+                    })
+                    this.$refs.dataTable.getList()
+                  } else {
+                    this.$message({
+                      type: 'error',
+                      message: '审核失败!'
+                    })
+                  }
+                })
+            })
+          }
+        },
         {
           text: '删除',
           type: 'danger',
@@ -161,9 +198,6 @@ export default {
           $type: 'input'
         }
       ],
-      operationAttrs: {
-        fixed: 'right'
-      },
       customQuery: {
         catalogId: ''
       },
